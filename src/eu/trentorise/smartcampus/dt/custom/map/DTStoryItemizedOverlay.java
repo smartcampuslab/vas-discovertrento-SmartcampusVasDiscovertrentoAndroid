@@ -250,7 +250,7 @@ public class DTStoryItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         
         Paint   mPaint = new Paint();
         mPaint.setDither(true);
-        mPaint.setColor(new Color().parseColor(mContext.getString(R.string.appcolor)));
+        mPaint.setColor(new Color().parseColor(mContext.getString(R.color.appcolor)));
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);

@@ -79,7 +79,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 	public static final String ARG_CATEGORY_SEARCH = "category_search";
 
 	private String category;
-
+	private List<EventObject> eventsList;
+	private  EventAdapter eventsAdapter;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -172,7 +173,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 //		new SCAsyncTask<Bundle, Void, EventObject[]>(getActivity(),
 //				new EventLoader(getActivity())).execute(bundle);
 
-		EventAdapter eventsAdapter = new EventAdapter(context, R.layout.events_row);
+		eventsAdapter = new EventAdapter(context, R.layout.events_row);
 		setAdapter(eventsAdapter);
 
 		// set title
@@ -214,7 +215,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				ViewSwitcher vs = (ViewSwitcher) view;
+				ViewSwitcher vs = (ViewSwitcher) view.findViewById(R.id.event_viewswitecher);
 				setupOptionsListeners(vs, position);
 				vs.showNext();
 				return true;
@@ -222,6 +223,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		});
 
 		super.onStart();
+
 	}
 
 	private void hideListItemsMenu(View v) {
@@ -258,7 +260,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 
 	protected void setupOptionsListeners(final ViewSwitcher vs,
 			final int position) {
-		final EventObject event = ((EventPlaceholder) vs.getTag()).event;
+		final EventObject event = ((EventPlaceholder)((View) vs.getParent()).getTag()).event;
 		ImageButton b = (ImageButton) vs.findViewById(R.id.delete_btn);
 		if (event.createdByUser()) {
 			b.setOnClickListener(new OnClickListener() {
@@ -371,6 +373,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 //				}
 //
 //			});
+
 			return sorted;
 		} catch (Exception e) {
 			Log.e(EventsListingFragment.class.getName(), e.getMessage());

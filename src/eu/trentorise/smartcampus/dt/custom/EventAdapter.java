@@ -15,14 +15,22 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.dt.custom;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.model.EventObject;
+
 
 // in EventsListingFragment
 public class EventAdapter extends ArrayAdapter<EventObject> {
@@ -30,6 +38,7 @@ public class EventAdapter extends ArrayAdapter<EventObject> {
 	private Context context;
 	private int layoutResourceId;
 //	private EventObject[] data;
+
 
 	public EventAdapter(Context context, int layoutResourceId) {
 		super(context, layoutResourceId);
@@ -68,10 +77,15 @@ public class EventAdapter extends ArrayAdapter<EventObject> {
 			e.location = (TextView) row
 					.findViewById(R.id.event_placeholder_loc);
 			e.date = (TextView) row.findViewById(R.id.event_placeholder_date);
+			e.separator = (LinearLayout) row.findViewById(R.id.separator);
+			e.dateSeparator = (TextView) row.findViewById(R.id.separator_text);
 			row.setTag(e);
 		} else
 			e = (EventPlaceholder) row.getTag();
 
+		
+
+		
 		e.event = getItem(position);//data[position];
 		e.title.setText(e.event.getTitle());
 		// e.description.setText(data[position].getDescription());
@@ -81,8 +95,61 @@ public class EventAdapter extends ArrayAdapter<EventObject> {
 			e.location.setText(null);
 		}
 		e.date.setText(e.event.dateTimeString());
+		
+		//Choose if show the separator or not
+		EventObject event = getItem(position);
+		EventObject previousEvent = null;
+		if (position - 1 >= 0) {
+			previousEvent = getItem(position - 1);
+		}
+
+		if (previousEvent == null || ((long)(event.getFromTime()/(1000*60*60*24))) != ((long)(previousEvent.getFromTime()/(1000*60*60*24)))) {
+			e.separator.setVisibility(View.VISIBLE);
+		} else {
+			e.separator.setVisibility(View.GONE);
+		}
+		//create Date 
+		e.dateSeparator.setText(setDateString(e));
+
 
 		return row;
 	}
+	private String setDateString(EventPlaceholder e){
+		String newdateformatted = new String("");
+
+		try {
+			Date dateEvents;
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			Date dateToday = new Date();
+			String stringToday=(dateFormat.format(dateToday));
+			String stringEvent = (dateFormat.format(new Date(e.event.getFromTime())));
+
+			Calendar cal = Calendar.getInstance();  
+			cal.setTime(dateToday);  
+			cal.add(Calendar.DAY_OF_YEAR, 1); // <--  
+			Date tomorrow = cal.getTime();  
+			String stringTomorrow=(dateFormat.format(tomorrow));  
+			dateEvents = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(e.event.dateTimeString().toString());
+			//check actual date
+			if (stringEvent.compareTo(stringToday)==0)
+			{//if equal put the Today string
+				 newdateformatted = new SimpleDateFormat("dd/MM/yyyy").format(dateEvents);
+				newdateformatted=this.context.getString(R.string.list_event_today)+" "+newdateformatted;
+				
+			}
+			else if (stringEvent.compareTo(stringTomorrow)==0)
+			{//else if it's tomorrow, cat that string
+				 newdateformatted = new SimpleDateFormat("dd/MM/yyyy").format(dateEvents);
+				newdateformatted=this.context.getString(R.string.list_event_tomorrow)+" "+newdateformatted;
+				
+			}	
+			//else put the day's name
+			else  newdateformatted = new SimpleDateFormat("EEEEEE dd/MM/yyyy").format(dateEvents);
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
+			return newdateformatted;	
+	}
+	
 
 }
