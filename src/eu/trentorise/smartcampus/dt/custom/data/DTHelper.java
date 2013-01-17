@@ -35,7 +35,6 @@ import android.util.Log;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.ac.authenticator.AMSCAccessProvider;
-import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.android.common.LocationHelper;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
@@ -60,9 +59,7 @@ import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.StorageConfigurationException;
 import eu.trentorise.smartcampus.storage.db.StorageConfiguration;
 import eu.trentorise.smartcampus.storage.remote.RemoteStorage;
-import eu.trentorise.smartcampus.storage.sync.SyncManager;
 import eu.trentorise.smartcampus.storage.sync.SyncStorage;
-import eu.trentorise.smartcampus.storage.sync.SyncStorageConfiguration;
 import eu.trentorise.smartcampus.storage.sync.SyncStorageWithPaging;
 import eu.trentorise.smartcampus.storage.sync.Utils;
 
