@@ -200,6 +200,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		ArrayAdapter<String> poiAdapter = new ArrayAdapter<String>(
 				getSherlockActivity(),
 				R.layout.dd_list,
+				R.id.dd_textview,
 				DTHelper.getAllPOITitles());
 		poiField.setAdapter(poiAdapter);
 		if (poi != null) {

@@ -111,6 +111,7 @@ public class AddStepToStoryFragment extends SherlockFragment implements OnTagsSe
 		ArrayAdapter<String> stepAdapter = new ArrayAdapter<String>(
 				getSherlockActivity(),
 				R.layout.dd_list,
+				R.id.dd_textview,
 				DTHelper.getAllPOITitles());
 		poiField.setAdapter(stepAdapter);
 		
