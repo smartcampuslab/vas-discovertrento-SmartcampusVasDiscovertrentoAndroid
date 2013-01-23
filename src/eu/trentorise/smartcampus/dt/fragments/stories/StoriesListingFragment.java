@@ -71,6 +71,8 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 	public static final String ARG_MY = "story_my";
 	public static final String ARG_CATEGORY_SEARCH = "category_search";
 
+	private String category;
+
 	private ListView list;
 	private Context context;
 	private View clickedElement;
@@ -110,13 +112,31 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 				fragmentTransaction.addToBackStack(fragment.getTag());
 				fragmentTransaction.commit();
 			}
-		});		super.onPrepareOptionsMenu(menu);
+		});	
+		
+		if (category==null)
+			category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
+		if (category!=null)
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addstory, Menu.NONE,getString(R.string.add)+" "+category+" "+getString(R.string.story));
+
+		super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-
+		case R.id.menu_item_addstory:
+			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			Fragment fragment = new CreateStoryFragment();
+			Bundle args = new Bundle();
+			args.putString(ARG_CATEGORY, category);
+			fragment.setArguments(args);
+			fragmentTransaction
+					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+		//	fragmentTransaction.detach(this);
+			fragmentTransaction.replace(android.R.id.content, fragment, "stories");
+			fragmentTransaction.addToBackStack(fragment.getTag());
+			fragmentTransaction.commit();
 		default:
 			return super.onOptionsItemSelected(item);
 		}

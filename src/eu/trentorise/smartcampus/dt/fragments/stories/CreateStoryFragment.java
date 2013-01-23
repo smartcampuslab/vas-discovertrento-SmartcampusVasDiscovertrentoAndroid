@@ -49,6 +49,7 @@ import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.custom.StepAdapter;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
+import eu.trentorise.smartcampus.dt.fragments.events.EventsListingFragment;
 import eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.StepHandler;
 import eu.trentorise.smartcampus.dt.model.BaseDTObject;
 import eu.trentorise.smartcampus.dt.model.CommunityData;
@@ -128,6 +129,10 @@ public class CreateStoryFragment extends SherlockFragment implements
 					ARG_STORY);
 		} else {
 			storyObject = new UserStoryObject();
+			if (getArguments() != null && getArguments().containsKey(StoriesListingFragment.ARG_CATEGORY))
+			{
+				storyObject.setType(getArguments().getString(StoriesListingFragment.ARG_CATEGORY));
+			}
 		}
 		if (storyObject.getCommunityData() == null)
 			storyObject.setCommunityData(new CommunityData());

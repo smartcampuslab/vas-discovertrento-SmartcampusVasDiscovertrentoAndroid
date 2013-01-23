@@ -126,7 +126,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		});
 		if (category==null)
 			category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
-		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addevent, Menu.NONE,getString(R.string.add)+" "+category+" "+getString(R.string.event));
+		if (category!=null)
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addevent, Menu.NONE,getString(R.string.add)+" "+category+" "+getString(R.string.event));
 		super.onPrepareOptionsMenu(menu);
 	}
 
