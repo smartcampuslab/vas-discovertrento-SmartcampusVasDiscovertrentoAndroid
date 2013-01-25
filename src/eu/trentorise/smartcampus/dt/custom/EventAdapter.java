@@ -98,12 +98,17 @@ public class EventAdapter extends ArrayAdapter<EventObject> {
 		
 		//Choose if show the separator or not
 		EventObject event = getItem(position);
-		EventObject previousEvent = null;
+		
+		Calendar previousEvent = null;
+		Calendar currentEvent = Calendar.getInstance();;
+		currentEvent.setTimeInMillis(event.getFromTime());
+
 		if (position - 1 >= 0) {
-			previousEvent = getItem(position - 1);
+			previousEvent = Calendar.getInstance();
+			previousEvent.setTimeInMillis(getItem(position - 1).getFromTime());
 		}
 
-		if (previousEvent == null || ((long)(event.getFromTime()/(1000*60*60*24))) != ((long)(previousEvent.getFromTime()/(1000*60*60*24)))) {
+		if (previousEvent == null || previousEvent.get(Calendar.DATE)!=currentEvent.get(Calendar.DATE)) {
 			e.separator.setVisibility(View.VISIBLE);
 		} else {
 			e.separator.setVisibility(View.GONE);
