@@ -43,5 +43,6 @@
     <item name="follow" type="id"/>
     <item name="rate" type="id"/>
     <item name="menu_item_import" type="id"/>
-    <item type="id" name="content_empty"></item>
+    <item type="id" name="content_empty"/>
+    <item name="menu_item_todayevent" type="id"/>
 </resources>

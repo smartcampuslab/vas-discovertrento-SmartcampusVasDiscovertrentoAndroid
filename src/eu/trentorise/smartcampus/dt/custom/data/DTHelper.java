@@ -16,8 +16,10 @@
 package eu.trentorise.smartcampus.dt.custom.data;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -550,6 +552,37 @@ public class DTHelper {
 			filter.setSkip(position);
 			filter.setLimit(size);
 			return getRemote(instance.mContext, getAuthToken()).searchObjects(filter, EventObject.class);
+		}
+	}
+	
+	public static Collection<EventObject> searchTodayEvents(int position, int size, String text) throws DataException,
+	StorageConfigurationException, ConnectionException, ProtocolException, SecurityException {
+		//Date now = new Date();  
+		Calendar cal = Calendar.getInstance();  
+		//cal.setTime(now);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		cal.add(Calendar.DAY_OF_YEAR, 1);   
+		Date tomorrow = cal.getTime(); 
+		
+		if (Utils.getObjectVersion(instance.mContext, Constants.APP_TOKEN) > 0) {
+			return getInstance().storage.query(
+					EventObject.class,
+					" fromTime > "
+							+ System.currentTimeMillis() +" AND fromTime < " + tomorrow.getTime(),
+					null , position, size, "fromTime ASC");
+		} else {
+			ObjectFilter filter = new ObjectFilter();
+			Map<String, Object> criteria = new HashMap<String, Object>(1);
+			criteria.put("text", text);
+			filter.setCriteria(criteria);
+			filter.setSkip(position);
+			filter.setLimit(size);
+			return getRemote(instance.mContext, getAuthToken()).searchObjects(
+					filter, EventObject.class);
 		}
 	}
 

@@ -75,6 +75,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 	public static final String ARG_POI = "event_poiId";
 	public static final String ARG_POI_NAME = "event_poi_title";
 	public static final String ARG_QUERY = "event_query";
+	public static final String ARG_QUERY_TODAY = "event_query_today";
 	public static final String ARG_MY = "event_my";
 	public static final String ARG_CATEGORY_SEARCH = "category_search";
 
@@ -196,6 +197,9 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 				if (category!=null)
 					title.append(" in "+category+" category");
 				}
+		} else if (bundle != null && bundle.containsKey(ARG_QUERY_TODAY)) {
+			title.setText("Search today's events ");
+			
 		}
 
 		// close items menus if open
@@ -357,7 +361,9 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 				}
 				else
 					result = DTHelper.searchEvents(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
-			} else {
+			}  else if (bundle.containsKey(ARG_QUERY_TODAY)) {
+				result = DTHelper.searchTodayEvents(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
+			}else {
 				return Collections.emptyList();
 			}
 

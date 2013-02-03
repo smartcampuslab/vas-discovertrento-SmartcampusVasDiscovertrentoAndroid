@@ -63,6 +63,7 @@ public class HomeFragment extends SherlockFragment implements MapItemsHandler, B
 	DTItemizedOverlay mItemizedoverlay = null;
 	MyLocationOverlay mMyLocationOverlay = null;
 
+	private Context context;
 	private String[] categories = null;
 
 	@Override
@@ -76,6 +77,7 @@ public class HomeFragment extends SherlockFragment implements MapItemsHandler, B
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.context = this.getSherlockActivity();
 		setHasOptionsMenu(true);
 	}
 
@@ -108,7 +110,7 @@ public class HomeFragment extends SherlockFragment implements MapItemsHandler, B
 				Paint paint = new Paint();
 				paint.setAntiAlias(true);
 				// paint.setColor(Color.BLUE);
-				paint.setColor(Color.parseColor(getSherlockActivity().getResources().getString(R.color.appcolor)));
+				paint.setColor(Color.parseColor(context.getResources().getString(R.color.appcolor)));
 
 				if (accuracy > 10.0f) {
 					paint.setAlpha(50);
@@ -119,7 +121,7 @@ public class HomeFragment extends SherlockFragment implements MapItemsHandler, B
 					canvas.drawCircle(loc.x, loc.y, accuracy, paint);
 				}
 
-				Bitmap bitmap = BitmapFactory.decodeResource(getSherlockActivity().getResources(), R.drawable.me).copy(
+				Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.me).copy(
 						Bitmap.Config.ARGB_8888, true);
 				canvas.drawBitmap(bitmap, loc.x - (bitmap.getWidth() / 2), loc.y - bitmap.getHeight(), null);
 			}

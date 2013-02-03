@@ -117,6 +117,7 @@ public class EventAdapter extends ArrayAdapter<EventObject> {
 		e.dateSeparator.setText(setDateString(e));
 
 
+
 		return row;
 	}
 	private String setDateString(EventPlaceholder e){

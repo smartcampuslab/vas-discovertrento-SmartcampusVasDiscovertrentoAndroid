@@ -73,7 +73,7 @@ public class AllEventsFragment extends SherlockFragment {
 
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addevent, Menu.NONE,
 				R.string.menu_item_addevent_text);
-	//	submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_import, Menu.NONE, R.string.menu_item_import_text);
+		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_todayevent, Menu.NONE, R.string.menu_item_todayevent_text);
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_myevents, Menu.NONE,
 				R.string.menu_item_myevents_text);
 
@@ -115,6 +115,7 @@ public class AllEventsFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		FragmentTransaction fragmentTransaction;
 		Fragment fragment;
+		Bundle args ;
 		switch (item.getItemId()) {
 
 		case R.id.menu_item_addevent:
@@ -128,10 +129,24 @@ public class AllEventsFragment extends SherlockFragment {
 			fragmentTransaction.commit();
 			return true;
 
+			
+		case R.id.menu_item_todayevent:
+			fragmentTransaction = fragmentManager.beginTransaction();
+			fragment = new EventsListingFragment();
+			args = new Bundle();
+			args.putString(EventsListingFragment.ARG_QUERY_TODAY, "");
+			fragment.setArguments(args);
+			fragmentTransaction
+					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//			fragmentTransaction.detach(currentFragment);
+			fragmentTransaction.replace(android.R.id.content, fragment,"events");
+			fragmentTransaction.addToBackStack(fragment.getTag());
+			fragmentTransaction.commit();
+			return true;
 		case R.id.menu_item_myevents:
 			fragmentTransaction = fragmentManager.beginTransaction();
 			fragment = new EventsListingFragment();
-			Bundle args = new Bundle();
+			 args = new Bundle();
 			args.putBoolean(EventsListingFragment.ARG_MY, true);
 			fragment.setArguments(args);
 			fragmentTransaction

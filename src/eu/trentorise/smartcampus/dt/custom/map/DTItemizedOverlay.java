@@ -40,11 +40,11 @@ import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.model.BaseDTObject;
 
-public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem> {
+public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem>  {
 
-    private static int densityX = 5;
-    private static int densityY = 5;
-
+    private final static int densityX = 5;
+    private final static int densityY = 5;
+    
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	private ArrayList<BaseDTObject> mObjects = new ArrayList<BaseDTObject>();
 	private Set<OverlayItem> mGeneric = new HashSet<OverlayItem>();
@@ -59,10 +59,17 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	
 	private MapView mMapView = null;
 
-	List<List<List<OverlayItem>>> grid = new ArrayList<List<List<OverlayItem>>>(densityX);
+	List<List<List<OverlayItem>>> grid = new ArrayList<List<List<OverlayItem>>>();
 	private Map<String,OverlayItem> layerMap = new HashMap<String,OverlayItem>();
 
 	private boolean isPinch = false;
+	
+	// flag specifying that the map is being moved so there is no need to recompute items
+	private boolean animating = false;
+	// hack parameters: need to compute consecutively the value to see whether the animation is finished
+	int lastStep = 0;
+	int lastStepCount = 0;
+
 
 	
 	
@@ -81,8 +88,6 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	public void setMapItemTapListener(BaseDTObjectMapItemTapListener listener) {
 		this.listener = listener;
 	}
-
-
 
 	public void addOverlay(BaseDTObject o) {
 		if (o.getLocation() != null) {
@@ -135,6 +140,9 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	public void clearMarkers() {
 		mOverlays.clear();
 		mObjects.clear();
+		animating = false;
+		lastStep = 0;
+		lastStepCount = 0;
 		populate();
 		
 	}
@@ -145,10 +153,14 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	{
 	    int fingers = e.getPointerCount();
 	    if( e.getAction()==MotionEvent.ACTION_DOWN ){
+	    	animating = true;
 	        isPinch=false;  // Touch DOWN, don't know if it's a pinch yet
 	    }
 	    if( e.getAction()==MotionEvent.ACTION_MOVE && fingers==2 ){
 	        isPinch=true;   // Two fingers, def a pinch
+	    }
+	    if (e.getAction() == MotionEvent.ACTION_UP) {
+	    	animating = false;
 	    }
 	    return super.onTouchEvent(e,mapView);
 	}
@@ -180,50 +192,76 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		 else return false;
 	}
 
-
 	@Override
 	public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-		 // binning:
+		if (mOverlays == null || mOverlays.isEmpty()) return;
+		
+		// if not animating do not compute
+		if (!animating) {
+	        Projection proj = mapView.getProjection();
+	        // coordinates of visible part
+	        GeoPoint lu = proj.fromPixels(0, 0);
+	        GeoPoint rd = proj.fromPixels(mapView.getWidth(), mapView.getHeight());
+	        // grid step
+	        int step = Math.abs(lu.getLongitudeE6()-rd.getLongitudeE6()) / densityX;
+	        
+	        // check if zoom is being animated
+	        boolean zooming = false;
+	        // step changes
+	        if (step != lastStep) {
+	        	if (lastStep > 0) zooming = true;
+	        	lastStepCount = 0;
+	        	lastStep = step;
+	        } else {//if (lastStep > 0) {
+	        	lastStepCount++;
+	        	// step does not change for several calls in a sequence
+	        	if (lastStepCount < 3) zooming = true;
+	        }
+	        
+	        if (!zooming) {
+		        item2group.clear();
+		        // 2D array with some configurable, fixed density
+		        grid.clear(); 
+		        
+		        for(int i = 0; i<= densityX; i++){
+		            ArrayList<List<OverlayItem>> column = new ArrayList<List<OverlayItem>>(densityY+1);
+		            for(int j = 0; j <= densityY; j++){
+		                column.add(new ArrayList<OverlayItem>());
+		            }
+		            grid.add(column);
+		        }
+
+		        // compute leftmost bound of the affected grid:
+		        // this is the bound of the leftmost grid cell that intersects with the visible part
+		        int startX = lu.getLongitudeE6() - (lu.getLongitudeE6() % step);
+		        if (lu.getLongitudeE6() < 0) startX -= step;
+		        // compute bottom bound of the affected grid
+		        int startY = rd.getLatitudeE6() - (rd.getLatitudeE6() % step);
+		        if (lu.getLatitudeE6() < 0) startY -= step;
+		        int endX = startX+(densityX+1)*step;
+		        int endY = startY+(densityY+1)*step;
+		        
+		        int idx = 0;
+		        for (OverlayItem m : mOverlays) {
+		        	if (!mGeneric.contains(m) &&
+		        		m.getPoint().getLongitudeE6()>=startX && m.getPoint().getLongitudeE6()<=endX &&
+		        		m.getPoint().getLatitudeE6()>=startY && m.getPoint().getLatitudeE6()<=endY) 
+		        	{
+		                int binX = Math.abs(m.getPoint().getLongitudeE6()-startX)/step;
+		                int binY = Math.abs(m.getPoint().getLatitudeE6()-startY)/step;
+
+		                item2group.put(idx, new int[]{binX,binY});
+		                grid.get(binX).get(binY).add(m); // just push the reference
+		        	}
+		            idx++;
+		        }
+	        }
+		}
         
-        item2group.clear();
-        
-        // 2D array with some configurable, fixed density
-        grid.clear(); 
-
-        for(int i = 0; i<densityX; i++){
-            ArrayList<List<OverlayItem>> column = new ArrayList<List<OverlayItem>>(densityY);
-            for(int j = 0; j < densityY; j++){
-                column.add(new ArrayList<OverlayItem>());
-            }
-            grid.add(column);
-        }
-
-        int idx = 0;
-        for (OverlayItem m : mOverlays) {
-        	if (!mGeneric.contains(m)) {
-                int binX;
-                int binY;
-
-                Projection proj = mapView.getProjection();
-                Point p = proj.toPixels(m.getPoint(), null);
-
-                if (isWithin(p, mapView)) {
-                    double fractionX = ((double)p.x / (double)mapView.getWidth());
-                    binX = (int) (Math.floor(densityX * fractionX));
-                    double fractionY = ((double)p.y / (double)mapView.getHeight());
-                    binY = (int) (Math
-                            .floor(densityX * fractionY));
-                    item2group.put(idx, new int[]{binX,binY});
-                    grid.get(binX).get(binY).add(m); // just push the reference
-                }
-        	}
-            idx++;
-        }
-
         // drawing:
 
-        for (int i = 0; i < densityX; i++) {
-            for (int j = 0; j < densityY; j++) {
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid.get(i).size(); j++) {
                 List<OverlayItem> markerList = grid.get(i).get(j);
                 if (markerList.size() > 1) {
                     drawGroup(canvas, mapView, markerList);
