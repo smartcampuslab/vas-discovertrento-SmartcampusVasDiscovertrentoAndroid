@@ -27,6 +27,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 
@@ -69,9 +70,6 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem>  {
 	// hack parameters: need to compute consecutively the value to see whether the animation is finished
 	int lastStep = 0;
 	int lastStepCount = 0;
-
-
-	
 	
 	public DTItemizedOverlay(Context mContext, MapView mapView) {
 		super(boundCenterBottom(mContext.getResources().getDrawable(R.drawable.poi)));
@@ -176,7 +174,16 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem>  {
 					try {
 						List<OverlayItem> list = grid.get(coords[0]).get(coords[1]);
 						if (list.size() > 1) {
-							MapManager.fitMapWithOverlays(list, mMapView);
+							if (mMapView.getZoomLevel() == mMapView.getMaxZoomLevel()) {
+								List<BaseDTObject> objects = new ArrayList<BaseDTObject>(list.size());
+								for (OverlayItem item : list) {
+									int idx = mOverlays.indexOf(item);
+									if (idx > 0) objects.add(mObjects.get(idx));
+								}
+								listener.onBaseDTObjectsTap(objects);
+							} else {
+								MapManager.fitMapWithOverlays(list, mMapView);
+							}
 							return super.onTap(index);
 						}
 					} catch (Exception e) {
@@ -255,6 +262,25 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem>  {
 		        	}
 		            idx++;
 		        }
+		        
+		        if (mapView.getZoomLevel() == mapView.getMaxZoomLevel()) {
+		        	for (int i = 0; i < grid.size(); i++) {
+		        		for (int j = 0; j < grid.get(0).size(); j++) {
+		        			List<OverlayItem> curr = grid.get(i).get(j);
+		        			if (curr.size() == 0) continue;
+		        			
+		        			if (i > 0) {
+		        				if (checkDistanceAndMerge(i-1, j, curr)) continue;
+		        			}
+		        			if (j > 0) {
+		        				if (checkDistanceAndMerge(i, j-1, curr)) continue;
+		        			}
+		        			if (i>0 && j > 0) {
+		        				if (checkDistanceAndMerge(i-1, j-1, curr)) continue;
+		        			}
+		        		}
+		        	}
+		        }
 	        }
 		}
         
@@ -264,7 +290,7 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem>  {
             for (int j = 0; j < grid.get(i).size(); j++) {
                 List<OverlayItem> markerList = grid.get(i).get(j);
                 if (markerList.size() > 1) {
-                    drawGroup(canvas, mapView, markerList);
+                    drawGroup(canvas, mapView, markerList, i, j);
                 } else {
                     // draw single marker
                     drawSingle(canvas, mapView, markerList);
@@ -277,7 +303,27 @@ public class DTItemizedOverlay extends ItemizedOverlay<OverlayItem>  {
         }
 	}
 
-	private void drawGroup(Canvas canvas, MapView mapView, List<OverlayItem> markerList) {
+
+	private boolean checkDistanceAndMerge(int i, int j, List<OverlayItem> curr) {
+		List<OverlayItem> src = grid.get(i).get(j);
+		if (src.size() == 0) return false;
+		
+		float[] dist = new float[3];
+		Location.distanceBetween(
+				src.get(0).getPoint().getLatitudeE6()/1E6, 
+				src.get(0).getPoint().getLongitudeE6()/1E6, 
+				curr.get(0).getPoint().getLatitudeE6()/1E6, 
+				curr.get(0).getPoint().getLongitudeE6()/1E6, 
+				dist);
+		if (dist[0] < 20) {
+			src.addAll(curr);
+			curr.clear();
+			return true;
+		}
+		return false;
+	}
+
+	private void drawGroup(Canvas canvas, MapView mapView, List<OverlayItem> markerList, int i, int j) {
 		OverlayItem item = markerList.get(0);
 		GeoPoint point = item.getPoint();
 		Point ptScreenCoord = new Point();

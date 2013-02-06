@@ -43,7 +43,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
 import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
@@ -52,6 +51,7 @@ import eu.trentorise.smartcampus.android.common.listing.AbstractLstingFragment;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
+import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.custom.PoiAdapter;
@@ -59,8 +59,6 @@ import eu.trentorise.smartcampus.dt.custom.PoiPlaceholder;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.custom.map.MapManager;
-import eu.trentorise.smartcampus.dt.fragments.events.EventsListingFragment;
-import eu.trentorise.smartcampus.dt.fragments.stories.StoriesListingFragment;
 import eu.trentorise.smartcampus.dt.model.BaseDTObject;
 import eu.trentorise.smartcampus.dt.model.Concept;
 import eu.trentorise.smartcampus.dt.model.DTConstants;
@@ -71,7 +69,7 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 	public static final String ARG_CATEGORY = "poi_category";
 	public static final String ARG_QUERY = "poi_query";
 	public static final String ARG_CATEGORY_SEARCH = "category_search";
-
+	public static final String ARG_LIST = "poi_list";
 
 	private ListView list;
 	private Context context;
@@ -101,26 +99,31 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		SubMenu submenu = menu.getItem(0).getSubMenu();
 		submenu.clear();
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.map_view, Menu.NONE, R.string.map_view);
-		SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
-			@Override
-			public void onSearch(String query) {
-				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
-				PoisListingFragment fragment = new PoisListingFragment();
-				Bundle args = new Bundle();
-				args.putString(PoisListingFragment.ARG_QUERY, query);
-				String category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
-				args.putString(PoisListingFragment.ARG_CATEGORY_SEARCH, category);
-				fragment.setArguments(args);
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				fragmentTransaction.replace(android.R.id.content, fragment,"pois");
-				fragmentTransaction.addToBackStack(fragment.getTag());
-				fragmentTransaction.commit();
-			}
-		});	
+		if (getArguments() == null || 
+			!getArguments().containsKey(ARG_LIST) &&
+			!getArguments().containsKey(ARG_QUERY)) 
+		{
+			SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
+				@Override
+				public void onSearch(String query) {
+					FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+					PoisListingFragment fragment = new PoisListingFragment();
+					Bundle args = new Bundle();
+					args.putString(PoisListingFragment.ARG_QUERY, query);
+					String category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
+					args.putString(PoisListingFragment.ARG_CATEGORY_SEARCH, category);
+					fragment.setArguments(args);
+					fragmentTransaction
+							.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+					fragmentTransaction.replace(android.R.id.content, fragment,"pois");
+					fragmentTransaction.addToBackStack(fragment.getTag());
+					fragmentTransaction.commit();
+				}
+			});	
+		}
 		if (category==null)
 			category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
-		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addpoi, Menu.NONE,getString(R.string.add)+" "+category+" "+getString(R.string.place));
+		if (category != null) submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addpoi, Menu.NONE,getString(R.string.add)+" "+category+" "+getString(R.string.place));
 		super.onPrepareOptionsMenu(menu);
 	}
 
@@ -338,6 +341,8 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 				}
 				else
 				result = DTHelper.searchPOIs(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
+			} else if (bundle.containsKey(ARG_LIST)) {
+				result = (List<POIObject>) bundle.getSerializable(ARG_LIST);
 			} else {
 				return Collections.emptyList();
 			}

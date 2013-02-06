@@ -43,7 +43,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
 import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
@@ -52,6 +51,7 @@ import eu.trentorise.smartcampus.android.common.listing.AbstractLstingFragment;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
+import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.custom.EventAdapter;
@@ -59,7 +59,6 @@ import eu.trentorise.smartcampus.dt.custom.EventPlaceholder;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.custom.map.MapManager;
-import eu.trentorise.smartcampus.dt.fragments.pois.CreatePoiFragment;
 import eu.trentorise.smartcampus.dt.model.BaseDTObject;
 import eu.trentorise.smartcampus.dt.model.Concept;
 import eu.trentorise.smartcampus.dt.model.DTConstants;
@@ -78,9 +77,9 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 	public static final String ARG_QUERY_TODAY = "event_query_today";
 	public static final String ARG_MY = "event_my";
 	public static final String ARG_CATEGORY_SEARCH = "category_search";
-
+	public static final String ARG_LIST = "event_list";
+	
 	private String category;
-	private List<EventObject> eventsList;
 	private  EventAdapter eventsAdapter;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -108,23 +107,28 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		SubMenu submenu = menu.getItem(0).getSubMenu();
 		submenu.clear();
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.map_view, Menu.NONE, R.string.map_view);
-		SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
-			@Override
-			public void onSearch(String query) {
-				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
-				EventsListingFragment fragment = new EventsListingFragment();
-				Bundle args = new Bundle();
-				args.putString(EventsListingFragment.ARG_QUERY, query);
-				String category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
-				args.putString(EventsListingFragment.ARG_CATEGORY_SEARCH, category);
-				fragment.setArguments(args);
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				fragmentTransaction.replace(android.R.id.content, fragment,"events");
-				fragmentTransaction.addToBackStack(fragment.getTag());
-				fragmentTransaction.commit();
-			}
-		});
+		if (getArguments() == null || !getArguments().containsKey(ARG_POI) &&
+			!getArguments().containsKey(ARG_LIST) &&
+			!getArguments().containsKey(ARG_QUERY_TODAY) &&
+			!getArguments().containsKey(ARG_QUERY)) {
+			SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
+				@Override
+				public void onSearch(String query) {
+					FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+					EventsListingFragment fragment = new EventsListingFragment();
+					Bundle args = new Bundle();
+					args.putString(EventsListingFragment.ARG_QUERY, query);
+					String category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
+					args.putString(EventsListingFragment.ARG_CATEGORY_SEARCH, category);
+					fragment.setArguments(args);
+					fragmentTransaction
+							.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+					fragmentTransaction.replace(android.R.id.content, fragment,"events");
+					fragmentTransaction.addToBackStack(fragment.getTag());
+					fragmentTransaction.commit();
+				}
+			});
+		}
 		if (category==null)
 			category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
 		if (category!=null)
@@ -363,6 +367,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 					result = DTHelper.searchEvents(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
 			}  else if (bundle.containsKey(ARG_QUERY_TODAY)) {
 				result = DTHelper.searchTodayEvents(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
+			}  else if (bundle.containsKey(ARG_LIST)) {
+				result = (List<EventObject>)bundle.get(ARG_LIST);
 			}else {
 				return Collections.emptyList();
 			}

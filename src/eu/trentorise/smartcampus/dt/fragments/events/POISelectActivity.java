@@ -19,16 +19,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -40,8 +37,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
-import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
+import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.custom.map.BaseDTObjectMapItemTapListener;
 import eu.trentorise.smartcampus.dt.custom.map.DTItemizedOverlay;
@@ -49,11 +46,9 @@ import eu.trentorise.smartcampus.dt.custom.map.MapItemsHandler;
 import eu.trentorise.smartcampus.dt.custom.map.MapLayerDialogHelper;
 import eu.trentorise.smartcampus.dt.custom.map.MapLoadProcessor;
 import eu.trentorise.smartcampus.dt.custom.map.MapManager;
-import eu.trentorise.smartcampus.dt.fragments.pois.PoiDetailsFragment;
 import eu.trentorise.smartcampus.dt.model.BaseDTObject;
 import eu.trentorise.smartcampus.dt.model.EventObject;
 import eu.trentorise.smartcampus.dt.model.POIObject;
-import eu.trentorise.smartcampus.dt.model.StoryObject;
 
 public class POISelectActivity extends SherlockFragmentActivity implements MapItemsHandler, BaseDTObjectMapItemTapListener {
 	
@@ -156,6 +151,12 @@ public class POISelectActivity extends SherlockFragmentActivity implements MapIt
 //		dialog.show();
 		new ConfirmPoiDialog(o).show(getSupportFragmentManager(), "me");
 	}
+	
+	@Override
+	public void onBaseDTObjectsTap(List<BaseDTObject> list) {
+		new ConfirmPoiDialog(list.get(0)).show(getSupportFragmentManager(), "me");
+	}
+
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

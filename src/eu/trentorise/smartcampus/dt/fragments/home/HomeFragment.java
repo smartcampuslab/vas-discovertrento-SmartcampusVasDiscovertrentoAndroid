@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.dt.fragments.home;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +54,11 @@ import eu.trentorise.smartcampus.dt.custom.map.MapItemsHandler;
 import eu.trentorise.smartcampus.dt.custom.map.MapLayerDialogHelper;
 import eu.trentorise.smartcampus.dt.custom.map.MapLoadProcessor;
 import eu.trentorise.smartcampus.dt.custom.map.MapManager;
+import eu.trentorise.smartcampus.dt.fragments.events.EventsListingFragment;
+import eu.trentorise.smartcampus.dt.fragments.pois.PoisListingFragment;
 import eu.trentorise.smartcampus.dt.model.BaseDTObject;
+import eu.trentorise.smartcampus.dt.model.EventObject;
+import eu.trentorise.smartcampus.dt.model.POIObject;
 
 public class HomeFragment extends SherlockFragment implements MapItemsHandler, BaseDTObjectMapItemTapListener {
 
@@ -219,4 +225,30 @@ public class HomeFragment extends SherlockFragment implements MapItemsHandler, B
 		new InfoDialog(o).show(getSherlockActivity().getSupportFragmentManager(), "me");
 	}
 
+	@Override
+	public void onBaseDTObjectsTap(List<BaseDTObject> list) {
+		if (list == null || list.size() == 0) return;
+		if (list.size() == 1) {
+			onBaseDTObjectTap(list.get(0));
+			return;
+		}
+		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+		SherlockFragment fragment = null;
+		Bundle args = new Bundle();
+		if (list.get(0) instanceof EventObject) {
+			fragment = new EventsListingFragment();
+			args.putSerializable(EventsListingFragment.ARG_LIST, new ArrayList<EventObject>((List)list));
+		} else if (list.get(0) instanceof POIObject) {
+			fragment = new PoisListingFragment();
+			args.putSerializable(PoisListingFragment.ARG_LIST, new ArrayList<POIObject>((List)list));
+		}
+		if (fragment != null) {
+			fragment.setArguments(args);
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			// fragmentTransaction.detach(this);
+			fragmentTransaction.replace(android.R.id.content, fragment, "home");
+			fragmentTransaction.addToBackStack(fragment.getTag());
+			fragmentTransaction.commit();
+		}
+	}
 }

@@ -15,10 +15,13 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.dt.custom.map;
 
+import java.util.List;
+
 import eu.trentorise.smartcampus.dt.model.BaseDTObject;
 
 public interface BaseDTObjectMapItemTapListener {
 
 	public void onBaseDTObjectTap(BaseDTObject o);
+	public void onBaseDTObjectsTap(List<BaseDTObject> list);
 	
 }
