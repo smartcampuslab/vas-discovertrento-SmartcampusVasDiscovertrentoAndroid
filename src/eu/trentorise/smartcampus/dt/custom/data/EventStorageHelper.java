@@ -33,6 +33,7 @@ public class EventStorageHelper implements BeanStorageHelper<EventObject> {
 		event.setPoiId(cursor.getString(cursor.getColumnIndex("poiId")));
 		event.setFromTime(cursor.getLong(cursor.getColumnIndex("fromTime")));
 		event.setToTime(cursor.getLong(cursor.getColumnIndex("toTime")));
+		event.setTiming(cursor.getString(cursor.getColumnIndex("timing")));
 		event.setAttendees(cursor.getInt(cursor.getColumnIndex("attendees")));
 		String attending = cursor.getString(cursor.getColumnIndex("attending"));
 		event.setAttending(attending == null ? Collections.<String>emptyList() : Collections.singletonList(attending));
@@ -51,6 +52,7 @@ public class EventStorageHelper implements BeanStorageHelper<EventObject> {
 		values.put("poiId", bean.getPoiId());
 		values.put("fromTime", bean.getFromTime());
 		values.put("toTime", bean.getToTime());
+		values.put("timing", bean.getTimingFormatted());
 		values.put("attendees", bean.getAttendees());
 		values.put("attending", bean.getAttending() != null && ! bean.getAttending().isEmpty() ? bean.getAttending().get(0) : null);
 		values.put("poiIdUserDefined", bean.isPoiIdUserDefined() ? 1 : 0);
@@ -67,6 +69,7 @@ public class EventStorageHelper implements BeanStorageHelper<EventObject> {
 		defs.put("poiId", "TEXT");
 		defs.put("fromTime", "INTEGER");
 		defs.put("toTime", "INTEGER");
+		defs.put("timing", "TEXT");
 		defs.put("attendees", "INTEGER");
 		defs.put("attending", "TEXT");
 

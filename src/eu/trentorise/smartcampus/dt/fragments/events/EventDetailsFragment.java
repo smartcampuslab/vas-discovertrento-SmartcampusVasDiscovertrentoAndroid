@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -111,12 +112,27 @@ public class EventDetailsFragment extends SherlockFragment {
 					R.id.event_details_title);
 			tv.setText(getEvent().getTitle());
 
+			// timing
+			tv = (TextView) this.getView().findViewById(
+					R.id.event_timing);
+			if (getEvent().getTiming() != null
+					&& getEvent().getTiming().length() > 0) {
+				tv.setText(getEvent().getTimingFormatted());
+			} else {
+				((LinearLayout) this.getView().findViewById(R.id.eventdetails))
+						.removeView(tv);
+			}
+
 			// description, optional
 			tv = (TextView) this.getView().findViewById(
 					R.id.event_details_descr);
 			if (getEvent().getDescription() != null
 					&& getEvent().getDescription().length() > 0) {
-				tv.setText(getEvent().getDescription());
+				if (getEvent().getDescription().indexOf('<')>=0) {
+					tv.setText(Html.fromHtml(getEvent().getDescription()));
+				} else {
+					tv.setText(getEvent().getDescription());
+				}
 			} else {
 				((LinearLayout) this.getView().findViewById(R.id.eventdetails))
 						.removeView(tv);

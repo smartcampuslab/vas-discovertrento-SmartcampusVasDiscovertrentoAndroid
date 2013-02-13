@@ -29,6 +29,8 @@
     <string name="createevent_date">Date</string>
     <string name="createevent_timestart">Start</string>
     <string name="createevent_timeend">End</string>
+    <string name="createevent_timing">Time</string>
+    <string name="createevent_timing_hint">18:00 - 20:00</string>
     <string name="createevent_timestarthint">12:00</string>
     <string name="createevent_datehint">24/07/2012</string>
     <string name="createevent_timeendhint">18:00</string>
@@ -123,6 +125,8 @@
     <string name="empty_step_title">The Place must not be empty</string>
     <string name="sure_delete_step">Are you sure you want to delete the step?</string>
 
+    <string name="msg_field_required"> is required.</string>
+    
     <string name="sure_change">Overwrite the previous data?</string><string name="add">Add</string>
     <string name="event">event</string>
     <string name="story">story</string>

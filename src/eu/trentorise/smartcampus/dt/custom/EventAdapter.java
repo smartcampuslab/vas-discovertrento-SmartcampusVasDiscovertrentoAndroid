@@ -16,7 +16,6 @@
 package eu.trentorise.smartcampus.dt.custom;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +34,8 @@ import eu.trentorise.smartcampus.dt.model.EventObject;
 // in EventsListingFragment
 public class EventAdapter extends ArrayAdapter<EventObject> {
 
+	private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static final DateFormat extDateFormat = new SimpleDateFormat("EEEEEE dd/MM/yyyy");
 	private Context context;
 	private int layoutResourceId;
 //	private EventObject[] data;
@@ -123,38 +124,31 @@ public class EventAdapter extends ArrayAdapter<EventObject> {
 	private String setDateString(EventPlaceholder e){
 		String newdateformatted = new String("");
 
-		try {
-			Date dateEvents;
-			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-			Date dateToday = new Date();
-			String stringToday=(dateFormat.format(dateToday));
-			String stringEvent = (dateFormat.format(new Date(e.event.getFromTime())));
+		Date dateToday = new Date();
+		String stringToday=(dateFormat.format(dateToday));
+		String stringEvent = (dateFormat.format(new Date(e.event.getFromTime())));
 
-			Calendar cal = Calendar.getInstance();  
-			cal.setTime(dateToday);  
-			cal.add(Calendar.DAY_OF_YEAR, 1); // <--  
-			Date tomorrow = cal.getTime();  
-			String stringTomorrow=(dateFormat.format(tomorrow));  
-			dateEvents = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(e.event.dateTimeString().toString());
-			//check actual date
-			if (stringEvent.compareTo(stringToday)==0)
-			{//if equal put the Today string
-				 newdateformatted = new SimpleDateFormat("dd/MM/yyyy").format(dateEvents);
-				newdateformatted=this.context.getString(R.string.list_event_today)+" "+newdateformatted;
-				
-			}
-			else if (stringEvent.compareTo(stringTomorrow)==0)
-			{//else if it's tomorrow, cat that string
-				 newdateformatted = new SimpleDateFormat("dd/MM/yyyy").format(dateEvents);
-				newdateformatted=this.context.getString(R.string.list_event_tomorrow)+" "+newdateformatted;
-				
-			}	
-			//else put the day's name
-			else  newdateformatted = new SimpleDateFormat("EEEEEE dd/MM/yyyy").format(dateEvents);
-			} catch (ParseException e1) {
-				e1.printStackTrace();
-			}
-			return newdateformatted;	
+		Calendar cal = Calendar.getInstance();  
+		cal.setTime(dateToday);  
+		cal.add(Calendar.DAY_OF_YEAR, 1); // <--  
+		Date tomorrow = cal.getTime();  
+		String stringTomorrow=(dateFormat.format(tomorrow));  
+		//check actual date
+		if (stringEvent.compareTo(stringToday)==0)
+		{//if equal put the Today string
+			 newdateformatted = stringToday;
+			newdateformatted=this.context.getString(R.string.list_event_today)+" "+newdateformatted;
+			
+		}
+		else if (stringEvent.compareTo(stringTomorrow)==0)
+		{//else if it's tomorrow, cat that string
+			 newdateformatted = stringTomorrow;
+			newdateformatted=this.context.getString(R.string.list_event_tomorrow)+" "+newdateformatted;
+			
+		}	
+		//else put the day's name
+		else  newdateformatted = extDateFormat.format(new Date(e.event.getFromTime()));
+		return newdateformatted;	
 	}
 	
 

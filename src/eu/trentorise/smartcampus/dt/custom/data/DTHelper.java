@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.dt.custom.data;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -106,7 +107,10 @@ public class DTHelper {
 		//this.mSyncManager = new SyncManager(mContext, DTSyncStorageService.class);
 		StorageConfiguration sc = new DTStorageConfiguration();
 		//this.config = new SyncStorageConfiguration(sc, GlobalConfig.getAppUrl(mContext), Constants.SYNC_SERVICE, Constants.SYNC_INTERVAL);
-		this.storage = new SyncStorageWithPaging(mContext, Constants.APP_TOKEN, Constants.SYNC_DB_NAME, 2, sc);
+		if (Utils.getDBVersion(mContext, Constants.APP_TOKEN) != 3) {
+			Utils.writeObjectVersion(mContext, Constants.APP_TOKEN, 0);
+		}
+		this.storage = new SyncStorageWithPaging(mContext, Constants.APP_TOKEN, Constants.SYNC_DB_NAME, 3, sc);
 		this.mProtocolCarrier = new ProtocolCarrier(mContext, Constants.APP_TOKEN);
 
 		// LocationManager locationManager = (LocationManager)
@@ -444,7 +448,7 @@ public class DTHelper {
 			List<String> parameters = nonNullCategories;
 
 			if (text != null) {
-				where += "AND ( events MATCH ? ) AND fromTime > " + System.currentTimeMillis();
+				where += "AND ( events MATCH ? ) AND fromTime > " + getCurrentDateTime();
 				parameters.add(text);
 			}
 			return getInstance().storage.query(EventObject.class, where, parameters.toArray(new String[parameters.size()]), position, size,
@@ -460,6 +464,14 @@ public class DTHelper {
 			}
 			return result;
 		}
+	}
+
+	private static long getCurrentDateTime() {
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.HOUR_OF_DAY, 23);
+		c.set(Calendar.MINUTE, 59);
+		c.add(Calendar.DATE, -1);
+		return c.getTimeInMillis();
 	}
 
 	public static Collection<StoryObject> searchStoriesByCategory(int position, int size, String text, String... categories)
@@ -520,7 +532,7 @@ public class DTHelper {
 			if (where.length() > 0) {
 				where = "(" + where + ")";
 			}
-			where += "AND fromTime > " + System.currentTimeMillis();
+			where += "AND fromTime > " + getCurrentDateTime();
 			return getInstance().storage.query(EventObject.class, where, nonNullCategories.toArray(new String[nonNullCategories.size()]),
 					position, size, "fromTime ASC");
 		} else {
@@ -542,7 +554,7 @@ public class DTHelper {
 			if (text == null || text.trim().length() == 0) {
 				return getInstance().storage.getObjects(EventObject.class);
 			}
-			return getInstance().storage.query(EventObject.class, "events MATCH ? AND fromTime > " + System.currentTimeMillis(),
+			return getInstance().storage.query(EventObject.class, "events MATCH ? AND fromTime > " + getCurrentDateTime(),
 					new String[] { text }, position, size, "fromTime DESC");
 		} else {
 			ObjectFilter filter = new ObjectFilter();
@@ -572,7 +584,7 @@ public class DTHelper {
 			return getInstance().storage.query(
 					EventObject.class,
 					" fromTime > "
-							+ System.currentTimeMillis() +" AND fromTime < " + tomorrow.getTime(),
+							+ getCurrentDateTime() +" AND fromTime < " + tomorrow.getTime(),
 					null , position, size, "fromTime ASC");
 		} else {
 			ObjectFilter filter = new ObjectFilter();
@@ -589,7 +601,7 @@ public class DTHelper {
 	public static Collection<EventObject> getEventsByPOI(int position, int size, String poiId) throws DataException,
 			StorageConfigurationException, ConnectionException, ProtocolException, SecurityException {
 		if (Utils.getObjectVersion(instance.mContext, Constants.APP_TOKEN) > 0) {
-			return getInstance().storage.query(EventObject.class, "poiId = ? AND fromTime > " + System.currentTimeMillis(),
+			return getInstance().storage.query(EventObject.class, "poiId = ? AND fromTime > " + getCurrentDateTime(),
 					new String[] { poiId }, position, size, "fromTime ASC");
 		} else {
 			ObjectFilter filter = new ObjectFilter();

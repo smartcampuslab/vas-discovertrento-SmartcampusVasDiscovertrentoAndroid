@@ -22,7 +22,7 @@ import java.util.List;
 
 public class EventObject extends BaseDTObject {
 	private static final long serialVersionUID = 388550207183035548L;
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
 	private String poiId;
 	
