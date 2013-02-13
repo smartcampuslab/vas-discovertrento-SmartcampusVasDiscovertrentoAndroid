@@ -41,6 +41,7 @@ public class CategoryHelper {
 		new CategoryDescriptor(R.drawable.marker_event_seminar, R.drawable.ic_event_seminars, "Seminars", "Seminars"),
 		new CategoryDescriptor(R.drawable.marker_event_theater, R.drawable.ic_event_theaters, "Theaters", "Theaters"),
 		new CategoryDescriptor(R.drawable.marker_event_generic, R.drawable.ic_other_event, EVENT_NONCATEGORIZED, EVENT_NONCATEGORIZED),
+		new CategoryDescriptor(R.drawable.marker_event_exhibition, R.drawable.ic_event_exhibition, "Exhibitions", "Exhibitions"),
 	};
 	
 	public static CategoryDescriptor[] POI_CATEGORIES = new CategoryDescriptor[]{
@@ -74,6 +75,7 @@ public class CategoryHelper {
 		for (CategoryDescriptor event: EVENT_CATEGORIES) {
 			descriptorMap.put(event.category, event);
 		}
+		
 		for (CategoryDescriptor poi: POI_CATEGORIES) {
 			descriptorMap.put(poi.category, poi);
 		}
@@ -85,6 +87,7 @@ public class CategoryHelper {
 		for (String s: descriptorMap.keySet()) {
 			categoryMapping.put(s, s);
 		}
+		categoryMapping.put("Dances", "Theaters");
 	}
 	
 	public static String[] getAllCategories(Set<String> set) {
@@ -96,7 +99,7 @@ public class CategoryHelper {
 					result.add(null);
 				}
 				result.add(key);
-				set.remove(categoryMapping.get(key));
+//				set.remove(categoryMapping.get(key));
 			}
 		}
 		return result.toArray(new String[result.size()]);
