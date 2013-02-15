@@ -17,6 +17,9 @@ package eu.trentorise.smartcampus.dt.model;
 
 import java.util.Map;
 
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
 import eu.trentorise.smartcampus.storage.BasicObject;
 
 public class BaseDTObject extends BasicObject {
@@ -59,6 +62,17 @@ public class BaseDTObject extends BasicObject {
 		return description;
 	}
 
+	public Spanned getFormattedDescription() {
+		if (description != null) {
+			if (description.indexOf('<')>=0) {
+				return Html.fromHtml(description);
+			} else {
+				return new SpannableString(source);
+			}
+		}
+		return null;
+	} 
+	
 	public void setDescription(String description) {
 		this.description = description;
 	}

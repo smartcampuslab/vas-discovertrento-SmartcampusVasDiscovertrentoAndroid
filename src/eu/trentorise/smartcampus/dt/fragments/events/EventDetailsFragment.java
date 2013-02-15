@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,11 +41,11 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.google.android.maps.GeoPoint;
 
-import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
 import eu.trentorise.smartcampus.android.common.follow.FollowHelper;
 import eu.trentorise.smartcampus.android.common.navigation.NavigationHelper;
+import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.RatingHelper;
 import eu.trentorise.smartcampus.dt.custom.RatingHelper.RatingHandler;
@@ -128,11 +127,7 @@ public class EventDetailsFragment extends SherlockFragment {
 					R.id.event_details_descr);
 			if (getEvent().getDescription() != null
 					&& getEvent().getDescription().length() > 0) {
-				if (getEvent().getDescription().indexOf('<')>=0) {
-					tv.setText(Html.fromHtml(getEvent().getDescription()));
-				} else {
-					tv.setText(getEvent().getDescription());
-				}
+				tv.setText(getEvent().getFormattedDescription());
 			} else {
 				((LinearLayout) this.getView().findViewById(R.id.eventdetails))
 						.removeView(tv);
