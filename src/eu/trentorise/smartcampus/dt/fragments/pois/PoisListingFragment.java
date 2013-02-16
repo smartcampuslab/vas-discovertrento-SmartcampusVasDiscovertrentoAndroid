@@ -18,7 +18,6 @@ package eu.trentorise.smartcampus.dt.fragments.pois;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import android.app.Activity;
@@ -53,7 +52,6 @@ import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
-import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.custom.PoiAdapter;
 import eu.trentorise.smartcampus.dt.custom.PoiPlaceholder;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
@@ -327,17 +325,11 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 			if (bundle == null) {
 				return Collections.emptyList();
 			} else if (bundle.containsKey(ARG_CATEGORY)) {
-				HashSet<String> set = new HashSet<String>(1);
-				set.add(bundle.getString(ARG_CATEGORY));
-				
-				result = DTHelper
-						.getPOIByCategory(params[0].position, params[0].size, CategoryHelper.getAllCategories(set));
+				result = DTHelper.getPOIByCategory(params[0].position, params[0].size, bundle.getString(ARG_CATEGORY));
 			} else if (bundle.containsKey(ARG_QUERY)) {
 				if (bundle.containsKey(ARG_CATEGORY_SEARCH))
 				{
-					HashSet<String> set = new HashSet<String>(1);
-					set.add(bundle.getString(ARG_CATEGORY_SEARCH));
-					result = DTHelper.searchPOIsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),CategoryHelper.getAllCategories(set));
+					result = DTHelper.searchPOIsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),bundle.getString(ARG_CATEGORY_SEARCH));
 				}
 				else
 				result = DTHelper.searchPOIs(params[0].position, params[0].size, bundle.getString(ARG_QUERY));

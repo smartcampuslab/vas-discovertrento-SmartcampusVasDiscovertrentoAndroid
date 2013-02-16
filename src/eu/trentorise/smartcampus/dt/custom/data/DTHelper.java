@@ -15,13 +15,14 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.dt.custom.data;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,7 @@ import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.android.common.LocationHelper;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.SuggestionHelper;
+import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.model.BaseDTObject;
 import eu.trentorise.smartcampus.dt.model.EventObject;
 import eu.trentorise.smartcampus.dt.model.ObjectFilter;
@@ -335,11 +337,14 @@ public class DTHelper {
 		}
 	}
 
-	public static Collection<POIObject> getPOIByCategory(int position, int size, String... categories) throws DataException,
+	public static Collection<POIObject> getPOIByCategory(int position, int size, String... inCategories) throws DataException,
 			StorageConfigurationException, ConnectionException, ProtocolException, SecurityException {
 
-		if (categories == null || categories.length == 0)
+		if (inCategories == null || inCategories.length == 0)
 			return Collections.emptyList();
+		
+		String[] categories = CategoryHelper.getAllCategories(new HashSet<String>(Arrays.asList(inCategories)));
+		
 		if (Utils.getObjectVersion(instance.mContext, Constants.APP_TOKEN) > 0) {
 			List<String> nonNullCategories = new ArrayList<String>();
 			String where = "";
@@ -386,9 +391,14 @@ public class DTHelper {
 		}
 	}
 
-	public static Collection<POIObject> searchPOIsByCategory(int position, int size, String text, String... categories)
+	public static Collection<POIObject> searchPOIsByCategory(int position, int size, String text, String... inCategories)
 			throws DataException, StorageConfigurationException, ConnectionException, ProtocolException, SecurityException {
 
+		if (inCategories == null || inCategories.length == 0)
+			return Collections.emptyList();
+		
+		String[] categories = CategoryHelper.getAllCategories(new HashSet<String>(Arrays.asList(inCategories)));
+		
 		if (Utils.getObjectVersion(instance.mContext, Constants.APP_TOKEN) > 0) {
 			List<String> nonNullCategories = new ArrayList<String>();
 			String where = "";
@@ -426,8 +436,13 @@ public class DTHelper {
 		}
 	}
 
-	public static Collection<EventObject> searchEventsByCategory(int position, int size, String text, String... categories)
+	public static Collection<EventObject> searchEventsByCategory(int position, int size, String text, String... inCategories)
 			throws DataException, StorageConfigurationException, ConnectionException, ProtocolException, SecurityException {
+
+		if (inCategories == null || inCategories.length == 0)
+			return Collections.emptyList();
+		
+		String[] categories = CategoryHelper.getAllCategories(new HashSet<String>(Arrays.asList(inCategories)));
 
 		if (Utils.getObjectVersion(instance.mContext, Constants.APP_TOKEN) > 0) {
 			List<String> nonNullCategories = new ArrayList<String>();
@@ -474,8 +489,13 @@ public class DTHelper {
 		return c.getTimeInMillis();
 	}
 
-	public static Collection<StoryObject> searchStoriesByCategory(int position, int size, String text, String... categories)
+	public static Collection<StoryObject> searchStoriesByCategory(int position, int size, String text, String... inCategories)
 			throws DataException, StorageConfigurationException, ConnectionException, ProtocolException, SecurityException {
+
+		if (inCategories == null || inCategories.length == 0)
+			return Collections.emptyList();
+		
+		String[] categories = CategoryHelper.getAllCategories(new HashSet<String>(Arrays.asList(inCategories)));
 
 		if (Utils.getObjectVersion(instance.mContext, Constants.APP_TOKEN) > 0) {
 			List<String> nonNullCategories = new ArrayList<String>();
@@ -514,8 +534,14 @@ public class DTHelper {
 		}
 	}
 
-	public static Collection<EventObject> getEventsByCategories(int position, int size, String... categories) throws DataException,
+	public static Collection<EventObject> getEventsByCategories(int position, int size, String... inCategories) throws DataException,
 			StorageConfigurationException, ConnectionException, ProtocolException, SecurityException {
+		
+		if (inCategories == null || inCategories.length == 0)
+			return Collections.emptyList();
+		
+		String[] categories = CategoryHelper.getAllCategories(new HashSet<String>(Arrays.asList(inCategories)));
+
 		if (Utils.getObjectVersion(instance.mContext, Constants.APP_TOKEN) > 0) {
 			List<String> nonNullCategories = new ArrayList<String>();
 			String where = "";
@@ -649,11 +675,6 @@ public class DTHelper {
 		Toast.makeText(activity, activity.getResources().getString(id), Toast.LENGTH_LONG).show();
 	}
 
-	public static BaseDTObject tagObject(BaseDTObject object, Collection<SemanticSuggestion> collection) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public static boolean deleteEvent(EventObject eventObject) throws DataException, ConnectionException, ProtocolException,
 			SecurityException, RemoteException, StorageConfigurationException {
 		if (eventObject.createdByUser()) {
@@ -762,8 +783,13 @@ public class DTHelper {
 		return result;
 	}
 
-	public static Collection<StoryObject> getStoryByCategory(int position, int size, String... categories) throws DataException,
+	public static Collection<StoryObject> getStoryByCategory(int position, int size, String... inCategories) throws DataException,
 			StorageConfigurationException, ConnectionException, ProtocolException, SecurityException {
+
+		if (inCategories == null || inCategories.length == 0)
+			return Collections.emptyList();
+		
+		String[] categories = CategoryHelper.getAllCategories(new HashSet<String>(Arrays.asList(inCategories)));
 
 		if (Utils.getObjectVersion(instance.mContext, Constants.APP_TOKEN) > 0) {
 			List<String> nonNullCategories = new ArrayList<String>();

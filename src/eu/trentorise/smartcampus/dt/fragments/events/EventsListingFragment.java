@@ -53,7 +53,6 @@ import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
-import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.custom.EventAdapter;
 import eu.trentorise.smartcampus.dt.custom.EventPlaceholder;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
@@ -349,9 +348,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 			if (bundle == null) {
 				return Collections.emptyList();
 			} else if (bundle.containsKey(ARG_CATEGORY)) {
-				HashSet<String> set = new HashSet<String>(1);
-				set.add(bundle.getString(ARG_CATEGORY));
-				result = DTHelper.getEventsByCategories(params[0].position, params[0].size, CategoryHelper.getAllCategories(set));
+				result = DTHelper.getEventsByCategories(params[0].position, params[0].size, bundle.getString(ARG_CATEGORY));
 			} else if (bundle.containsKey(ARG_POI)) {
 				result = DTHelper.getEventsByPOI(params[0].position, params[0].size, bundle.getString(ARG_POI));
 			} else if (bundle.containsKey(ARG_MY)) {
@@ -361,7 +358,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 				{
 					HashSet<String> set = new HashSet<String>(1);
 					set.add(bundle.getString(ARG_CATEGORY_SEARCH));
-					result = DTHelper.searchEventsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),CategoryHelper.getAllCategories(set));
+					result = DTHelper.searchEventsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),bundle.getString(ARG_CATEGORY_SEARCH));
 				}
 				else
 					result = DTHelper.searchEvents(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
