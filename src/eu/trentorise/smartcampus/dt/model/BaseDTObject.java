@@ -67,7 +67,7 @@ public class BaseDTObject extends BasicObject {
 			if (description.indexOf('<')>=0) {
 				return Html.fromHtml(description);
 			} else {
-				return new SpannableString(source);
+				return new SpannableString(description);
 			}
 		}
 		return null;
