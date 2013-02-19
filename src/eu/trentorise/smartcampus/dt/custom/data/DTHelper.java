@@ -467,7 +467,7 @@ public class DTHelper {
 				parameters.add(text);
 			}
 			return getInstance().storage.query(EventObject.class, where, parameters.toArray(new String[parameters.size()]), position, size,
-					"fromTime DESC");
+					"fromTime ASC");
 		} else {
 			ArrayList<EventObject> result = new ArrayList<EventObject>();
 			for (String category : categories) {
@@ -581,7 +581,7 @@ public class DTHelper {
 				return getInstance().storage.getObjects(EventObject.class);
 			}
 			return getInstance().storage.query(EventObject.class, "events MATCH ? AND fromTime > " + getCurrentDateTime(),
-					new String[] { text }, position, size, "fromTime DESC");
+					new String[] { text }, position, size, "fromTime ASC");
 		} else {
 			ObjectFilter filter = new ObjectFilter();
 			Map<String, Object> criteria = new HashMap<String, Object>(1);
@@ -643,7 +643,7 @@ public class DTHelper {
 	public static Collection<EventObject> getMyEvents(int position, int size) throws DataException, StorageConfigurationException,
 			ConnectionException, ProtocolException, SecurityException {
 		if (Utils.getObjectVersion(instance.mContext, Constants.APP_TOKEN) > 0) {
-			return getInstance().storage.query(EventObject.class, "attending IS NOT NULL", null, position, size, "fromTime ASC");
+			return getInstance().storage.query(EventObject.class, "attending IS NOT NULL", null, position, size, "fromTime DESC");
 		} else {
 			ObjectFilter filter = new ObjectFilter();
 			filter.setMyObjects(true);
