@@ -17,6 +17,9 @@ package eu.trentorise.smartcampus.dt.model;
 
 import java.util.Map;
 
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
 import eu.trentorise.smartcampus.storage.BasicObject;
 
 public class BaseDTObject extends BasicObject {
@@ -47,6 +50,7 @@ public class BaseDTObject extends BasicObject {
 	private double[] location;
 	private Long fromTime;
 	private Long toTime;
+	private String timing;
 
 	private Map<String,Object> customData;
 
@@ -58,6 +62,17 @@ public class BaseDTObject extends BasicObject {
 		return description;
 	}
 
+	public Spanned getFormattedDescription() {
+		if (description != null) {
+			if (description.indexOf('<')>=0) {
+				return Html.fromHtml(description);
+			} else {
+				return new SpannableString(description);
+			}
+		}
+		return null;
+	} 
+	
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -176,5 +191,18 @@ public class BaseDTObject extends BasicObject {
 
 	public void setCustomData(Map<String, Object> customData) {
 		this.customData = customData;
+	}
+
+	public String getTiming() {
+		return timing;
+	}
+
+	public String getTimingFormatted() {
+		if (this.timing != null) return timing.replace("\\n", "\n").replace("\t", "").replaceAll("(\n)+", "\n");
+		return null;
+	}
+	
+	public void setTiming(String timing) {
+		this.timing = timing;
 	}
 }

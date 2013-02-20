@@ -24,8 +24,10 @@
         android:id="@+id/mapdialog_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp" 
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:maxLines="10"
+        android:scrollbars="vertical" />
 
     <LinearLayout
         android:layout_width="match_parent"

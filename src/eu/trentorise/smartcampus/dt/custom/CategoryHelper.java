@@ -40,6 +40,7 @@ public class CategoryHelper {
 		new CategoryDescriptor(R.drawable.marker_event_party, R.drawable.ic_event_parties, "Parties", "Parties"),
 		new CategoryDescriptor(R.drawable.marker_event_seminar, R.drawable.ic_event_seminars, "Seminars", "Seminars"),
 		new CategoryDescriptor(R.drawable.marker_event_theater, R.drawable.ic_event_theaters, "Theaters", "Theaters"),
+		new CategoryDescriptor(R.drawable.marker_event_exhibition, R.drawable.ic_event_exhibition, "Exhibitions", "Exhibitions"),
 		new CategoryDescriptor(R.drawable.marker_event_generic, R.drawable.ic_other_event, EVENT_NONCATEGORIZED, EVENT_NONCATEGORIZED),
 	};
 	
@@ -74,6 +75,7 @@ public class CategoryHelper {
 		for (CategoryDescriptor event: EVENT_CATEGORIES) {
 			descriptorMap.put(event.category, event);
 		}
+		
 		for (CategoryDescriptor poi: POI_CATEGORIES) {
 			descriptorMap.put(poi.category, poi);
 		}
@@ -85,6 +87,21 @@ public class CategoryHelper {
 		for (String s: descriptorMap.keySet()) {
 			categoryMapping.put(s, s);
 		}
+		// custom categories for events
+		categoryMapping.put("Dances", "Theaters");
+		// custom categories for POIs
+		categoryMapping.put("biblioteca", "Libraries");
+		categoryMapping.put("museo", "Museums");
+		categoryMapping.put("esposizione", "Museums");
+		categoryMapping.put("arte", "Museums");
+		categoryMapping.put("luogo", POI_NONCATEGORIZED);
+		categoryMapping.put("ufficio", "Offices");
+		categoryMapping.put("sala", POI_NONCATEGORIZED);
+		categoryMapping.put("teatro", "Theater");
+		categoryMapping.put("musica", "Theater");
+		categoryMapping.put("universita", "University");
+		categoryMapping.put("bar", "Drink");
+		categoryMapping.put("ristorante", "Food");
 	}
 	
 	public static String[] getAllCategories(Set<String> set) {
@@ -96,7 +113,7 @@ public class CategoryHelper {
 					result.add(null);
 				}
 				result.add(key);
-				set.remove(categoryMapping.get(key));
+//				set.remove(categoryMapping.get(key));
 			}
 		}
 		return result.toArray(new String[result.size()]);

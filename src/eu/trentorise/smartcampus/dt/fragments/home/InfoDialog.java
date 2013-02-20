@@ -17,6 +17,7 @@ package eu.trentorise.smartcampus.dt.fragments.home;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,7 +54,7 @@ public class InfoDialog extends SherlockDialogFragment {
 		super.onStart();
 		TextView msg = (TextView) getDialog().findViewById(R.id.mapdialog_msg);
 		if (data.getDescription() != null)
-			msg.setText(data.getDescription());
+			msg.setText(data.getFormattedDescription());
 		else {
 			if (data instanceof POIObject)
 				msg.setText(((POIObject) data).shortAddress());
@@ -63,6 +64,7 @@ public class InfoDialog extends SherlockDialogFragment {
 				msg.setText(poi.shortAddress());
 			}
 		}
+		msg.setMovementMethod(new ScrollingMovementMethod());
 		Button b = (Button) getDialog().findViewById(R.id.mapdialog_cancel);
 		b.setOnClickListener(new OnClickListener() {
 

@@ -78,19 +78,35 @@
             android:textColorHint="@color/sc_hint"
             android:inputType="date" />
 
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/createevent_timing" 
+                android:textColor="@color/sc_light_gray"/>
+          
+          <EditText
+                android:id="@+id/event_timing_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:hint="@string/createevent_timing_hint"
+                android:textColorHint="@color/sc_hint"
+                android:inputType="textMultiLine"/>
+          
+<!--              
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
             android:orientation="horizontal" >
 
-            <TextView
+            
+          <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/createevent_timestart" 
                 android:textColor="@color/sc_light_gray"/>
-
-            <EditText
+          <EditText
                 android:id="@+id/event_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,7 +134,8 @@
                 android:hint="@string/createevent_timeendhint"
                 android:inputType="time" />
         </LinearLayout>
-
+ -->
+     
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -131,16 +148,6 @@
                 android:text="@string/create_place"
                 android:textColor="@color/sc_light_gray" />
 
-
-
-
-
-
-
-
-
-
-
             <AutoCompleteTextView
                 android:id="@+id/event_place"
                 android:layout_width="wrap_content"
@@ -149,7 +156,6 @@
                 android:layout_weight="15"
                 android:ems="10"
                 android:hint="@string/create_placehint"
-                android:textColor="@android:color/black"
                 android:textColorHint="@color/sc_hint" />
 
 

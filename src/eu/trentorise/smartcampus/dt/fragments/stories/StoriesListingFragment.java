@@ -18,8 +18,8 @@ package eu.trentorise.smartcampus.dt.fragments.stories;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -37,11 +37,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
 import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
@@ -50,8 +50,8 @@ import eu.trentorise.smartcampus.android.common.listing.AbstractLstingFragment;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
+import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
-import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
 import eu.trentorise.smartcampus.dt.custom.StoryAdapter;
 import eu.trentorise.smartcampus.dt.custom.StoryPlaceholder;
@@ -305,19 +305,14 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 			if (bundle == null) {
 				return Collections.emptyList();
 			} else if (bundle.containsKey(ARG_CATEGORY)) {
-				HashSet<String> set = new HashSet<String>(1);
-				set.add(bundle.getString(ARG_CATEGORY));
-				
 				result = DTHelper
-						.getStoryByCategory(params[0].position, params[0].size, CategoryHelper.getAllCategories(set));
+						.getStoryByCategory(params[0].position, params[0].size, bundle.getString(ARG_CATEGORY));
 			}  else if (bundle.containsKey(ARG_MY)) {
 			result = DTHelper.getMyStories(params[0].position, params[0].size);
 		}else if (bundle.containsKey(ARG_QUERY)) {
 				if (bundle.containsKey(ARG_CATEGORY_SEARCH))
 				{
-					HashSet<String> set = new HashSet<String>(1);
-					set.add(bundle.getString(ARG_CATEGORY_SEARCH));
-					result = DTHelper.searchStoriesByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),CategoryHelper.getAllCategories(set));
+					result = DTHelper.searchStoriesByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),bundle.getString(ARG_CATEGORY_SEARCH));
 				}
 				else
 					result = DTHelper.searchStories(params[0].position, params[0].size, bundle.getString(ARG_QUERY));

@@ -30,7 +30,7 @@ import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,21 +41,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
+import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.custom.DatePickerDialogFragment;
-import eu.trentorise.smartcampus.dt.custom.TimePickerDialogFragment;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.fragments.pois.CreatePoiFragment;
-import eu.trentorise.smartcampus.dt.fragments.pois.PoisListingFragment;
 import eu.trentorise.smartcampus.dt.fragments.pois.CreatePoiFragment.PoiHandler;
 import eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment;
 import eu.trentorise.smartcampus.dt.model.CommunityData;
@@ -128,31 +127,31 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 						"datePicker");
 			}
 		});
-		final EditText startTime = (EditText)getView().findViewById(R.id.event_start);
-		startTime.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				DialogFragment newFragment = TimePickerDialogFragment
-						.newInstance((EditText) v);
-				if (startTime != null) 
-					newFragment.setArguments(TimePickerDialogFragment.prepareData(startTime.getText().toString()));
-				newFragment.show(getSherlockActivity()
-						.getSupportFragmentManager(), "timePicker");
-			}
-		});
-
-		final EditText endTime = (EditText) getView().findViewById(R.id.event_end);
-		endTime.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				DialogFragment newFragment = TimePickerDialogFragment
-						.newInstance((EditText) v);
-				if (endTime != null) 
-					newFragment.setArguments(TimePickerDialogFragment.prepareData(endTime.getText().toString()));
-				newFragment.show(getSherlockActivity()
-						.getSupportFragmentManager(), "timePicker");
-			}
-		});
+//		final EditText startTime = (EditText)getView().findViewById(R.id.event_start);
+//		startTime.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				DialogFragment newFragment = TimePickerDialogFragment
+//						.newInstance((EditText) v);
+//				if (startTime != null) 
+//					newFragment.setArguments(TimePickerDialogFragment.prepareData(startTime.getText().toString()));
+//				newFragment.show(getSherlockActivity()
+//						.getSupportFragmentManager(), "timePicker");
+//			}
+//		});
+//
+//		final EditText endTime = (EditText) getView().findViewById(R.id.event_end);
+//		endTime.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				DialogFragment newFragment = TimePickerDialogFragment
+//						.newInstance((EditText) v);
+//				if (endTime != null) 
+//					newFragment.setArguments(TimePickerDialogFragment.prepareData(endTime.getText().toString()));
+//				newFragment.show(getSherlockActivity()
+//						.getSupportFragmentManager(), "timePicker");
+//			}
+//		});
 		if (poi != null) {
 			poiField.setText(poi.getTitle());
 		}
@@ -177,24 +176,38 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		title.setText(eventObject.getTitle());
 
 		EditText dateEdit = (EditText)view.findViewById(R.id.event_date);
-		EditText startTimeEdit = (EditText)view.findViewById(R.id.event_start);
-		EditText endTimeEdit = (EditText)view.findViewById(R.id.event_end);
+		
+		EditText timing = (EditText)view.findViewById(R.id.event_timing_et);
+		if (eventObject.getTiming() == null || eventObject.isFromTimeUserDefined() || eventObject.createdByUser()) {
+			// set edit visible, set textview gone
+			if (eventObject.getTiming() != null) {
+				timing.setText(eventObject.getTimingFormatted());
+			}
+			timing.setEnabled(true);
+		} else {
+			// set edit gone, set textview visible
+			timing.setText(eventObject.getTimingFormatted());
+			timing.setEnabled(false);
+		}
+		
+//		EditText startTimeEdit = (EditText)view.findViewById(R.id.event_start);
+//		EditText endTimeEdit = (EditText)view.findViewById(R.id.event_end);
 		if (eventObject.getFromTime() != null && eventObject.getFromTime() > 0) {
 			dateEdit.setText(DatePickerDialogFragment.DATEFORMAT.format(new Date(eventObject.getFromTime())));
-			startTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(new Date(eventObject.getFromTime())));
+//			startTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(new Date(eventObject.getFromTime())));
 		} else {
 			Calendar c = Calendar.getInstance();
 			c.set(Calendar.MINUTE, 0);
 			dateEdit.setText(DatePickerDialogFragment.DATEFORMAT.format(c.getTime()));
-			startTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(c.getTime()));
+//			startTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(c.getTime()));
 		}
-		if (eventObject.getToTime() != null && eventObject.getToTime() > 0) {
-			endTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(new Date(eventObject.getToTime())));
-		} else {
-			Calendar c = Calendar.getInstance();
-			c.set(Calendar.MINUTE, 0);
-			endTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(c.getTime()));
-		}
+//		if (eventObject.getToTime() != null && eventObject.getToTime() > 0) {
+//			endTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(new Date(eventObject.getToTime())));
+//		} else {
+//			Calendar c = Calendar.getInstance();
+//			c.set(Calendar.MINUTE, 0);
+//			endTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(c.getTime()));
+//		}
 		
 		poiField = (AutoCompleteTextView) view.findViewById(R.id.event_place);
 		ArrayAdapter<String> poiAdapter = new ArrayAdapter<String>(
@@ -245,14 +258,15 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			}
 			if (eventObject.getFromTime() != null && eventObject.getFromTime() > 0 && !eventObject.isFromTimeUserDefined()) {
 				dateEdit.setEnabled(false);
-				startTimeEdit.setEnabled(false);
+//				startTimeEdit.setEnabled(false);
 			}
-			if (eventObject.getToTime() != null && eventObject.getToTime() > 0 && !eventObject.isToTimeUserDefined()) {
-				endTimeEdit.setEnabled(false);
-			}
+//			if (eventObject.getToTime() != null && eventObject.getToTime() > 0 && !eventObject.isToTimeUserDefined()) {
+//				endTimeEdit.setEnabled(false);
+//			}
 			if (poi != null && !eventObject.isPoiIdUserDefined()) {
 				poiField.setEnabled(false);
 				locationBtn.setEnabled(false);
+				addPoiBtn.setEnabled(false);
 			}
 		}
 
@@ -421,34 +435,47 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			}
 
 			CharSequence datestr = ((EditText) view.findViewById(R.id.event_date)).getText();
-			CharSequence fromstr = ((EditText) view.findViewById(R.id.event_start)).getText();
-			CharSequence tostr = ((EditText) view.findViewById(R.id.event_end)).getText();
+//			CharSequence fromstr = ((EditText) view.findViewById(R.id.event_start)).getText();
+//			CharSequence tostr = ((EditText) view.findViewById(R.id.event_end)).getText();
 
 			if (datestr == null || datestr.length() == 0) {
 				Toast.makeText(
 						getActivity(),
-						getActivity().getResources().getString(R.string.createevent_date) + " is required.", Toast.LENGTH_SHORT)
+						getActivity().getResources().getString(R.string.createevent_date) + 
+						getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
 						.show();
 				return;
 			}
-			if (fromstr == null || fromstr.length() == 0) {
-				Toast.makeText(
-						getActivity(),
-						getActivity().getResources().getString(R.string.createevent_timestart) + " is required.", Toast.LENGTH_SHORT)
-						.show();
-				return;
+			if (eventObject.getTiming() == null || eventObject.isFromTimeUserDefined() || eventObject.createdByUser()) {
+				CharSequence timingstr = ((EditText) view.findViewById(R.id.event_timing_et)).getText();
+				if (timingstr == null || timingstr.length() == 0) {
+					Toast.makeText(
+							getActivity(),
+							getActivity().getResources().getString(R.string.createevent_timing) + 
+							getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
+							.show();
+					return;
+				}
+				eventObject.setTiming(timingstr.toString());
 			}
-			if (tostr == null || tostr.length() == 0) {
-				Toast.makeText(
-						getActivity(),
-						getActivity().getResources().getString(R.string.createevent_timeend) + " is required.", Toast.LENGTH_SHORT)
-						.show();
-				return;
-			}
+//			if (fromstr == null || fromstr.length() == 0) {
+//				Toast.makeText(
+//						getActivity(),
+//						getActivity().getResources().getString(R.string.createevent_timestart) + " is required.", Toast.LENGTH_SHORT)
+//						.show();
+//				return;
+//			}
+//			if (tostr == null || tostr.length() == 0) {
+//				Toast.makeText(
+//						getActivity(),
+//						getActivity().getResources().getString(R.string.createevent_timeend) + " is required.", Toast.LENGTH_SHORT)
+//						.show();
+//				return;
+//			}
 			
 			Calendar cal = Calendar.getInstance();
-			Calendar start = Calendar.getInstance();
-			Calendar end = Calendar.getInstance();
+//			Calendar start = Calendar.getInstance();
+//			Calendar end = Calendar.getInstance();
 			try {
 				Date d = DatePickerDialogFragment.DATEFORMAT.parse(datestr.toString());
 				cal.setTime(d);
@@ -461,45 +488,46 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 						Toast.LENGTH_SHORT).show();
 				return;
 			}
-			try {
-				Date d = TimePickerDialogFragment.TIMEFORMAT.parse(fromstr.toString());
-				start.setTime(d);
-			} catch (ParseException e) {
-				Toast.makeText(
-						getActivity(),
-						"Incorrect "
-								+ getResources().getString(
-										R.string.createevent_timestart),
-						Toast.LENGTH_SHORT).show();
-				return;
-			}
-			try {
-				Date d = TimePickerDialogFragment.TIMEFORMAT.parse(tostr.toString());
-				end.setTime(d);
-			} catch (ParseException e) {
-				Toast.makeText(
-						getActivity(),
-						"Incorrect "
-								+ getResources().getString(
-										R.string.createevent_timeend),
-						Toast.LENGTH_SHORT).show();
-				return;
-			}
-			start.set(Calendar.YEAR, cal.get(Calendar.YEAR));
-			start.set(Calendar.MONTH, cal.get(Calendar.MONTH));
-			start.set(Calendar.DATE, cal.get(Calendar.DATE));
-			end.set(Calendar.YEAR, cal.get(Calendar.YEAR));
-			end.set(Calendar.MONTH, cal.get(Calendar.MONTH));
-			end.set(Calendar.DATE, cal.get(Calendar.DATE));
+//			try {
+//				Date d = TimePickerDialogFragment.TIMEFORMAT.parse(fromstr.toString());
+//				start.setTime(d);
+//			} catch (ParseException e) {
+//				Toast.makeText(
+//						getActivity(),
+//						"Incorrect "
+//								+ getResources().getString(
+//										R.string.createevent_timestart),
+//						Toast.LENGTH_SHORT).show();
+//				return;
+//			}
+//			try {
+//				Date d = TimePickerDialogFragment.TIMEFORMAT.parse(tostr.toString());
+//				end.setTime(d);
+//			} catch (ParseException e) {
+//				Toast.makeText(
+//						getActivity(),
+//						"Incorrect "
+//								+ getResources().getString(
+//										R.string.createevent_timeend),
+//						Toast.LENGTH_SHORT).show();
+//				return;
+//			}
+//			start.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+//			start.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+//			start.set(Calendar.DATE, cal.get(Calendar.DATE));
+//			end.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+//			end.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+//			end.set(Calendar.DATE, cal.get(Calendar.DATE));
+//			
+//			if (end.before(start)) {
+//				end.add(Calendar.DATE, 1);
+//			}
+//
+//			
+//			eventObject.setFromTime(start.getTimeInMillis());
+//			eventObject.setToTime(end.getTimeInMillis());
+			eventObject.setFromTime(cal.getTimeInMillis());
 			
-			if (end.before(start)) {
-				end.add(Calendar.DATE, 1);
-			}
-
-			
-			eventObject.setFromTime(start.getTimeInMillis());
-			eventObject.setToTime(end.getTimeInMillis());
-
 			eventObject.setType(cat);
 			if (poi != null) {
 				eventObject.setPoiId(poi.getId());

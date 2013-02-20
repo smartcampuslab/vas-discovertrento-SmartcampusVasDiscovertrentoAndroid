@@ -56,7 +56,7 @@ public class POIObject extends BaseDTObject {
 	}
 	
 	public String shortAddress() {
-		return getPoi().getStreet()+", "+getPoi().getCity();
+		return getTitle() + (getPoi().getStreet()==null || getPoi().getStreet().length()==0? "": (", "+getPoi().getStreet()));
 	}
 	
 	public Address asGoogleAddress() {
