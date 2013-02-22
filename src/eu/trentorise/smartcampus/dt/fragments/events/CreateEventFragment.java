@@ -30,7 +30,6 @@ import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,7 +40,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -52,6 +50,7 @@ import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
+import eu.trentorise.smartcampus.dt.custom.CategoryHelper.CategoryDescriptor;
 import eu.trentorise.smartcampus.dt.custom.DatePickerDialogFragment;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.fragments.pois.CreatePoiFragment;
@@ -64,22 +63,26 @@ import eu.trentorise.smartcampus.dt.model.POIObject;
 import eu.trentorise.smartcampus.dt.model.UserEventObject;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
-public class CreateEventFragment extends SherlockFragment implements TaggingDialog.OnTagsSelectedListener, TaggingDialog.TagProvider {
+public class CreateEventFragment extends SherlockFragment implements TaggingDialog.OnTagsSelectedListener,
+		TaggingDialog.TagProvider {
 
 	private POIObject poi = null;
 	private View view = null;
 	private CreatePoiFromEvent poiHandler = new CreatePoiFromEvent();
-	private AutoCompleteTextView poiField; 
+	private AutoCompleteTextView poiField;
 	public static String ARG_EVENT = "event";
-	
+
+	private CategoryDescriptor[] categoryDescriptors;
+
 	private EventObject eventObject;
-	
+
 	@Override
 	public void onTagsSelected(Collection<SemanticSuggestion> suggestions) {
 		eventObject.getCommunityData().setTags(Concept.convertSS(suggestions));
-		((EditText)getView().findViewById(R.id.event_tags)).setText(Concept.toSimpleString(eventObject.getCommunityData().getTags()));	
+		((EditText) getView().findViewById(R.id.event_tags)).setText(Concept.toSimpleString(eventObject.getCommunityData()
+				.getTags()));
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle arg0) {
 		super.onSaveInstanceState(arg0);
@@ -90,15 +93,16 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(false);
-		
-		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_EVENT) && savedInstanceState.getSerializable(ARG_EVENT) != null) {
-			eventObject = (EventObject)savedInstanceState.get(ARG_EVENT);
-		} else if (getArguments() != null && getArguments().containsKey(ARG_EVENT) && getArguments().getSerializable(ARG_EVENT) != null) {
-			eventObject = (EventObject)getArguments().getSerializable(ARG_EVENT);
-		} else  {
+
+		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_EVENT)
+				&& savedInstanceState.getSerializable(ARG_EVENT) != null) {
+			eventObject = (EventObject) savedInstanceState.get(ARG_EVENT);
+		} else if (getArguments() != null && getArguments().containsKey(ARG_EVENT)
+				&& getArguments().getSerializable(ARG_EVENT) != null) {
+			eventObject = (EventObject) getArguments().getSerializable(ARG_EVENT);
+		} else {
 			eventObject = new UserEventObject();
-			if (getArguments() != null && getArguments().containsKey(EventsListingFragment.ARG_CATEGORY))
-			{
+			if (getArguments() != null && getArguments().containsKey(EventsListingFragment.ARG_CATEGORY)) {
 				eventObject.setType(getArguments().getString(EventsListingFragment.ARG_CATEGORY));
 			}
 		}
@@ -106,78 +110,83 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			poi = DTHelper.findPOIById(eventObject.getPoiId());
 
 		}
-		if (eventObject.getCommunityData() == null) eventObject.setCommunityData(new CommunityData());
+		if (eventObject.getCommunityData() == null)
+			eventObject.setCommunityData(new CommunityData());
 	}
-
 
 	@Override
 	public void onStart() {
-		super.onStart(); 
-		
+		super.onStart();
+
 		// date and time will be returned as tags
-		final EditText dateEditText = (EditText)getView().findViewById(R.id.event_date);
+		final EditText dateEditText = (EditText) getView().findViewById(R.id.event_date);
 		dateEditText.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				DialogFragment f = DatePickerDialogFragment
-						.newInstance((EditText) v);
+				DialogFragment f = DatePickerDialogFragment.newInstance((EditText) v);
 				if (dateEditText.getText() != null)
 					f.setArguments(DatePickerDialogFragment.prepareData(dateEditText.getText().toString()));
-				f.show(getSherlockActivity().getSupportFragmentManager(),
-						"datePicker");
+				f.show(getSherlockActivity().getSupportFragmentManager(), "datePicker");
 			}
 		});
-//		final EditText startTime = (EditText)getView().findViewById(R.id.event_start);
-//		startTime.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				DialogFragment newFragment = TimePickerDialogFragment
-//						.newInstance((EditText) v);
-//				if (startTime != null) 
-//					newFragment.setArguments(TimePickerDialogFragment.prepareData(startTime.getText().toString()));
-//				newFragment.show(getSherlockActivity()
-//						.getSupportFragmentManager(), "timePicker");
-//			}
-//		});
-//
-//		final EditText endTime = (EditText) getView().findViewById(R.id.event_end);
-//		endTime.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				DialogFragment newFragment = TimePickerDialogFragment
-//						.newInstance((EditText) v);
-//				if (endTime != null) 
-//					newFragment.setArguments(TimePickerDialogFragment.prepareData(endTime.getText().toString()));
-//				newFragment.show(getSherlockActivity()
-//						.getSupportFragmentManager(), "timePicker");
-//			}
-//		});
+		// final EditText startTime =
+		// (EditText)getView().findViewById(R.id.event_start);
+		// startTime.setOnClickListener(new View.OnClickListener() {
+		// @Override
+		// public void onClick(View v) {
+		// DialogFragment newFragment = TimePickerDialogFragment
+		// .newInstance((EditText) v);
+		// if (startTime != null)
+		// newFragment.setArguments(TimePickerDialogFragment.prepareData(startTime.getText().toString()));
+		// newFragment.show(getSherlockActivity()
+		// .getSupportFragmentManager(), "timePicker");
+		// }
+		// });
+		//
+		// final EditText endTime = (EditText)
+		// getView().findViewById(R.id.event_end);
+		// endTime.setOnClickListener(new View.OnClickListener() {
+		// @Override
+		// public void onClick(View v) {
+		// DialogFragment newFragment = TimePickerDialogFragment
+		// .newInstance((EditText) v);
+		// if (endTime != null)
+		// newFragment.setArguments(TimePickerDialogFragment.prepareData(endTime.getText().toString()));
+		// newFragment.show(getSherlockActivity()
+		// .getSupportFragmentManager(), "timePicker");
+		// }
+		// });
 		if (poi != null) {
 			poiField.setText(poi.getTitle());
 		}
-	
+
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		view = inflater.inflate(R.layout.createeventform, container, false);
 
+		categoryDescriptors = CategoryHelper.EVENT_CATEGORIES;
+
 		Spinner categories = (Spinner) view.findViewById(R.id.event_category);
 		int selected = 0;
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),R.layout.dd_list, R.id.dd_textview);;
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.dd_list, R.id.dd_textview);
 		categories.setAdapter(adapter);
-		for (int i = 0; i < CategoryHelper.EVENT_CATEGORIES.length; i++) {
-			adapter.add(CategoryHelper.EVENT_CATEGORIES[i].category);
-			if (CategoryHelper.EVENT_CATEGORIES[i].category.equals(eventObject.getType())) selected = i;
+		for (int i = 0; i < categoryDescriptors.length; i++) {
+			adapter.add(getSherlockActivity().getApplicationContext().getResources()
+					.getString(categoryDescriptors[i].description));
+			if (categoryDescriptors[i].category.equals(eventObject.getType())) {
+				selected = i;
+			}
 		}
 		categories.setSelection(selected);
 
 		EditText title = (EditText) view.findViewById(R.id.event_title);
 		title.setText(eventObject.getTitle());
 
-		EditText dateEdit = (EditText)view.findViewById(R.id.event_date);
-		
-		EditText timing = (EditText)view.findViewById(R.id.event_timing_et);
+		EditText dateEdit = (EditText) view.findViewById(R.id.event_date);
+
+		EditText timing = (EditText) view.findViewById(R.id.event_timing_et);
 		if (eventObject.getTiming() == null || eventObject.isFromTimeUserDefined() || eventObject.createdByUser()) {
 			// set edit visible, set textview gone
 			if (eventObject.getTiming() != null) {
@@ -189,37 +198,37 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			timing.setText(eventObject.getTimingFormatted());
 			timing.setEnabled(false);
 		}
-		
-//		EditText startTimeEdit = (EditText)view.findViewById(R.id.event_start);
-//		EditText endTimeEdit = (EditText)view.findViewById(R.id.event_end);
+
+		// EditText startTimeEdit =
+		// (EditText)view.findViewById(R.id.event_start);
+		// EditText endTimeEdit = (EditText)view.findViewById(R.id.event_end);
 		if (eventObject.getFromTime() != null && eventObject.getFromTime() > 0) {
 			dateEdit.setText(DatePickerDialogFragment.DATEFORMAT.format(new Date(eventObject.getFromTime())));
-//			startTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(new Date(eventObject.getFromTime())));
+			// startTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(new
+			// Date(eventObject.getFromTime())));
 		} else {
 			Calendar c = Calendar.getInstance();
 			c.set(Calendar.MINUTE, 0);
 			dateEdit.setText(DatePickerDialogFragment.DATEFORMAT.format(c.getTime()));
-//			startTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(c.getTime()));
+			// startTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(c.getTime()));
 		}
-//		if (eventObject.getToTime() != null && eventObject.getToTime() > 0) {
-//			endTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(new Date(eventObject.getToTime())));
-//		} else {
-//			Calendar c = Calendar.getInstance();
-//			c.set(Calendar.MINUTE, 0);
-//			endTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(c.getTime()));
-//		}
-		
+		// if (eventObject.getToTime() != null && eventObject.getToTime() > 0) {
+		// endTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(new
+		// Date(eventObject.getToTime())));
+		// } else {
+		// Calendar c = Calendar.getInstance();
+		// c.set(Calendar.MINUTE, 0);
+		// endTimeEdit.setText(TimePickerDialogFragment.TIMEFORMAT.format(c.getTime()));
+		// }
+
 		poiField = (AutoCompleteTextView) view.findViewById(R.id.event_place);
-		ArrayAdapter<String> poiAdapter = new ArrayAdapter<String>(
-				getSherlockActivity(),
-				R.layout.dd_list,
-				R.id.dd_textview,
+		ArrayAdapter<String> poiAdapter = new ArrayAdapter<String>(getSherlockActivity(), R.layout.dd_list, R.id.dd_textview,
 				DTHelper.getAllPOITitles());
 		poiField.setAdapter(poiAdapter);
 		if (poi != null) {
 			poiField.setText(poi.getTitle());
 		}
-	
+
 		ImageButton addPoiBtn = (ImageButton) view.findViewById(R.id.btn_event_add_poi);
 		addPoiBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -230,11 +239,9 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 				fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 				fragment = new CreatePoiFragment();
 				Bundle args = new Bundle();
-				args.putParcelable(AddStepToStoryFragment.ARG_STEP_HANDLER,
-						poiHandler);
-				fragment.setArguments(args);				
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				args.putParcelable(AddStepToStoryFragment.ARG_STEP_HANDLER, poiHandler);
+				fragment.setArguments(args);
+				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 				fragmentTransaction.addToBackStack(fragment.getTag());
 				fragmentTransaction.commit();
@@ -245,9 +252,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		locationBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startActivityForResult(new Intent(getActivity(),
-						POISelectActivity.class),
-						POISelectActivity.RESULT_SELECTED);
+				startActivityForResult(new Intent(getActivity(), POISelectActivity.class), POISelectActivity.RESULT_SELECTED);
 			}
 		});
 
@@ -258,11 +263,12 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			}
 			if (eventObject.getFromTime() != null && eventObject.getFromTime() > 0 && !eventObject.isFromTimeUserDefined()) {
 				dateEdit.setEnabled(false);
-//				startTimeEdit.setEnabled(false);
+				// startTimeEdit.setEnabled(false);
 			}
-//			if (eventObject.getToTime() != null && eventObject.getToTime() > 0 && !eventObject.isToTimeUserDefined()) {
-//				endTimeEdit.setEnabled(false);
-//			}
+			// if (eventObject.getToTime() != null && eventObject.getToTime() >
+			// 0 && !eventObject.isToTimeUserDefined()) {
+			// endTimeEdit.setEnabled(false);
+			// }
 			if (poi != null && !eventObject.isPoiIdUserDefined()) {
 				poiField.setEnabled(false);
 				locationBtn.setEnabled(false);
@@ -270,18 +276,18 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			}
 		}
 
-		
-		EditText notes = (EditText)view.findViewById(R.id.event_notes);
+		EditText notes = (EditText) view.findViewById(R.id.event_notes);
 		notes.setText(eventObject.getCommunityData().getNotes());
 
-		EditText tagsEdit = (EditText) view.findViewById(R.id.event_tags); 
+		EditText tagsEdit = (EditText) view.findViewById(R.id.event_tags);
 		tagsEdit.setText(Concept.toSimpleString(eventObject.getCommunityData().getTags()));
 		tagsEdit.setClickable(true);
 		tagsEdit.setFocusableInTouchMode(false);
 		tagsEdit.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				TaggingDialog taggingDialog = new TaggingDialog(getActivity(), CreateEventFragment.this, CreateEventFragment.this, Concept.convertToSS(eventObject.getCommunityData().getTags()));
+				TaggingDialog taggingDialog = new TaggingDialog(getActivity(), CreateEventFragment.this,
+						CreateEventFragment.this, Concept.convertToSS(eventObject.getCommunityData().getTags()));
 				taggingDialog.show();
 			}
 		});
@@ -292,7 +298,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			public void onClick(View v) {
 				getSherlockActivity().getSupportFragmentManager().popBackStack();
 			}
-			
+
 		});
 
 		Button save = (Button) view.findViewById(R.id.btn_createevent_ok);
@@ -305,12 +311,12 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		Integer result = null;
 		if (data.getTitle() == null || data.getTitle().length() == 0)
 			return R.string.create_title;
-//		if (data.getFromTime() == null)
-//			return R.string.createevent_timestart;
-//		if (data.getToTime() == null)
-//			return R.string.createevent_timeend;
-//		if (data.getToTime() <= data.getFromTime())
-//			return R.string.createevent_timeend;
+		// if (data.getFromTime() == null)
+		// return R.string.createevent_timestart;
+		// if (data.getToTime() == null)
+		// return R.string.createevent_timeend;
+		// if (data.getToTime() <= data.getFromTime())
+		// return R.string.createevent_timeend;
 		if (data.getPoiId() == null)
 			return R.string.create_place;
 		if (data.getType() == null || data.getType().length() == 0)
@@ -323,8 +329,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		super.onActivityResult(requestCode, resultCode, result);
 		if (resultCode == POISelectActivity.RESULT_SELECTED) {
 			poi = (POIObject) result.getSerializableExtra("poi");
-			AutoCompleteTextView text = (AutoCompleteTextView) view
-					.findViewById(R.id.event_place);
+			AutoCompleteTextView text = (AutoCompleteTextView) view.findViewById(R.id.event_place);
 			text.setText(poi.getTitle());
 			for (int i = 0; i < text.getAdapter().getCount(); i++) {
 				if (poi.getTitle().equals((text.getAdapter().getItem(i)))) {
@@ -390,7 +395,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 	// return super.onOptionsItemSelected(item);
 	// }
 	// }
-	
+
 	private class CreateEventProcessor extends AbstractAsyncTaskProcessor<EventObject, Boolean> {
 
 		public CreateEventProcessor(Activity activity) {
@@ -411,38 +416,42 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 				Toast.makeText(getSherlockActivity(), R.string.update_success, Toast.LENGTH_SHORT).show();
 			}
 		}
-		
+
 	}
-	
-	private class SaveEvent implements OnClickListener{
+
+	private class SaveEvent implements OnClickListener {
 		@Override
 		public void onClick(View v) {
 			CharSequence desc = ((EditText) view.findViewById(R.id.event_notes)).getText();
 			if (desc != null) {
 				eventObject.getCommunityData().setNotes(desc.toString());
 			}
+
 			CharSequence title = ((EditText) view.findViewById(R.id.event_title)).getText();
 			if (title != null) {
 				eventObject.setTitle(title.toString());
 			}
-			String cat = ((Spinner) view.findViewById(R.id.event_category)).getSelectedItem().toString();
+
+			String catString = ((Spinner) view.findViewById(R.id.event_category)).getSelectedItem().toString();
+			String cat = getCategoryDescriptorByDescription(catString).category;
 
 			AutoCompleteTextView eventPlace = (AutoCompleteTextView) view.findViewById(R.id.event_place);
-			if ((poi == null || !poi.getTitle().equals(eventPlace.getText().toString()))
-					&& eventPlace.getText() != null && eventPlace.getText().length() > 0) 
-			{
+			if ((poi == null || !poi.getTitle().equals(eventPlace.getText().toString())) && eventPlace.getText() != null
+					&& eventPlace.getText().length() > 0) {
 				poi = DTHelper.findPOIByTitle(eventPlace.getText().toString());
 			}
 
 			CharSequence datestr = ((EditText) view.findViewById(R.id.event_date)).getText();
-//			CharSequence fromstr = ((EditText) view.findViewById(R.id.event_start)).getText();
-//			CharSequence tostr = ((EditText) view.findViewById(R.id.event_end)).getText();
+			// CharSequence fromstr = ((EditText)
+			// view.findViewById(R.id.event_start)).getText();
+			// CharSequence tostr = ((EditText)
+			// view.findViewById(R.id.event_end)).getText();
 
 			if (datestr == null || datestr.length() == 0) {
 				Toast.makeText(
 						getActivity(),
-						getActivity().getResources().getString(R.string.createevent_date) + 
-						getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
+						getActivity().getResources().getString(R.string.createevent_date)
+								+ getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
 						.show();
 				return;
 			}
@@ -451,83 +460,85 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 				if (timingstr == null || timingstr.length() == 0) {
 					Toast.makeText(
 							getActivity(),
-							getActivity().getResources().getString(R.string.createevent_timing) + 
-							getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
+							getActivity().getResources().getString(R.string.createevent_timing)
+									+ getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
 							.show();
 					return;
 				}
 				eventObject.setTiming(timingstr.toString());
 			}
-//			if (fromstr == null || fromstr.length() == 0) {
-//				Toast.makeText(
-//						getActivity(),
-//						getActivity().getResources().getString(R.string.createevent_timestart) + " is required.", Toast.LENGTH_SHORT)
-//						.show();
-//				return;
-//			}
-//			if (tostr == null || tostr.length() == 0) {
-//				Toast.makeText(
-//						getActivity(),
-//						getActivity().getResources().getString(R.string.createevent_timeend) + " is required.", Toast.LENGTH_SHORT)
-//						.show();
-//				return;
-//			}
-			
+			// if (fromstr == null || fromstr.length() == 0) {
+			// Toast.makeText(
+			// getActivity(),
+			// getActivity().getResources().getString(R.string.createevent_timestart)
+			// + " is required.", Toast.LENGTH_SHORT)
+			// .show();
+			// return;
+			// }
+			// if (tostr == null || tostr.length() == 0) {
+			// Toast.makeText(
+			// getActivity(),
+			// getActivity().getResources().getString(R.string.createevent_timeend)
+			// + " is required.", Toast.LENGTH_SHORT)
+			// .show();
+			// return;
+			// }
+
 			Calendar cal = Calendar.getInstance();
-//			Calendar start = Calendar.getInstance();
-//			Calendar end = Calendar.getInstance();
+			// Calendar start = Calendar.getInstance();
+			// Calendar end = Calendar.getInstance();
 			try {
 				Date d = DatePickerDialogFragment.DATEFORMAT.parse(datestr.toString());
 				cal.setTime(d);
 			} catch (ParseException e) {
 				Toast.makeText(
 						getActivity(),
-						"Incorrect "
-								+ getResources().getString(
-										R.string.createevent_date),
-						Toast.LENGTH_SHORT).show();
+						getResources().getString(R.string.toast_incorrect) + " "
+								+ getResources().getString(R.string.createevent_date), Toast.LENGTH_SHORT).show();
 				return;
 			}
-//			try {
-//				Date d = TimePickerDialogFragment.TIMEFORMAT.parse(fromstr.toString());
-//				start.setTime(d);
-//			} catch (ParseException e) {
-//				Toast.makeText(
-//						getActivity(),
-//						"Incorrect "
-//								+ getResources().getString(
-//										R.string.createevent_timestart),
-//						Toast.LENGTH_SHORT).show();
-//				return;
-//			}
-//			try {
-//				Date d = TimePickerDialogFragment.TIMEFORMAT.parse(tostr.toString());
-//				end.setTime(d);
-//			} catch (ParseException e) {
-//				Toast.makeText(
-//						getActivity(),
-//						"Incorrect "
-//								+ getResources().getString(
-//										R.string.createevent_timeend),
-//						Toast.LENGTH_SHORT).show();
-//				return;
-//			}
-//			start.set(Calendar.YEAR, cal.get(Calendar.YEAR));
-//			start.set(Calendar.MONTH, cal.get(Calendar.MONTH));
-//			start.set(Calendar.DATE, cal.get(Calendar.DATE));
-//			end.set(Calendar.YEAR, cal.get(Calendar.YEAR));
-//			end.set(Calendar.MONTH, cal.get(Calendar.MONTH));
-//			end.set(Calendar.DATE, cal.get(Calendar.DATE));
-//			
-//			if (end.before(start)) {
-//				end.add(Calendar.DATE, 1);
-//			}
-//
-//			
-//			eventObject.setFromTime(start.getTimeInMillis());
-//			eventObject.setToTime(end.getTimeInMillis());
+			// try {
+			// Date d =
+			// TimePickerDialogFragment.TIMEFORMAT.parse(fromstr.toString());
+			// start.setTime(d);
+			// } catch (ParseException e) {
+			// Toast.makeText(
+			// getActivity(),
+			// "Incorrect "
+			// + getResources().getString(
+			// R.string.createevent_timestart),
+			// Toast.LENGTH_SHORT).show();
+			// return;
+			// }
+			// try {
+			// Date d =
+			// TimePickerDialogFragment.TIMEFORMAT.parse(tostr.toString());
+			// end.setTime(d);
+			// } catch (ParseException e) {
+			// Toast.makeText(
+			// getActivity(),
+			// "Incorrect "
+			// + getResources().getString(
+			// R.string.createevent_timeend),
+			// Toast.LENGTH_SHORT).show();
+			// return;
+			// }
+			// start.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+			// start.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+			// start.set(Calendar.DATE, cal.get(Calendar.DATE));
+			// end.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+			// end.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+			// end.set(Calendar.DATE, cal.get(Calendar.DATE));
+			//
+			// if (end.before(start)) {
+			// end.add(Calendar.DATE, 1);
+			// }
+			//
+			//
+			// eventObject.setFromTime(start.getTimeInMillis());
+			// eventObject.setToTime(end.getTimeInMillis());
 			eventObject.setFromTime(cal.getTimeInMillis());
-			
+
 			eventObject.setType(cat);
 			if (poi != null) {
 				eventObject.setPoiId(poi.getId());
@@ -537,27 +548,38 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 				Toast.makeText(
 						getActivity(),
 						getActivity().getResources().getString(missing)
-								+ " is required.", Toast.LENGTH_SHORT)
-						.show();
+								+ " "
+								+ getSherlockActivity().getApplicationContext().getResources()
+										.getString(R.string.toast_is_required), Toast.LENGTH_SHORT).show();
 				return;
 			}
-			
-			new SCAsyncTask<EventObject, Void, Boolean>(getActivity(),new CreateEventProcessor(getActivity())).execute(eventObject);
+
+			new SCAsyncTask<EventObject, Void, Boolean>(getActivity(), new CreateEventProcessor(getActivity()))
+					.execute(eventObject);
 		}
 
 	}
-	
-	private class CreatePoiFromEvent implements PoiHandler, Parcelable {
 
+	private CategoryDescriptor getCategoryDescriptorByDescription(String desc) {
+		for (CategoryDescriptor cd : categoryDescriptors) {
+			String catDesc = getSherlockActivity().getApplicationContext().getResources().getString(cd.description);
+			if (catDesc.equalsIgnoreCase(desc)) {
+				return cd;
+			}
+		}
+
+		return null;
+	}
+
+	private class CreatePoiFromEvent implements PoiHandler, Parcelable {
 
 		private static final long serialVersionUID = 16774297617446649L;
 
 		@Override
 		public void addPoi(POIObject poi) {
-			
 
-			//add the step, notify to the adapter and go back to this fragment
-			CreateEventFragment.this.poi=poi;
+			// add the step, notify to the adapter and go back to this fragment
+			CreateEventFragment.this.poi = poi;
 			CreateEventFragment.this.eventObject.assignPoi(poi);
 		}
 
@@ -570,8 +592,6 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		public void writeToParcel(Parcel dest, int flags) {
 
 		}
-
-
 
 	}
 }

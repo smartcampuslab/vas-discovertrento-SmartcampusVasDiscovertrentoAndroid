@@ -176,4 +176,7 @@
 	<string name="search_in_category">nella categoria</string>
 	<string name="search_today_events">Cerca eventi di oggi</string>
 	
+	<string name="toast_is_required">richiesto.</string>
+	<string name="toast_incorrect">Dato non corretto:</string>
+	
 </resources>

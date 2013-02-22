@@ -175,5 +175,8 @@
 	<string name="search_for">Search for</string>
 	<string name="search_in_category">in category</string>
 	<string name="search_today_events">Search today\'s events</string>
+	
+	<string name="toast_is_required">is required.</string>
+	<string name="toast_incorrect">Incorrect</string>
     
 </resources>
