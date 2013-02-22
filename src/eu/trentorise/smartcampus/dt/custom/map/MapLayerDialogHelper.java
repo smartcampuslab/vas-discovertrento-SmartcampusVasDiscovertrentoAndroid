@@ -23,38 +23,47 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper.CategoryDescriptor;
 
 public class MapLayerDialogHelper {
 
-	public static Dialog createDialog(Context ctx, final MapItemsHandler handler, String title, String ... selected) {
+	public static Dialog createDialog(final Context ctx, final MapItemsHandler handler, String title, String... selected) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 		builder.setTitle(title);
 
 		HashSet<String> selectedSet = new HashSet<String>();
-		if (selected != null) selectedSet.addAll(Arrays.asList(selected));
-		
-		final String[] items = CategoryDescriptor.getPOICategories();
-		boolean[] checkedItems = new boolean[items.length]; 
+		if (selected != null) {
+			selectedSet.addAll(Arrays.asList(selected));
+		}
+
+		final CategoryDescriptor[] items = CategoryHelper.getPOICategoryDescriptors();
+
+		final String[] itemsDescriptions = new String[items.length];
 		for (int i = 0; i < items.length; i++) {
-			checkedItems[i] = selectedSet.contains(items[i]);
+			itemsDescriptions[i] = ctx.getResources().getString(items[i].description);
+		}
+
+		boolean[] checkedItems = new boolean[items.length];
+		for (int i = 0; i < items.length; i++) {
+			checkedItems[i] = selectedSet.contains(items[i].category);
 		}
 
 		final ArrayList<String> newSelected = new ArrayList<String>(selectedSet);
 
-		builder.setMultiChoiceItems(items, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which,
-                    boolean isChecked) {
-                if (isChecked) {
-                    // If the user checked the item, add it to the selected items
-                    newSelected.add(items[which]);
-                } else if (newSelected.contains(items[which])) {
-                    // Else, if the item is already in the array, remove it 
-                    newSelected.remove(items[which]);
-                }
-            }
-        });
+		builder.setMultiChoiceItems(itemsDescriptions, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+				if (isChecked) {
+					// If the user checked the item, add it to the selected
+					// items
+					newSelected.add(items[which].category);
+				} else if (newSelected.contains(items[which].category)) {
+					// Else, if the item is already in the array, remove it
+					newSelected.remove(items[which].category);
+				}
+			}
+		});
 		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -62,7 +71,6 @@ public class MapLayerDialogHelper {
 			}
 		});
 
-		
 		builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -70,7 +78,7 @@ public class MapLayerDialogHelper {
 				dialog.dismiss();
 			}
 		});
-		
+
 		return builder.create();
 	}
 }

@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import eu.trentorise.smartcampus.dt.R;
+import eu.trentorise.smartcampus.dt.custom.CategoryHelper.CategoryDescriptor;
 import eu.trentorise.smartcampus.dt.fragments.events.EventsListingFragment;
 
 public class EventsCategoriesAdapter extends BaseAdapter {
@@ -36,67 +37,58 @@ public class EventsCategoriesAdapter extends BaseAdapter {
 		this.context = c;
 	}
 
-	public EventsCategoriesAdapter(Context applicationContext,
-			FragmentManager fragmentManager) {
+	public EventsCategoriesAdapter(Context applicationContext, FragmentManager fragmentManager) {
 		this.fragmentManager = fragmentManager;
 		this.context = applicationContext;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = new ViewHolder();
+		ViewHolder holder = new ViewHolder();
+		CategoryDescriptor cd = CategoryHelper.EVENT_CATEGORIES[position];
+
 		if (convertView == null) {
 			holder.button = new Button(context);
-			holder.button.setText(CategoryHelper.EVENT_CATEGORIES[position].category);
+			// holder.button.setText(CategoryHelper.EVENT_CATEGORIES[position].description);
+			holder.button.setTag(cd);
+			holder.button.setText(context.getResources().getString(cd.description));
 			holder.button.setTextSize(11);
-			holder.button.setTextColor(context.getResources().getColor(
-					R.color.sc_light_gray));
-			holder.button.setBackgroundColor(context.getResources().getColor(
-					android.R.color.transparent));
-			holder.button.setCompoundDrawablesWithIntrinsicBounds(
-					null,
-					context.getResources()
-							.getDrawable(
-									CategoryHelper.EVENT_CATEGORIES[position].thumbnail),
-					null, null);
+			holder.button.setTextColor(context.getResources().getColor(R.color.sc_light_gray));
+			holder.button.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+			holder.button.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(cd.thumbnail), null,
+					null);
 			holder.button.setOnClickListener(new EventsCategoriesOnClickListener());
-		} else
-			{
+		} else {
 			holder.button = (Button) convertView;
 			holder.button.setText(((Button) convertView).getText());
 			holder.button.setTextSize(11);
 			holder.button.setTextColor(context.getResources().getColor(R.color.sc_light_gray));
 			holder.button.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
-			holder.button.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(
-					CategoryHelper.EVENT_CATEGORIES[position].thumbnail),
-			null, null);
+			holder.button.setCompoundDrawablesWithIntrinsicBounds(null,
+					context.getResources().getDrawable(CategoryHelper.EVENT_CATEGORIES[position].thumbnail), null, null);
 			holder.button.setOnClickListener(new EventsCategoriesOnClickListener());
-			}
+		}
 		return holder.button;
 	}
-	
-	static class ViewHolder{
+
+	static class ViewHolder {
 		Button button;
 	}
-	
-	public class EventsCategoriesOnClickListener implements OnClickListener {
 
+	public class EventsCategoriesOnClickListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
-			String cat = ((Button) v).getText().toString();
-			FragmentTransaction fragmentTransaction = fragmentManager
-					.beginTransaction();
+			String cat = ((CategoryDescriptor) v.getTag()).category;
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			EventsListingFragment fragment = new EventsListingFragment();
 			Bundle args = new Bundle();
 			args.putString(EventsListingFragment.ARG_CATEGORY, cat);
 			fragment.setArguments(args);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(android.R.id.content, fragment,"events");
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 		}
-		
 	}
 
 	@Override

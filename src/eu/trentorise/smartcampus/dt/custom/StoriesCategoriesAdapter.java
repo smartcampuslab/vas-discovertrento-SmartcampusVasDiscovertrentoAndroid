@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import eu.trentorise.smartcampus.dt.R;
+import eu.trentorise.smartcampus.dt.custom.CategoryHelper.CategoryDescriptor;
 import eu.trentorise.smartcampus.dt.fragments.stories.StoriesListingFragment;
 
 public class StoriesCategoriesAdapter extends BaseAdapter {
@@ -34,25 +35,26 @@ public class StoriesCategoriesAdapter extends BaseAdapter {
 	public StoriesCategoriesAdapter(Context c) {
 		this.context = c;
 	}
-	
-	public StoriesCategoriesAdapter(Context applicationContext,
-			FragmentManager fragmentManager) {
+
+	public StoriesCategoriesAdapter(Context applicationContext, FragmentManager fragmentManager) {
 		this.fragmentManager = fragmentManager;
 		this.context = applicationContext;
 	}
 
-		@Override
+	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-	        ViewHolder holder = new ViewHolder();
+		ViewHolder holder = new ViewHolder();
+		CategoryDescriptor cd = CategoryHelper.STORY_CATEGORIES[position];
+
 		if (convertView == null) {
 			holder.button = new Button(context);
-			holder.button.setText(CategoryHelper.STORY_CATEGORIES[position].description);
+			holder.button.setTag(cd);
+			holder.button.setText(context.getResources().getString(cd.description));
 			holder.button.setTextSize(11);
 			holder.button.setTextColor(context.getResources().getColor(R.color.sc_light_gray));
 			holder.button.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
-			holder.button.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(
-							CategoryHelper.STORY_CATEGORIES[position].thumbnail),
-					null, null);
+			holder.button.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(cd.thumbnail), null,
+					null);
 			holder.button.setOnClickListener(new StoriesCategoriesOnClickListener());
 		} else {
 			holder.button = (Button) convertView;
@@ -60,39 +62,35 @@ public class StoriesCategoriesAdapter extends BaseAdapter {
 			holder.button.setTextSize(11);
 			holder.button.setTextColor(context.getResources().getColor(R.color.sc_light_gray));
 			holder.button.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
-			holder.button.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(
-					CategoryHelper.STORY_CATEGORIES[position].thumbnail),
-			null, null);
+			holder.button.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(cd.thumbnail), null,
+					null);
 			holder.button.setOnClickListener(new StoriesCategoriesOnClickListener());
 		}
 		return holder.button;
 	}
 
-	static class ViewHolder{
+	static class ViewHolder {
 		Button button;
 	}
-	
+
 	public class StoriesCategoriesOnClickListener implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			String cat = ((Button) v).getText().toString();
-			FragmentTransaction fragmentTransaction = fragmentManager
-					.beginTransaction();
+			String cat = ((CategoryDescriptor) v.getTag()).category;
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			StoriesListingFragment fragment = new StoriesListingFragment();
 			Bundle args = new Bundle();
 			args.putString(StoriesListingFragment.ARG_CATEGORY, cat);
 			fragment.setArguments(args);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			fragmentTransaction.replace(android.R.id.content, fragment, "stories");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 		}
-		
+
 	}
-	
-		
+
 	@Override
 	public int getCount() {
 		return CategoryHelper.STORY_CATEGORIES.length;

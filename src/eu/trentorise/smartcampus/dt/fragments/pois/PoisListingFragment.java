@@ -52,6 +52,8 @@ import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
+import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
+import eu.trentorise.smartcampus.dt.custom.CategoryHelper.CategoryDescriptor;
 import eu.trentorise.smartcampus.dt.custom.PoiAdapter;
 import eu.trentorise.smartcampus.dt.custom.PoiPlaceholder;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
@@ -87,41 +89,41 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-/*		menu.clear();
-		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.map_view,
-				Menu.NONE, R.string.map_view);
-		item.setIcon(R.drawable.ic_map);
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);*/
+		/*
+		 * menu.clear(); MenuItem item = menu.add(Menu.CATEGORY_SYSTEM,
+		 * R.id.map_view, Menu.NONE, R.string.map_view);
+		 * item.setIcon(R.drawable.ic_map);
+		 * item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		 */
 		menu.clear();
 		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.gripmenu, menu);
 		SubMenu submenu = menu.getItem(0).getSubMenu();
 		submenu.clear();
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.map_view, Menu.NONE, R.string.map_view);
-		if (getArguments() == null || 
-			!getArguments().containsKey(ARG_LIST) &&
-			!getArguments().containsKey(ARG_QUERY)) 
-		{
+		if (getArguments() == null || !getArguments().containsKey(ARG_LIST) && !getArguments().containsKey(ARG_QUERY)) {
 			SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
 				@Override
 				public void onSearch(String query) {
-					FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+					FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager()
+							.beginTransaction();
 					PoisListingFragment fragment = new PoisListingFragment();
 					Bundle args = new Bundle();
 					args.putString(PoisListingFragment.ARG_QUERY, query);
 					String category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
 					args.putString(PoisListingFragment.ARG_CATEGORY_SEARCH, category);
 					fragment.setArguments(args);
-					fragmentTransaction
-							.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-					fragmentTransaction.replace(android.R.id.content, fragment,"pois");
+					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+					fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 					fragmentTransaction.addToBackStack(fragment.getTag());
 					fragmentTransaction.commit();
 				}
-			});	
+			});
 		}
-		if (category==null)
+		if (category == null)
 			category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
-		if (category != null) submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addpoi, Menu.NONE,getString(R.string.add)+" "+category+" "+getString(R.string.place));
+		if (category != null)
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addpoi, Menu.NONE, getString(R.string.add) + " " + category + " "
+					+ getString(R.string.place));
 		super.onPrepareOptionsMenu(menu);
 	}
 
@@ -147,9 +149,8 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 			Bundle args = new Bundle();
 			args.putString(ARG_CATEGORY, category);
 			fragment.setArguments(args);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		//	fragmentTransaction.detach(this);
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
@@ -164,46 +165,44 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 	public void onStart() {
 		Bundle bundle = this.getArguments();
 		String category = (bundle != null) ? bundle.getString(ARG_CATEGORY) : null;
+		CategoryDescriptor catDescriptor = CategoryHelper.getCategoryDescriptorByCategory("pois", category);
+		String categoryString = (catDescriptor != null) ? context.getResources().getString(catDescriptor.description) : null;
 
 		// set title
 		TextView title = (TextView) getView().findViewById(R.id.list_title);
-		if (category != null) {
-			title.setText(category);
+		if (categoryString != null) {
+			title.setText(categoryString);
 		} else if (bundle != null && bundle.containsKey(ARG_QUERY)) {
 			String query = bundle.getString(ARG_QUERY);
-			title.setText("Search for '"+query+"'");
+			title.setText(context.getResources().getString(R.string.search_for) + "'" + query + "'");
 
-			if (bundle.containsKey(ARG_CATEGORY_SEARCH)){
-				category =  bundle.getString(ARG_CATEGORY_SEARCH) ;
-				if (category!=null)
-					title.append(" in "+category+" category");
-				}
+			if (bundle.containsKey(ARG_CATEGORY_SEARCH)) {
+				category = bundle.getString(ARG_CATEGORY_SEARCH);
+				if (category != null)
+					title.append(" " + context.getResources().getString(R.string.search_for) + " " + categoryString);
+			}
 		}
 
-		
 		list = (ListView) getSherlockActivity().findViewById(R.id.pois_list);
-		
+
 		PoiAdapter poiAdapter = new PoiAdapter(context, R.layout.pois_row);
 		setAdapter(poiAdapter);
-		
+
 		// close items menus if open
-		((View) list.getParent())
-				.setOnClickListener(new View.OnClickListener() {
-					public void onClick(View v) {
-						hideListItemsMenu(v);
-					}
-				});
+		((View) list.getParent()).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				hideListItemsMenu(v);
+			}
+		});
 		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				hideListItemsMenu(view);
 			}
 		});
 
 		// open items menu for that entry
 		list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 				ViewSwitcher vs = (ViewSwitcher) view;
 				setupOptionsListeners(vs, position);
 				vs.showNext();
@@ -222,8 +221,8 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 			b.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					new SCAsyncTask<POIObject, Void, Boolean>(getActivity(),
-							new POIDeleteProcessor(getActivity())).execute(poi);
+					new SCAsyncTask<POIObject, Void, Boolean>(getActivity(), new POIDeleteProcessor(getActivity()))
+							.execute(poi);
 				}
 			});
 		}
@@ -233,17 +232,14 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 
 			@Override
 			public void onClick(View v) {
-				FragmentTransaction fragmentTransaction = getSherlockActivity()
-						.getSupportFragmentManager().beginTransaction();
+				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 				Fragment fragment = new CreatePoiFragment();
 				Bundle args = new Bundle();
 				args.putSerializable(CreatePoiFragment.ARG_POI, poi);
 				fragment.setArguments(args);
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				// fragmentTransaction.detach(this);
-				fragmentTransaction.replace(android.R.id.content, fragment,
-						"pois");
+				fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 				fragmentTransaction.addToBackStack(fragment.getTag());
 				fragmentTransaction.commit();
 			}
@@ -264,7 +260,7 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 			@Override
 			public void onClick(View v) {
 				TaggingDialog taggingDialog = new TaggingDialog(getActivity(), new TaggingDialog.OnTagsSelectedListener() {
-					
+
 					@SuppressWarnings("unchecked")
 					@Override
 					public void onTagsSelected(Collection<SemanticSuggestion> suggestions) {
@@ -280,9 +276,7 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 
 			@Override
 			public void onClick(View v) {
-				FollowEntityObject obj = new FollowEntityObject(poi
-						.getEntityId(), poi.getTitle(),
-						DTConstants.ENTITY_TYPE_POI);
+				FollowEntityObject obj = new FollowEntityObject(poi.getEntityId(), poi.getTitle(), DTConstants.ENTITY_TYPE_POI);
 				FollowHelper.follow(getActivity(), obj);
 			}
 		});
@@ -292,25 +286,21 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		boolean toBeHidden = false;
 		for (int index = 0; index < list.getChildCount(); index++) {
 			View view = list.getChildAt(index);
-			if (view instanceof ViewSwitcher
-					&& ((ViewSwitcher) view).getDisplayedChild() == 1) {
+			if (view instanceof ViewSwitcher && ((ViewSwitcher) view).getDisplayedChild() == 1) {
 				((ViewSwitcher) view).showPrevious();
 				toBeHidden = true;
 			}
 		}
 		if (!toBeHidden && v != null && v.getTag() != null) {
 			// no items needed to be flipped, fill and open details page
-			FragmentTransaction fragmentTransaction = getSherlockActivity()
-					.getSupportFragmentManager().beginTransaction();
+			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			PoiDetailsFragment fragment = new PoiDetailsFragment();
 
 			Bundle args = new Bundle();
-			args.putSerializable(PoiDetailsFragment.ARG_POI,
-					((PoiPlaceholder) v.getTag()).poi);
+			args.putSerializable(PoiDetailsFragment.ARG_POI, ((PoiPlaceholder) v.getTag()).poi);
 			fragment.setArguments(args);
 
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 			fragmentTransaction.addToBackStack(fragment.getTag());
@@ -327,28 +317,26 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 			} else if (bundle.containsKey(ARG_CATEGORY)) {
 				result = DTHelper.getPOIByCategory(params[0].position, params[0].size, bundle.getString(ARG_CATEGORY));
 			} else if (bundle.containsKey(ARG_QUERY)) {
-				if (bundle.containsKey(ARG_CATEGORY_SEARCH))
-				{
-					result = DTHelper.searchPOIsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),bundle.getString(ARG_CATEGORY_SEARCH));
-				}
-				else
-				result = DTHelper.searchPOIs(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
+				if (bundle.containsKey(ARG_CATEGORY_SEARCH)) {
+					result = DTHelper.searchPOIsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),
+							bundle.getString(ARG_CATEGORY_SEARCH));
+				} else
+					result = DTHelper.searchPOIs(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
 			} else if (bundle.containsKey(ARG_LIST)) {
 				result = (List<POIObject>) bundle.getSerializable(ARG_LIST);
 			} else {
 				return Collections.emptyList();
 			}
 
-			
 			List<POIObject> sorted = new ArrayList<POIObject>(result);
-//			Collections.sort(sorted, new Comparator<POIObject>() {
-//				@Override
-//				public int compare(POIObject lhs, POIObject rhs) {
-//					return lhs.getTitle().compareTo(rhs.getTitle());
-//				}
-//
-//			});
-			for (POIObject poi:sorted){
+			// Collections.sort(sorted, new Comparator<POIObject>() {
+			// @Override
+			// public int compare(POIObject lhs, POIObject rhs) {
+			// return lhs.getTitle().compareTo(rhs.getTitle());
+			// }
+			//
+			// });
+			for (POIObject poi : sorted) {
 				Log.e("lista", poi.getTitle());
 			}
 			return sorted;
@@ -366,22 +354,26 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		}
 
 		@Override
-		public List<POIObject> performAction(AbstractLstingFragment.ListingRequest... params) throws SecurityException, Exception {
+		public List<POIObject> performAction(AbstractLstingFragment.ListingRequest... params) throws SecurityException,
+				Exception {
 			return getPOIs(params);
 		}
 
 		@Override
 		public void handleResult(List<POIObject> result) {
-//			list.setAdapter(new PoiAdapter(context, R.layout.pois_row, result));
-			eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout)getView().findViewById(R.id.poilistcontainer));
+			// list.setAdapter(new PoiAdapter(context, R.layout.pois_row,
+			// result));
+			eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout) getView().findViewById(
+					R.id.poilistcontainer));
 			if (result == null || result.isEmpty()) {
-				eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout)getView().findViewById(R.id.poilistcontainer));
+				eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout) getView().findViewById(
+						R.id.poilistcontainer));
 			}
 
 		}
 
 	}
-	
+
 	@Override
 	public List<SemanticSuggestion> getTags(CharSequence text) {
 		try {
@@ -391,9 +383,8 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		}
 	}
 
-
 	private class TaggingAsyncTask extends SCAsyncTask<List<Concept>, Void, Void> {
-		
+
 		public TaggingAsyncTask(final POIObject p) {
 			super(getSherlockActivity(), new AbstractAsyncTaskProcessor<List<Concept>, Void>(getSherlockActivity()) {
 				@Override
@@ -402,16 +393,17 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 					DTHelper.savePOI(p);
 					return null;
 				}
+
 				@Override
 				public void handleResult(Void result) {
-					Toast.makeText(getSherlockActivity(), getString(R.string.tags_successfully_added), Toast.LENGTH_SHORT).show();
+					Toast.makeText(getSherlockActivity(), getString(R.string.tags_successfully_added), Toast.LENGTH_SHORT)
+							.show();
 				}
 			});
 		}
 	}
 
-	private class POIDeleteProcessor extends
-			AbstractAsyncTaskProcessor<POIObject, Boolean> {
+	private class POIDeleteProcessor extends AbstractAsyncTaskProcessor<POIObject, Boolean> {
 		private POIObject object = null;
 
 		public POIDeleteProcessor(Activity activity) {
@@ -419,8 +411,7 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		}
 
 		@Override
-		public Boolean performAction(POIObject... params)
-				throws SecurityException, Exception {
+		public Boolean performAction(POIObject... params) throws SecurityException, Exception {
 			object = params[0];
 			return DTHelper.deletePOI(params[0]);
 		}
@@ -431,11 +422,8 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 				((PoiAdapter) list.getAdapter()).remove(object);
 				((PoiAdapter) list.getAdapter()).notifyDataSetChanged();
 			} else {
-				Toast.makeText(
-						getActivity(),
-						getActivity().getString(
-								R.string.app_failure_cannot_delete),
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(getActivity(), getActivity().getString(R.string.app_failure_cannot_delete), Toast.LENGTH_LONG)
+						.show();
 			}
 		}
 
@@ -451,5 +439,4 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		return list;
 	}
 
-	
 }

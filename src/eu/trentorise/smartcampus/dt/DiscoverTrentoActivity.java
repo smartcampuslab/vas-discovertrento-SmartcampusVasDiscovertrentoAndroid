@@ -69,13 +69,15 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 
 	@Override
 	protected void onResume() {
-		if (DTHelper.getLocationHelper() != null) DTHelper.getLocationHelper().start();
+		if (DTHelper.getLocationHelper() != null)
+			DTHelper.getLocationHelper().start();
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		if (DTHelper.getLocationHelper() != null) DTHelper.getLocationHelper().stop();
+		if (DTHelper.getLocationHelper() != null)
+			DTHelper.getLocationHelper().stop();
 		super.onPause();
 	}
 
@@ -87,7 +89,7 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 				initData(token);
 			}
 		} catch (Exception e) {
-			Toast.makeText(this, "Failed to initialize DiscoverTrento application", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.app_failure_init, Toast.LENGTH_LONG).show();
 			return;
 		}
 	}
@@ -96,7 +98,7 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 		try {
 			new SCAsyncTask<Void, Void, BaseDTObject>(this, new LoadDataProcessor(this)).execute();
 		} catch (Exception e1) {
-			Toast.makeText(this, "Failed to initialize DiscoverTrento app", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.app_failure_init, Toast.LENGTH_LONG).show();
 			return false;
 		}
 		return true;
@@ -112,24 +114,25 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 
 		// Home
 		ActionBar.Tab tab = actionBar.newTab();
-		tab.setText("Home");
+		tab.setText(R.string.tab_home);
 		tab.setTabListener(new TabListener<HomeFragment>(this, "me", HomeFragment.class));
 		actionBar.addTab(tab);
 
 		// Points of interest
 		tab = actionBar.newTab();
-		tab.setText("Places");
+		tab.setText(R.string.tab_places);
 		tab.setTabListener(new TabListener<AllPoisFragment>(this, "pois", AllPoisFragment.class));
 		actionBar.addTab(tab);
+
 		// Events
 		tab = actionBar.newTab();
-		tab.setText("Events");
+		tab.setText(R.string.tab_events);
 		tab.setTabListener(new TabListener<AllEventsFragment>(this, "events", AllEventsFragment.class));
 		actionBar.addTab(tab);
 
 		// Stories
 		tab = getSupportActionBar().newTab();
-		tab.setText("Stories");
+		tab.setText(R.string.tab_stories);
 		tab.setTabListener(new TabListener<AllStoriesFragment>(this, "stories", AllStoriesFragment.class));
 		actionBar.addTab(tab);
 
@@ -151,7 +154,7 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 		if (resultCode == RESULT_OK) {
 			String token = data.getExtras().getString(AccountManager.KEY_AUTHTOKEN);
 			if (token == null) {
-				Toast.makeText(this, "Failed to retrieve authentication data", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.app_failure_security, Toast.LENGTH_LONG).show();
 				finish();
 			} else {
 				initData(token);
@@ -200,7 +203,7 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 			Long entityId = getIntent().getLongExtra(getString(R.string.view_intent_arg_entity_id), -1);
 			if (entityId > 0) {
 				if (result == null) {
-					Toast.makeText(DiscoverTrentoActivity.this, "Object not found!", Toast.LENGTH_LONG).show();
+					Toast.makeText(DiscoverTrentoActivity.this, R.string.app_failure_obj_not_found, Toast.LENGTH_LONG).show();
 					return;
 				}
 
@@ -244,7 +247,7 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 		try {
 			DTHelper.getAccessProvider().getAuthToken(this, null);
 		} catch (Exception e) {
-			Toast.makeText(this, "Failed to initialize DiscoverTrento application", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.app_failure_init, Toast.LENGTH_LONG).show();
 			return;
 		}
 

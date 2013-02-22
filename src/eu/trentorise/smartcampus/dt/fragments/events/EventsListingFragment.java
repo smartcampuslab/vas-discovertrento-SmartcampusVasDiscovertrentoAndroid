@@ -53,6 +53,8 @@ import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
+import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
+import eu.trentorise.smartcampus.dt.custom.CategoryHelper.CategoryDescriptor;
 import eu.trentorise.smartcampus.dt.custom.EventAdapter;
 import eu.trentorise.smartcampus.dt.custom.EventPlaceholder;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
@@ -77,9 +79,10 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 	public static final String ARG_MY = "event_my";
 	public static final String ARG_CATEGORY_SEARCH = "category_search";
 	public static final String ARG_LIST = "event_list";
-	
+
 	private String category;
-	private  EventAdapter eventsAdapter;
+	private EventAdapter eventsAdapter;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -88,50 +91,49 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.eventslist, container, false);
 	}
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-/*		menu.clear();
-		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.map_view,
-				Menu.NONE, R.string.map_view);
-		item.setIcon(R.drawable.ic_map);
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);*/
+		/*
+		 * menu.clear(); MenuItem item = menu.add(Menu.CATEGORY_SYSTEM,
+		 * R.id.map_view, Menu.NONE, R.string.map_view);
+		 * item.setIcon(R.drawable.ic_map);
+		 * item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		 */
 		menu.clear();
 		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.gripmenu, menu);
 
 		SubMenu submenu = menu.getItem(0).getSubMenu();
 		submenu.clear();
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.map_view, Menu.NONE, R.string.map_view);
-		if (getArguments() == null || !getArguments().containsKey(ARG_POI) &&
-			!getArguments().containsKey(ARG_LIST) &&
-			!getArguments().containsKey(ARG_QUERY_TODAY) &&
-			!getArguments().containsKey(ARG_QUERY)) {
+		if (getArguments() == null || !getArguments().containsKey(ARG_POI) && !getArguments().containsKey(ARG_LIST)
+				&& !getArguments().containsKey(ARG_QUERY_TODAY) && !getArguments().containsKey(ARG_QUERY)) {
 			SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
 				@Override
 				public void onSearch(String query) {
-					FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+					FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager()
+							.beginTransaction();
 					EventsListingFragment fragment = new EventsListingFragment();
 					Bundle args = new Bundle();
 					args.putString(EventsListingFragment.ARG_QUERY, query);
 					String category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
 					args.putString(EventsListingFragment.ARG_CATEGORY_SEARCH, category);
 					fragment.setArguments(args);
-					fragmentTransaction
-							.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-					fragmentTransaction.replace(android.R.id.content, fragment,"events");
+					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+					fragmentTransaction.replace(android.R.id.content, fragment, "events");
 					fragmentTransaction.addToBackStack(fragment.getTag());
 					fragmentTransaction.commit();
 				}
 			});
 		}
-		if (category==null)
+		if (category == null)
 			category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
-		if (category!=null)
-			submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addevent, Menu.NONE,getString(R.string.add)+" "+category+" "+getString(R.string.event));
+		if (category != null)
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addevent, Menu.NONE, getString(R.string.add) + " " + category
+					+ " " + getString(R.string.event));
 		super.onPrepareOptionsMenu(menu);
 	}
 
@@ -142,10 +144,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 			ArrayList<BaseDTObject> target = new ArrayList<BaseDTObject>();
 			if (list != null) {
 				for (int i = 0; i < list.getAdapter().getCount(); i++) {
-					BaseDTObject o = (BaseDTObject) list.getAdapter()
-							.getItem(i);
-					if (o.getLocation() != null && o.getLocation()[0] != 0
-							&& o.getLocation()[1] != 0) {
+					BaseDTObject o = (BaseDTObject) list.getAdapter().getItem(i);
+					if (o.getLocation() != null && o.getLocation()[0] != 0 && o.getLocation()[1] != 0) {
 						target.add(o);
 					}
 				}
@@ -158,9 +158,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 			Bundle args = new Bundle();
 			args.putString(ARG_CATEGORY, category);
 			fragment.setArguments(args);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		//	fragmentTransaction.detach(this);
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
@@ -175,8 +174,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		Bundle bundle = this.getArguments();
 
 		list = (ListView) getSherlockActivity().findViewById(R.id.events_list);
-//		new SCAsyncTask<Bundle, Void, EventObject[]>(getActivity(),
-//				new EventLoader(getActivity())).execute(bundle);
+		// new SCAsyncTask<Bundle, Void, EventObject[]>(getActivity(),
+		// new EventLoader(getActivity())).execute(bundle);
 
 		eventsAdapter = new EventAdapter(context, R.layout.events_row);
 		setAdapter(eventsAdapter);
@@ -184,45 +183,43 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		// set title
 		TextView title = (TextView) getView().findViewById(R.id.list_title);
 		String category = bundle.getString(ARG_CATEGORY);
+		CategoryDescriptor catDescriptor = CategoryHelper.getCategoryDescriptorByCategory("events", category);
+		String categoryString = (catDescriptor != null) ? context.getResources().getString(catDescriptor.description) : null;
 
 		if (bundle != null && bundle.containsKey(ARG_CATEGORY)) {
-			title.setText(category);
+			title.setText(categoryString);
 		} else if (bundle != null && bundle.containsKey(ARG_MY)) {
 			title.setText(R.string.myevents);
 		} else if (bundle != null && bundle.containsKey(ARG_POI_NAME)) {
 			String poiName = bundle.getString(ARG_POI_NAME);
-			title.setText("Events at "+poiName);
+			title.setText("Events at " + poiName);
 		} else if (bundle != null && bundle.containsKey(ARG_QUERY)) {
 			String query = bundle.getString(ARG_QUERY);
-			title.setText("Search for '"+query+"'");
-			if (bundle.containsKey(ARG_CATEGORY_SEARCH)){
-				category =  bundle.getString(ARG_CATEGORY_SEARCH) ;
-				if (category!=null)
-					title.append(" in "+category+" category");
-				}
+			title.setText(context.getResources().getString(R.string.search_for) + " '" + query + "'");
+			if (bundle.containsKey(ARG_CATEGORY_SEARCH)) {
+				category = bundle.getString(ARG_CATEGORY_SEARCH);
+				if (category != null)
+					title.append(context.getResources().getString(R.string.search_in_category) + " " + category);
+			}
 		} else if (bundle != null && bundle.containsKey(ARG_QUERY_TODAY)) {
-			title.setText("Search today's events ");
-			
+			title.setText(context.getResources().getString(R.string.search_today_events));
 		}
 
 		// close items menus if open
-		((View) list.getParent())
-				.setOnClickListener(new View.OnClickListener() {
-					public void onClick(View v) {
-						hideListItemsMenu(v);
-					}
-				});
+		((View) list.getParent()).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				hideListItemsMenu(v);
+			}
+		});
 		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				hideListItemsMenu(view);
 			}
 		});
 
 		// open items menu for that entry
 		list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 				ViewSwitcher vs = (ViewSwitcher) view.findViewById(R.id.event_viewswitecher);
 				setupOptionsListeners(vs, position);
 				vs.showNext();
@@ -238,45 +235,38 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		boolean toBeHidden = false;
 		for (int index = 0; index < list.getChildCount(); index++) {
 			View view = list.getChildAt(index);
-			if (view instanceof ViewSwitcher
-					&& ((ViewSwitcher) view).getDisplayedChild() == 1) {
+			if (view instanceof ViewSwitcher && ((ViewSwitcher) view).getDisplayedChild() == 1) {
 				((ViewSwitcher) view).showPrevious();
 				toBeHidden = true;
 			}
 		}
 		if (!toBeHidden && v != null && v.getTag() != null) {
 			// no items needed to be flipped, fill and open details page
-			FragmentTransaction fragmentTransaction = getSherlockActivity()
-					.getSupportFragmentManager().beginTransaction();
+			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			EventDetailsFragment fragment = new EventDetailsFragment();
 
 			Bundle args = new Bundle();
-			args.putSerializable(EventDetailsFragment.ARG_EVENT_OBJECT,
-					((EventPlaceholder) v.getTag()).event);
+			args.putSerializable(EventDetailsFragment.ARG_EVENT_OBJECT, ((EventPlaceholder) v.getTag()).event);
 			fragment.setArguments(args);
 
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
-			fragmentTransaction.replace(android.R.id.content, fragment,
-					"events");
+			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 
 		}
 	}
 
-	protected void setupOptionsListeners(final ViewSwitcher vs,
-			final int position) {
-		final EventObject event = ((EventPlaceholder)((View) vs.getParent()).getTag()).event;
+	protected void setupOptionsListeners(final ViewSwitcher vs, final int position) {
+		final EventObject event = ((EventPlaceholder) ((View) vs.getParent()).getTag()).event;
 		ImageButton b = (ImageButton) vs.findViewById(R.id.delete_btn);
 		if (event.createdByUser()) {
 			b.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					new SCAsyncTask<EventObject, Void, Boolean>(getActivity(),
-							new EventDeleteProcessor(getActivity()))
+					new SCAsyncTask<EventObject, Void, Boolean>(getActivity(), new EventDeleteProcessor(getActivity()))
 							.execute(event);
 					hideListItemsMenu(vs);
 				}
@@ -287,17 +277,14 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 
 			@Override
 			public void onClick(View v) {
-				FragmentTransaction fragmentTransaction = getSherlockActivity()
-						.getSupportFragmentManager().beginTransaction();
+				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 				Fragment fragment = new CreateEventFragment();
 				Bundle args = new Bundle();
 				args.putSerializable(CreateEventFragment.ARG_EVENT, event);
 				fragment.setArguments(args);
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				// fragmentTransaction.detach(this);
-				fragmentTransaction.replace(android.R.id.content, fragment,
-						"events");
+				fragmentTransaction.replace(android.R.id.content, fragment, "events");
 				fragmentTransaction.addToBackStack(fragment.getTag());
 				fragmentTransaction.commit();
 			}
@@ -318,7 +305,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 			@Override
 			public void onClick(View v) {
 				TaggingDialog taggingDialog = new TaggingDialog(getActivity(), new TaggingDialog.OnTagsSelectedListener() {
-					
+
 					@SuppressWarnings("unchecked")
 					@Override
 					public void onTagsSelected(Collection<SemanticSuggestion> suggestions) {
@@ -333,8 +320,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 
 			@Override
 			public void onClick(View v) {
-				FollowEntityObject obj = new FollowEntityObject(event
-						.getEntityId(), event.getTitle(),
+				FollowEntityObject obj = new FollowEntityObject(event.getEntityId(), event.getTitle(),
 						DTConstants.ENTITY_TYPE_EVENT);
 				FollowHelper.follow(getActivity(), obj);
 			}
@@ -354,19 +340,18 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 			} else if (bundle.containsKey(ARG_MY)) {
 				result = DTHelper.getMyEvents(params[0].position, params[0].size);
 			} else if (bundle.containsKey(ARG_QUERY)) {
-				if (bundle.containsKey(ARG_CATEGORY_SEARCH))
-				{
+				if (bundle.containsKey(ARG_CATEGORY_SEARCH)) {
 					HashSet<String> set = new HashSet<String>(1);
 					set.add(bundle.getString(ARG_CATEGORY_SEARCH));
-					result = DTHelper.searchEventsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),bundle.getString(ARG_CATEGORY_SEARCH));
-				}
-				else
+					result = DTHelper.searchEventsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),
+							bundle.getString(ARG_CATEGORY_SEARCH));
+				} else
 					result = DTHelper.searchEvents(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
-			}  else if (bundle.containsKey(ARG_QUERY_TODAY)) {
+			} else if (bundle.containsKey(ARG_QUERY_TODAY)) {
 				result = DTHelper.searchTodayEvents(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
-			}  else if (bundle.containsKey(ARG_LIST)) {
-				result = (List<EventObject>)bundle.get(ARG_LIST);
-			}else {
+			} else if (bundle.containsKey(ARG_LIST)) {
+				result = (List<EventObject>) bundle.get(ARG_LIST);
+			} else {
 				return Collections.emptyList();
 			}
 
@@ -376,13 +361,13 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 					eventObject.assignPoi(DTHelper.findPOIById(eventObject.getPoiId()));
 				}
 			}
-//			Collections.sort(sorted, new Comparator<EventObject>() {
-//				@Override
-//				public int compare(EventObject lhs, EventObject rhs) {
-//					return lhs.getFromTime().compareTo(rhs.getFromTime());
-//				}
-//
-//			});
+			// Collections.sort(sorted, new Comparator<EventObject>() {
+			// @Override
+			// public int compare(EventObject lhs, EventObject rhs) {
+			// return lhs.getFromTime().compareTo(rhs.getFromTime());
+			// }
+			//
+			// });
 
 			return sorted;
 		} catch (Exception e) {
@@ -401,9 +386,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		}
 	}
 
-
 	private class TaggingAsyncTask extends SCAsyncTask<List<Concept>, Void, Void> {
-		
+
 		public TaggingAsyncTask(final EventObject p) {
 			super(getSherlockActivity(), new AbstractAsyncTaskProcessor<List<Concept>, Void>(getSherlockActivity()) {
 				@Override
@@ -412,16 +396,17 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 					DTHelper.saveEvent(p);
 					return null;
 				}
+
 				@Override
 				public void handleResult(Void result) {
-					Toast.makeText(getSherlockActivity(), getString(R.string.tags_successfully_added), Toast.LENGTH_SHORT).show();
+					Toast.makeText(getSherlockActivity(), getString(R.string.tags_successfully_added), Toast.LENGTH_SHORT)
+							.show();
 				}
 			});
 		}
 	}
 
-	private class EventLoader extends
-			AbstractAsyncTaskProcessor<AbstractLstingFragment.ListingRequest, List<EventObject>> {
+	private class EventLoader extends AbstractAsyncTaskProcessor<AbstractLstingFragment.ListingRequest, List<EventObject>> {
 
 		public EventLoader(Activity activity) {
 			super(activity);
@@ -429,30 +414,34 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 
 		// fetches the events
 		@Override
-		public List<EventObject> performAction(AbstractLstingFragment.ListingRequest... params)
-				throws SecurityException, Exception {
+		public List<EventObject> performAction(AbstractLstingFragment.ListingRequest... params) throws SecurityException,
+				Exception {
 			return getEvents(params);
 		}
 
 		// populates the listview with the events
 		@Override
 		public void handleResult(List<EventObject> result) {
-//			Bundle bundle = getArguments();
-//			if (bundle != null && bundle.containsKey(ARG_CATEGORY) && (result == null || result.size() == 0) && getListView().getCount() == 0) {
-//				Toast.makeText(getActivity(), getString(R.string.noevents),
-//						Toast.LENGTH_LONG).show();
-//			}	
-//			} else
-//				list.setAdapter(new EventAdapter(context, R.layout.events_row, result));
-			eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout)getView().findViewById(R.id.eventlistcontainer));
+			// Bundle bundle = getArguments();
+			// if (bundle != null && bundle.containsKey(ARG_CATEGORY) && (result
+			// == null || result.size() == 0) && getListView().getCount() == 0)
+			// {
+			// Toast.makeText(getActivity(), getString(R.string.noevents),
+			// Toast.LENGTH_LONG).show();
+			// }
+			// } else
+			// list.setAdapter(new EventAdapter(context, R.layout.events_row,
+			// result));
+			eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout) getView().findViewById(
+					R.id.eventlistcontainer));
 			if (result == null || result.isEmpty()) {
-				eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout)getView().findViewById(R.id.eventlistcontainer));
+				eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout) getView().findViewById(
+						R.id.eventlistcontainer));
 			}
 		}
 	}
 
-	private class EventDeleteProcessor extends
-			AbstractAsyncTaskProcessor<EventObject, Boolean> {
+	private class EventDeleteProcessor extends AbstractAsyncTaskProcessor<EventObject, Boolean> {
 		private EventObject object = null;
 
 		public EventDeleteProcessor(Activity activity) {
@@ -460,8 +449,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		}
 
 		@Override
-		public Boolean performAction(EventObject... params)
-				throws SecurityException, Exception {
+		public Boolean performAction(EventObject... params) throws SecurityException, Exception {
 			object = params[0];
 			return DTHelper.deleteEvent(params[0]);
 		}
@@ -472,16 +460,13 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 				((EventAdapter) list.getAdapter()).remove(object);
 				((EventAdapter) list.getAdapter()).notifyDataSetChanged();
 			} else {
-				Toast.makeText(
-						getActivity(),
-						getActivity().getString(
-								R.string.app_failure_cannot_delete),
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(getActivity(), getActivity().getString(R.string.app_failure_cannot_delete), Toast.LENGTH_LONG)
+						.show();
 			}
 		}
 
 	}
-	
+
 	@Override
 	protected SCAsyncTaskProcessor<AbstractLstingFragment.ListingRequest, List<EventObject>> getLoader() {
 		return new EventLoader(getActivity());

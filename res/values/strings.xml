@@ -77,10 +77,12 @@
     <string name="attendees">Attendees</string>
     <string name="attendees_num">0</string>
     <string name="source_smartcampus">SmartCampus</string>
+    <string name="app_failure_init">Failed to initialize ViviTrento application</string>
     <string name="app_failure_security">Failed to retrieve authentication data</string>
     <string name="app_failure_setup">Failed to initialize appplication</string>
     <string name="app_failure_operation">OOPS! An error occurred. Please check your connection or try again later</string>
     <string name="app_failure_cannot_delete">Object cannot be deleted.</string>
+    <string name="app_failure_obj_not_found">Object not found!</string>
     <string name="ratingtext">Community rating:</string>
     <string name="attendees_extended"> people are attending this event.</string>
     <string name="attendees_story_extended"> people are attending this story.</string>
@@ -107,7 +109,8 @@
     <string name="attend_success">You will attend this event!</string>
     <string name="not_attend_success">You will not attend this event!</string>
 
-    <string name="attend_story_success">Story is added to my stories!</string><string name="not_attend_story_success">Story is removed from my stories!</string>
+    <string name="attend_story_success">Story is added to my stories!</string>
+    <string name="not_attend_story_success">Story is removed from my stories!</string>
     <string name="event_create_success">Event successfully created!</string>
     <string name="story_create_success">Story successfully created!</string>
     <string name="poi_create_success">Place successfully created!</string>
@@ -127,12 +130,50 @@
 
     <string name="msg_field_required"> is required.</string>
     
-    <string name="sure_change">Overwrite the previous data?</string><string name="add">Add</string>
+    <string name="sure_change">Overwrite the previous data?</string>
+    <string name="add">Add</string>
     <string name="event">event</string>
     <string name="story">story</string>
     <string name="place">place</string>
 	<string name="list_event_today">Today</string> 
 	<string name="list_event_tomorrow">Tomorrow</string>    
-	<string name="menu_item_todayevent_text">Today\'s Events</string> 
+	<string name="menu_item_todayevent_text">Today\'s Events</string>
+	
+	<string name="tab_home">Home</string>
+	<string name="tab_places">Places</string>
+	<string name="tab_events">Events</string>
+	<string name="tab_stories">Stories</string>
+	
+	<string name="categories_event_concert">Concerts</string>
+	<string name="categories_event_happyhour">Happy hours</string>
+	<string name="categories_event_movie">Movies</string>
+	<string name="categories_event_party">Parties</string>
+	<string name="categories_event_seminar">Seminars</string>
+	<string name="categories_event_theater">Theaters</string>
+	<string name="categories_event_exhibition">Exhibitions</string>
+	<string name="categories_event_generic">Other event</string>
+	
+	<string name="categories_poi_museum">Museums</string>
+	<string name="categories_poi_mobility">Mobility</string>
+	<string name="categories_poi_parking">Parkings</string>
+	<string name="categories_poi_office">Offices</string>
+	<string name="categories_poi_theater">Theaters</string>
+	<string name="categories_poi_university">University</string>
+	<string name="categories_poi_accommodation">Accommodation</string>
+	<string name="categories_poi_library">Libraries</string>
+	<string name="categories_poi_food">Food</string>
+	<string name="categories_poi_drink">Drink</string>
+	<string name="categories_poi_cinema">Cinemas</string>
+	<string name="categories_poi_generic">Other place</string>
+	
+	<string name="categories_story_leisure">Leisure</string>
+	<string name="categories_story_offices_and_services">Offices and Services</string>
+	<string name="categories_story_university">University</string>
+	<string name="categories_story_culture">Culture</string>
+	<string name="categories_story_generic">Other story</string>
+	
+	<string name="search_for">Search for</string>
+	<string name="search_in_category">in category</string>
+	<string name="search_today_events">Search today\'s events</string>
     
 </resources>
