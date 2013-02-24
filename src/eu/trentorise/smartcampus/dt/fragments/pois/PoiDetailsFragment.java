@@ -260,7 +260,8 @@ public class PoiDetailsFragment extends SherlockFragment {
 		submenu.add(Menu.NONE, R.id.see_on_map, Menu.NONE, R.string.onmap);
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.edit_btn, Menu.NONE,
 				R.string.edit);
-		if (getPOI().createdByUser()) {
+		// CAN DELETE ONLY OWN OBJECTS
+		if (DTHelper.isOwnedObject(getPOI())) {
 			submenu.add(Menu.CATEGORY_SYSTEM, R.id.delete_btn, Menu.NONE,
 					R.string.delete);
 		}

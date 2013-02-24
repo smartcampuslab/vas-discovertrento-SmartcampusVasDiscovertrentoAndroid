@@ -318,7 +318,8 @@ public class EventDetailsFragment extends SherlockFragment {
 		}
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.edit_btn, Menu.NONE,
 				R.string.edit);
-		if (getEvent().createdByUser()) {
+		// CAN DELETE ONLY OWN OBJECTS
+		if (DTHelper.isOwnedObject(getEvent())) {
 			submenu.add(Menu.CATEGORY_SYSTEM, R.id.delete_btn, Menu.NONE,
 					R.string.delete);
 		}

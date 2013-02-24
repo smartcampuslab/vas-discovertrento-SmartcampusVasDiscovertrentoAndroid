@@ -58,6 +58,7 @@ import eu.trentorise.smartcampus.dt.custom.CategoryHelper.CategoryDescriptor;
 import eu.trentorise.smartcampus.dt.custom.EventAdapter;
 import eu.trentorise.smartcampus.dt.custom.EventPlaceholder;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
+import eu.trentorise.smartcampus.dt.custom.StoryAdapter;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.custom.map.MapManager;
 import eu.trentorise.smartcampus.dt.model.BaseDTObject;
@@ -192,7 +193,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 			title.setText(R.string.myevents);
 		} else if (bundle != null && bundle.containsKey(ARG_POI_NAME)) {
 			String poiName = bundle.getString(ARG_POI_NAME);
-			title.setText("Events at " + poiName);
+			title.setText(getResources().getString(R.string.eventlist_at_place)+ " " + poiName);
 		} else if (bundle != null && bundle.containsKey(ARG_QUERY)) {
 			String query = bundle.getString(ARG_QUERY);
 			title.setText(context.getResources().getString(R.string.search_for) + " '" + query + "'");
@@ -235,6 +236,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		boolean toBeHidden = false;
 		for (int index = 0; index < list.getChildCount(); index++) {
 			View view = list.getChildAt(index);
+			if (view != null && view instanceof LinearLayout && ((LinearLayout)view).getChildCount()==2)
+				view = ((LinearLayout)view).getChildAt(1);
 			if (view instanceof ViewSwitcher && ((ViewSwitcher) view).getDisplayedChild() == 1) {
 				((ViewSwitcher) view).showPrevious();
 				toBeHidden = true;
@@ -261,7 +264,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 	protected void setupOptionsListeners(final ViewSwitcher vs, final int position) {
 		final EventObject event = ((EventPlaceholder) ((View) vs.getParent()).getTag()).event;
 		ImageButton b = (ImageButton) vs.findViewById(R.id.delete_btn);
-		if (event.createdByUser()) {
+		if (DTHelper.isOwnedObject(event)) {
+			b.setVisibility(View.VISIBLE);
 			b.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -271,6 +275,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 					hideListItemsMenu(vs);
 				}
 			});
+		} else {
+			b.setVisibility(View.GONE);
 		}
 		b = (ImageButton) vs.findViewById(R.id.edit_btn);
 		b.setOnClickListener(new OnClickListener() {
@@ -422,22 +428,14 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		// populates the listview with the events
 		@Override
 		public void handleResult(List<EventObject> result) {
-			// Bundle bundle = getArguments();
-			// if (bundle != null && bundle.containsKey(ARG_CATEGORY) && (result
-			// == null || result.size() == 0) && getListView().getCount() == 0)
-			// {
-			// Toast.makeText(getActivity(), getString(R.string.noevents),
-			// Toast.LENGTH_LONG).show();
-			// }
-			// } else
-			// list.setAdapter(new EventAdapter(context, R.layout.events_row,
-			// result));
-			eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout) getView().findViewById(
-					R.id.eventlistcontainer));
-			if (result == null || result.isEmpty()) {
-				eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout) getView().findViewById(
-						R.id.eventlistcontainer));
-			}
+//			Bundle bundle = getArguments();
+//			if (bundle != null && bundle.containsKey(ARG_CATEGORY) && (result == null || result.size() == 0) && getListView().getCount() == 0) {
+//				Toast.makeText(getActivity(), getString(R.string.noevents),
+//						Toast.LENGTH_LONG).show();
+//			}	
+//			} else
+//				list.setAdapter(new EventAdapter(context, R.layout.events_row, result));
+			updateList(result == null || result.isEmpty());
 		}
 	}
 
@@ -459,6 +457,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 			if (result) {
 				((EventAdapter) list.getAdapter()).remove(object);
 				((EventAdapter) list.getAdapter()).notifyDataSetChanged();
+				updateList(((EventAdapter) list.getAdapter()).isEmpty());
 			} else {
 				Toast.makeText(getActivity(), getActivity().getString(R.string.app_failure_cannot_delete), Toast.LENGTH_LONG)
 						.show();
@@ -475,6 +474,14 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 	@Override
 	protected ListView getListView() {
 		return list;
+	}
+
+	private void updateList(boolean empty) {
+		eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout)getView().findViewById(R.id.eventlistcontainer));
+		if (empty) {
+			eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout)getView().findViewById(R.id.eventlistcontainer));
+		}
+		hideListItemsMenu(null);
 	}
 
 }

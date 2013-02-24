@@ -178,9 +178,7 @@ public class StoryDetailsFragment extends SherlockFragment implements
 					buttonStep.setVisibility(View.VISIBLE);
 					buttonSart.setVisibility(View.GONE);
 					detailStory.setVisibility(View.GONE);
-					mItemizedoverlay.changeElementsonMap(actualStepPosition,
-							story);
-
+					mItemizedoverlay.changeElementsonMap(actualStepPosition, story);
 				}
 			});
 
@@ -193,9 +191,7 @@ public class StoryDetailsFragment extends SherlockFragment implements
 				public void onClick(View v) {
 					mItemizedoverlay.fithMaptOnTheStory();
 					changeStep(actualStepPosition - 1);
-					mItemizedoverlay.changeElementsonMap(actualStepPosition,
-							story);
-
+					mItemizedoverlay.changeElementsonMap(actualStepPosition, story);
 				}
 			});
 
@@ -208,8 +204,7 @@ public class StoryDetailsFragment extends SherlockFragment implements
 				public void onClick(View v) {
 					mItemizedoverlay.fithMaptOnTheStory();
 					changeStep(actualStepPosition + 1);
-					mItemizedoverlay.changeElementsonMap(actualStepPosition,
-							story);
+					mItemizedoverlay.changeElementsonMap(actualStepPosition, story);
 
 				}
 			});
@@ -256,6 +251,11 @@ public class StoryDetailsFragment extends SherlockFragment implements
 		// start button
 		LinearLayout startStory = (LinearLayout) this.getView().findViewById(
 				R.id.start_buttons);
+
+		if (getStory().getSteps() == null || getStory().getSteps().size() == 0) {
+			startStory.setVisibility(View.GONE);
+		} else 
+
 		// show the details of the story
 		if (actualStepPosition == -1) {
 			detailStory.setVisibility(View.VISIBLE);
@@ -288,11 +288,12 @@ public class StoryDetailsFragment extends SherlockFragment implements
 				// notes of the step
 				TextView noteOfStepText = (TextView) this.getView()
 						.findViewById(R.id.step_details_note);
-				if (story.getSteps().get(actualStepPosition).assignedPoi() != null)
-					noteOfStepText.setText(story.getSteps()
-							.get(actualStepPosition).getNote());
-				else
-					noteOfStepText.setText(" ");
+//				if (story.getSteps().get(actualStepPosition).assignedPoi() != null)
+//					noteOfStepText.setText(story.getSteps()
+//							.get(actualStepPosition).getNote());
+//				else
+//					noteOfStepText.setText(" ");
+				noteOfStepText.setText(story.getSteps().get(actualStepPosition).getNote());
 				Button nextStep = (Button) this.getView().findViewById(
 						R.id.btn_story_next);
 
@@ -339,7 +340,7 @@ public class StoryDetailsFragment extends SherlockFragment implements
 		SubMenu submenu = menu.getItem(0).getSubMenu();
 		submenu.clear();
 
-		if (actualStepPosition == -1) {
+		if (actualStepPosition == -1 || getStory().getSteps() == null || getStory().getSteps().size() == 0) {
 			//story visualization
 			submenu.add(Menu.CATEGORY_SYSTEM, R.id.rate, Menu.NONE,
 					R.string.rate);
@@ -354,7 +355,8 @@ public class StoryDetailsFragment extends SherlockFragment implements
 					R.string.follow);
 			submenu.add(Menu.CATEGORY_SYSTEM, R.id.edit_btn, Menu.NONE,
 					R.string.edit);
-			if (getStory().createdByUser()) {
+			// CAN DELETE ONLY OWN STORY
+			if (DTHelper.isOwnedObject(getStory())) {
 				submenu.add(Menu.CATEGORY_SYSTEM, R.id.delete_btn, Menu.NONE,
 						R.string.delete);
 			}
@@ -365,19 +367,19 @@ public class StoryDetailsFragment extends SherlockFragment implements
 						Menu.NONE, R.string.related_poi);
 				submenu.add(Menu.CATEGORY_SYSTEM, R.id.direction_step_btn,
 						Menu.NONE, R.string.getdir);
-				if (getStory().getSteps().get(actualStepPosition).assignedPoi()
-						.createdByUser()) {
-					submenu.add(Menu.CATEGORY_SYSTEM, R.id.delete_step_btn,
-							Menu.NONE, R.string.delete);
-				}
 
 			}
-			submenu.add(Menu.CATEGORY_SYSTEM, R.id.edit_step_btn, Menu.NONE,
-					R.string.edit);
+			// CAN EDIT AND DELETE STEPS ONLY IN OWN STORIES
+			if (DTHelper.isOwnedObject(getStory())) {
+				// TODO implement the step cancellation!!!!
+//				submenu.add(Menu.CATEGORY_SYSTEM, R.id.delete_step_btn,
+//						Menu.NONE, R.string.delete);
+				submenu.add(Menu.CATEGORY_SYSTEM, R.id.edit_step_btn, Menu.NONE,
+						R.string.edit);
+			}
 
 		}
 		super.onPrepareOptionsMenu(menu);
-
 	}
 
 	

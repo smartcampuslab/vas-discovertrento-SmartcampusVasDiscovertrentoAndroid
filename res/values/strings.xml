@@ -179,4 +179,6 @@
 	<string name="toast_is_required">is required.</string>
 	<string name="toast_incorrect">Incorrect</string>
     
+	<string name="eventlist_at_place">Events at</string>
+	
 </resources>

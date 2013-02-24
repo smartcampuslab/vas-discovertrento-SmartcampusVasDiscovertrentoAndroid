@@ -15,9 +15,6 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.dt.custom;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -37,15 +34,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.dt.R;
-import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment;
 import eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.StepHandler;
-import eu.trentorise.smartcampus.dt.model.BaseDTObject;
 import eu.trentorise.smartcampus.dt.model.POIObject;
 import eu.trentorise.smartcampus.dt.model.StepObject;
 import eu.trentorise.smartcampus.dt.model.StoryObject;
-import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 /*
  * The adapter composed by number, name and button for deleting
@@ -90,95 +84,85 @@ public class StepAdapter extends ArrayAdapter<StepObject> {
 		s.step = getItem(position);
 		if (s.title == null)
 			s.title = (TextView) row.findViewById(R.id.step_placeholder_title);
-		if (s.step.assignedPoi() != null)
-			s.title.setText((position + 1) + " - "
-					+ s.step.assignedPoi().getTitle());
-		else
-			new SCAsyncTask<Void, Void, Collection<? extends BaseDTObject>>(
-					activity, new StoryLoadProcessor(activity) {
-						@Override
-						protected Collection<? extends BaseDTObject> getObjects() {
-							try {
-								ArrayList<POIObject> poiList = new ArrayList<POIObject>();
-								poiList = DTHelper.getPOIBySteps(storyObject
-										.getSteps());
-								for (int i = 0; i < poiList.size(); i++) {
-									storyObject.getSteps().get(i)
-											.assignPoi(poiList.get(i));
-								}
-								return poiList;
-							} catch (Exception e) {
-								e.printStackTrace();
-								return Collections.emptyList();
-							}
-						}
-					}).execute();
-		s.title.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// edit the step
-				FragmentTransaction fragmentTransaction = fragmentManager
-						.beginTransaction();
-				AddStepToStoryFragment fragment = new AddStepToStoryFragment();
-				Bundle args = new Bundle();
-				args.putParcelable(AddStepToStoryFragment.ARG_STEP_HANDLER,
-						stepHandler);
-				args.putSerializable(AddStepToStoryFragment.ARG_STORY_OBJECT,
-						storyObject);
-				args.putInt(AddStepToStoryFragment.ARG_STEP_POSITION, position);
-				fragment.setArguments(args);
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				fragmentTransaction.replace(android.R.id.content, fragment,
-						"stories");
-				fragmentTransaction.addToBackStack(fragment.getTag());
-				fragmentTransaction.commit();
-
+		if (s.step.assignedPoi() == null) {
+			StepObject step = storyObject.getSteps().get(position);
+			if (step != null) {
+				POIObject poi = DTHelper.findPOIById(step.getPoiId());
+				if (poi != null) {
+					step.assignPoi(poi);
+				}
 			}
-		});
-
+		}
+		if (s.step.assignedPoi() != null) {
+			s.title.setText((position + 1) + " - " + s.step.assignedPoi().getTitle());
+		}
 		if (s.delete == null)
 			s.delete = (ImageButton) row
 					.findViewById(R.id.step_placeholder_delete);
-		s.delete.setOnClickListener(new OnClickListener() {
+		if (DTHelper.isOwnedObject(storyObject)) {
+			s.title.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// create a dialog alarm that ask if you are sure
-				AlertDialog.Builder builder = new AlertDialog.Builder(context);
-				// Add the buttons
-				builder.setMessage(context.getString(R.string.sure_delete_step));
-				builder.setPositiveButton(R.string.ok,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								// User clicked OK button
-								data.remove(position);
-								StepAdapter.this.notifyDataSetChanged();
-							}
-						});
-				builder.setNegativeButton(R.string.cancel,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								// User cancelled the dialog
-								dialog.dismiss();
-							}
-						});
+				@Override
+				public void onClick(View v) {
+					// edit the step
+					FragmentTransaction fragmentTransaction = fragmentManager
+							.beginTransaction();
+					AddStepToStoryFragment fragment = new AddStepToStoryFragment();
+					Bundle args = new Bundle();
+					args.putParcelable(AddStepToStoryFragment.ARG_STEP_HANDLER,
+							stepHandler);
+					args.putSerializable(AddStepToStoryFragment.ARG_STORY_OBJECT,
+							storyObject);
+					args.putInt(AddStepToStoryFragment.ARG_STEP_POSITION, position);
+					fragment.setArguments(args);
+					fragmentTransaction
+							.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+					fragmentTransaction.replace(android.R.id.content, fragment,
+							"stories");
+					fragmentTransaction.addToBackStack(fragment.getTag());
+					fragmentTransaction.commit();
 
-				// Create the AlertDialog
-				AlertDialog dialog = builder.create();
-				// remove the element from the array
-				dialog.show();
+				}
+			});
+			s.delete.setOnClickListener(new OnClickListener() {
 
-			}
-		});
+				@Override
+				public void onClick(View v) {
+					// create a dialog alarm that ask if you are sure
+					AlertDialog.Builder builder = new AlertDialog.Builder(context);
+					// Add the buttons
+					builder.setMessage(context.getString(R.string.sure_delete_step));
+					builder.setPositiveButton(R.string.ok,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int id) {
+									// User clicked OK button
+									data.remove(position);
+									StepAdapter.this.notifyDataSetChanged();
+								}
+							});
+					builder.setNegativeButton(R.string.cancel,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int id) {
+									// User cancelled the dialog
+									dialog.dismiss();
+								}
+							});
+
+					// Create the AlertDialog
+					AlertDialog dialog = builder.create();
+					// remove the element from the array
+					dialog.show();
+
+				}
+			});
+		} else {
+			s.delete.setVisibility(View.GONE);
+		}
 
 		return row;
 	}
 
 	private class AddStep implements StepHandler, Parcelable {
-
-		private static final long serialVersionUID = 16774297617446649L;
 
 		@Override
 		public void addStep(StepObject step) {
@@ -206,33 +190,6 @@ public class StepAdapter extends ArrayAdapter<StepObject> {
 			fragmentManager.popBackStack();
 
 		}
-
-	}
-
-	abstract class StoryLoadProcessor
-			extends
-			AbstractAsyncTaskProcessor<Void, Collection<? extends BaseDTObject>> {
-
-		public StoryLoadProcessor(Activity activity) {
-			super(activity);
-
-		}
-
-		@Override
-		public Collection<? extends BaseDTObject> performAction(Void... params)
-				throws SecurityException, Exception {
-			return getObjects();
-		}
-
-		@Override
-		public void handleResult(Collection<? extends BaseDTObject> objects) {
-			StepAdapter.this.notifyDataSetChanged();
-
-		}
-		
-
-		protected abstract Collection<? extends BaseDTObject> getObjects()
-				throws SecurityException, Exception;
 
 	}
 }

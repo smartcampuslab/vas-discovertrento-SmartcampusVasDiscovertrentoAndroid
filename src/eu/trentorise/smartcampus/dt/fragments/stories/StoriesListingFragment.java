@@ -204,14 +204,17 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 		final StoryObject story = ((StoryPlaceholder) vs.getTag()).story;
 
 		ImageButton b = (ImageButton) vs.findViewById(R.id.story_delete_btn);
-		if (story.createdByUser()) {
+		if (DTHelper.isOwnedObject(story)) {
+			b.setVisibility(View.VISIBLE);
 			b.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					new SCAsyncTask<StoryObject, Void, Boolean>(getActivity(), new StoryDeleteProcessor(getActivity()))
-							.execute(story);
+					new SCAsyncTask<StoryObject, Void, Boolean>(getActivity(),
+							new StoryDeleteProcessor(getActivity())).execute(story);
 				}
 			});
+		} else {
+			b.setVisibility(View.GONE);
 		}
 
 		b = (ImageButton) vs.findViewById(R.id.story_edit_btn);
@@ -308,7 +311,7 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 			} else {
 				return Collections.emptyList();
 			}
-
+			
 			List<StoryObject> sorted = new ArrayList<StoryObject>(result);
 
 			return sorted;
@@ -336,19 +339,11 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 
 		@Override
 		public void handleResult(List<StoryObject> result) {
-			if (result == null || result.isEmpty()) {
-				eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout) getView().findViewById(
-						R.id.storylistcontainer));
-
-			} else {
-				eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout) getView().findViewById(
-						R.id.storylistcontainer));
-			}
-
+			updateList(result == null || result.isEmpty());
 		}
 
 	}
-
+	
 	@Override
 	public List<SemanticSuggestion> getTags(CharSequence text) {
 		try {
@@ -358,8 +353,9 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 		}
 	}
 
-	private class TaggingAsyncTask extends SCAsyncTask<List<Concept>, Void, Void> {
 
+	private class TaggingAsyncTask extends SCAsyncTask<List<Concept>, Void, Void> {
+		
 		public TaggingAsyncTask(final StoryObject s) {
 			super(getSherlockActivity(), new AbstractAsyncTaskProcessor<List<Concept>, Void>(getSherlockActivity()) {
 				@Override
@@ -368,17 +364,16 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 					DTHelper.saveStory(s);
 					return null;
 				}
-
 				@Override
 				public void handleResult(Void result) {
-					Toast.makeText(getSherlockActivity(), getString(R.string.tags_successfully_added), Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(getSherlockActivity(), getString(R.string.tags_successfully_added), Toast.LENGTH_SHORT).show();
 				}
 			});
 		}
 	}
 
-	private class StoryDeleteProcessor extends AbstractAsyncTaskProcessor<StoryObject, Boolean> {
+	private class StoryDeleteProcessor extends
+			AbstractAsyncTaskProcessor<StoryObject, Boolean> {
 		private StoryObject object = null;
 
 		public StoryDeleteProcessor(Activity activity) {
@@ -386,7 +381,8 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 		}
 
 		@Override
-		public Boolean performAction(StoryObject... params) throws SecurityException, Exception {
+		public Boolean performAction(StoryObject... params)
+				throws SecurityException, Exception {
 			object = params[0];
 			return DTHelper.deleteStory(params[0]);
 		}
@@ -397,9 +393,13 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 				((StoryAdapter) list.getAdapter()).remove(object);
 				((StoryAdapter) list.getAdapter()).notifyDataSetChanged();
 				hideListItemsMenu(clickedElement);
+				updateList(((StoryAdapter) list.getAdapter()).isEmpty());
 			} else {
-				Toast.makeText(getActivity(), getActivity().getString(R.string.app_failure_cannot_delete), Toast.LENGTH_LONG)
-						.show();
+				Toast.makeText(
+						getActivity(),
+						getActivity().getString(
+								R.string.app_failure_cannot_delete),
+						Toast.LENGTH_LONG).show();
 			}
 		}
 
@@ -415,4 +415,13 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 		return list;
 	}
 
+	private void updateList(boolean empty) {
+		eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout)getView().findViewById(R.id.storylistcontainer));
+		if (empty) {
+			eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout)getView().findViewById(R.id.storylistcontainer));
+		}
+		hideListItemsMenu(null);
+	}
+
+	
 }

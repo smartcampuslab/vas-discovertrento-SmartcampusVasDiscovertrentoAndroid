@@ -26,10 +26,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import android.accounts.Account;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
@@ -52,6 +51,7 @@ import eu.trentorise.smartcampus.dt.model.StepObject;
 import eu.trentorise.smartcampus.dt.model.StoryObject;
 import eu.trentorise.smartcampus.dt.model.UserEventObject;
 import eu.trentorise.smartcampus.dt.model.UserPOIObject;
+import eu.trentorise.smartcampus.dt.model.UserProfile;
 import eu.trentorise.smartcampus.dt.model.UserStoryObject;
 import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
 import eu.trentorise.smartcampus.protocolcarrier.common.Constants.Method;
@@ -84,6 +84,8 @@ public class DTHelper {
 
 	private static LocationHelper mLocationHelper;
 
+	private UserProfile userProfile = null;
+	
 	public static void init(Context mContext) {
 		if (instance == null)
 			instance = new DTHelper(mContext);
@@ -129,13 +131,13 @@ public class DTHelper {
 	public static void start() throws RemoteException, DataException, StorageConfigurationException, SecurityException,
 			ConnectionException, ProtocolException {
 		getInstance().storage.synchronize(getAuthToken(), GlobalConfig.getAppUrl(getInstance().mContext), Constants.SYNC_SERVICE);
+		loadUserProfile();
 		//getInstance().mSyncManager.start(getAuthToken(), Constants.APP_TOKEN, getInstance().config);
 	}
 
-	public static void synchronize() throws RemoteException, DataException, StorageConfigurationException {
-        ContentResolver.requestSync(new Account(eu.trentorise.smartcampus.ac.Constants.ACCOUNT_NAME, eu.trentorise.smartcampus.ac.Constants.ACCOUNT_TYPE), "eu.trentorise.smartcampus.dt", new Bundle());
-
-		//getInstance().mSyncManager.synchronize(getAuthToken(), Constants.APP_TOKEN);
+	public static void synchronize() throws RemoteException, DataException, StorageConfigurationException, SecurityException, ConnectionException, ProtocolException {
+		getInstance().storage.synchronize(getAuthToken(), GlobalConfig.getAppUrl(getInstance().mContext), Constants.SYNC_SERVICE);
+//        ContentResolver.requestSync(new Account(eu.trentorise.smartcampus.ac.Constants.ACCOUNT_NAME, eu.trentorise.smartcampus.ac.Constants.ACCOUNT_TYPE), "eu.trentorise.smartcampus.dt", new Bundle());
 	}
 
 	public static void destroy() throws DataException {
@@ -930,4 +932,80 @@ public class DTHelper {
 		return getInstance().storage;
 	}
 
+	public static UserProfile getUserProfile() {
+		try {
+			return loadUserProfile();
+		} catch (Exception e) {
+			Log.e(DTHelper.class.getName(), "Failed to retrieve user profile: "+e.getMessage());
+			return null;
+		}
+	}
+	private static UserProfile loadUserProfile() throws DataException, ConnectionException, ProtocolException, SecurityException {
+		if (getInstance().userProfile == null) {
+			UserProfile storedProfile = readFromPrefs();
+			if (storedProfile != null) {
+				getInstance().userProfile = storedProfile;
+			}
+			else {
+				storedProfile = readProfileRemote();
+				getInstance().userProfile = storedProfile;
+				if (storedProfile != null) {
+					writeToPrefs(storedProfile);
+				}
+			}
+		}
+		return getInstance().userProfile;
+	}
+
+	/**
+	 * @return
+	 * @throws DataException 
+	 * @throws SecurityException 
+	 * @throws ProtocolException 
+	 * @throws ConnectionException 
+	 */
+	private static UserProfile readProfileRemote() throws ConnectionException, ProtocolException, SecurityException, DataException {
+		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
+				Constants.CM_SERVICE + "/eu.trentorise.smartcampus.cm.model.Profile/current");
+		request.setMethod(Method.GET);
+		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+		String body = response.getBody();
+		if (body == null || body.trim().length() == 0) {
+			throw new DataException("User profile does not exist.");
+		}
+		return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(body, UserProfile.class);
+	}
+
+
+	private static void writeToPrefs(UserProfile storedProfile) throws DataException {
+		SharedPreferences prefs = getInstance().mContext.getSharedPreferences(Constants.PREFS,  Context.MODE_PRIVATE);
+		prefs.edit()
+		.putLong(Constants.PREFS_USER_ID, storedProfile.getUserId())
+		.putLong(Constants.PREFS_USER_SOCIAL_ID, storedProfile.getSocialId())
+		.putString(Constants.PREFS_USER_NAME, storedProfile.getName())
+		.putString(Constants.PREFS_USER_SURNAME, storedProfile.getSurname())
+		.commit();
+		
+	}
+
+	private static UserProfile readFromPrefs() throws DataException {
+		SharedPreferences prefs = getInstance().mContext.getSharedPreferences(Constants.PREFS,  Context.MODE_PRIVATE);
+		long userId = prefs.getLong(Constants.PREFS_USER_ID, 0);
+		if (userId > 0) {
+			UserProfile p = new UserProfile();
+			p.setUserId(userId);
+			p.setSocialId(prefs.getLong(Constants.PREFS_USER_SOCIAL_ID, 0));
+			p.setName(prefs.getString(Constants.PREFS_USER_NAME, null));
+			p.setSurname(prefs.getString(Constants.PREFS_USER_SURNAME, null));
+			return p;
+		}
+		return null;
+	}
+	
+	public static boolean isOwnedObject(BaseDTObject obj) {
+		if (obj.getId() == null) return true;
+		UserProfile p = getUserProfile();
+		if (p != null) return p.getUserIdString().equals(obj.getCreatorId());
+		return false;
+	}
 }

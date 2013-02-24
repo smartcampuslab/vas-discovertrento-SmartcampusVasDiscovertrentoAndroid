@@ -178,5 +178,7 @@
 	
 	<string name="toast_is_required">richiesto.</string>
 	<string name="toast_incorrect">Dato non corretto:</string>
-	
+
+	<string name="eventlist_at_place">Eventi a</string>
+		
 </resources>

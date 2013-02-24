@@ -89,12 +89,11 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		/*
-		 * menu.clear(); MenuItem item = menu.add(Menu.CATEGORY_SYSTEM,
-		 * R.id.map_view, Menu.NONE, R.string.map_view);
-		 * item.setIcon(R.drawable.ic_map);
-		 * item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		 */
+/*		menu.clear();
+		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.map_view,
+				Menu.NONE, R.string.map_view);
+		item.setIcon(R.drawable.ic_map);
+		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);*/
 		menu.clear();
 		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.gripmenu, menu);
 		SubMenu submenu = menu.getItem(0).getSubMenu();
@@ -202,7 +201,8 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 
 		// open items menu for that entry
 		list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
 				ViewSwitcher vs = (ViewSwitcher) view;
 				setupOptionsListeners(vs, position);
 				vs.showNext();
@@ -217,7 +217,9 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		final POIObject poi = ((PoiPlaceholder) vs.getTag()).poi;
 
 		ImageButton b = (ImageButton) vs.findViewById(R.id.poi_delete_btn);
-		if (poi.createdByUser()) {
+		// CAN DELETE ONLY OWN OBJECTS
+		if (DTHelper.isOwnedObject(poi)) {
+			b.setVisibility(View.VISIBLE);
 			b.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -225,6 +227,8 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 							.execute(poi);
 				}
 			});
+		} else {
+			b.setVisibility(View.GONE);
 		}
 
 		b = (ImageButton) vs.findViewById(R.id.poi_edit_btn);
@@ -317,26 +321,28 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 			} else if (bundle.containsKey(ARG_CATEGORY)) {
 				result = DTHelper.getPOIByCategory(params[0].position, params[0].size, bundle.getString(ARG_CATEGORY));
 			} else if (bundle.containsKey(ARG_QUERY)) {
-				if (bundle.containsKey(ARG_CATEGORY_SEARCH)) {
-					result = DTHelper.searchPOIsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),
-							bundle.getString(ARG_CATEGORY_SEARCH));
-				} else
-					result = DTHelper.searchPOIs(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
+				if (bundle.containsKey(ARG_CATEGORY_SEARCH))
+				{
+					result = DTHelper.searchPOIsByCategory(params[0].position, params[0].size, bundle.getString(ARG_QUERY),bundle.getString(ARG_CATEGORY_SEARCH));
+				}
+				else
+				result = DTHelper.searchPOIs(params[0].position, params[0].size, bundle.getString(ARG_QUERY));
 			} else if (bundle.containsKey(ARG_LIST)) {
 				result = (List<POIObject>) bundle.getSerializable(ARG_LIST);
 			} else {
 				return Collections.emptyList();
 			}
 
+			
 			List<POIObject> sorted = new ArrayList<POIObject>(result);
-			// Collections.sort(sorted, new Comparator<POIObject>() {
-			// @Override
-			// public int compare(POIObject lhs, POIObject rhs) {
-			// return lhs.getTitle().compareTo(rhs.getTitle());
-			// }
-			//
-			// });
-			for (POIObject poi : sorted) {
+//			Collections.sort(sorted, new Comparator<POIObject>() {
+//				@Override
+//				public int compare(POIObject lhs, POIObject rhs) {
+//					return lhs.getTitle().compareTo(rhs.getTitle());
+//				}
+//
+//			});
+			for (POIObject poi:sorted){
 				Log.e("lista", poi.getTitle());
 			}
 			return sorted;
@@ -361,19 +367,12 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 
 		@Override
 		public void handleResult(List<POIObject> result) {
-			// list.setAdapter(new PoiAdapter(context, R.layout.pois_row,
-			// result));
-			eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout) getView().findViewById(
-					R.id.poilistcontainer));
-			if (result == null || result.isEmpty()) {
-				eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout) getView().findViewById(
-						R.id.poilistcontainer));
-			}
-
+//			list.setAdapter(new PoiAdapter(context, R.layout.pois_row, result));
+			updateList(result == null || result.isEmpty());
 		}
 
 	}
-
+	
 	@Override
 	public List<SemanticSuggestion> getTags(CharSequence text) {
 		try {
@@ -383,8 +382,9 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		}
 	}
 
-	private class TaggingAsyncTask extends SCAsyncTask<List<Concept>, Void, Void> {
 
+	private class TaggingAsyncTask extends SCAsyncTask<List<Concept>, Void, Void> {
+		
 		public TaggingAsyncTask(final POIObject p) {
 			super(getSherlockActivity(), new AbstractAsyncTaskProcessor<List<Concept>, Void>(getSherlockActivity()) {
 				@Override
@@ -393,7 +393,6 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 					DTHelper.savePOI(p);
 					return null;
 				}
-
 				@Override
 				public void handleResult(Void result) {
 					Toast.makeText(getSherlockActivity(), getString(R.string.tags_successfully_added), Toast.LENGTH_SHORT)
@@ -403,7 +402,8 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		}
 	}
 
-	private class POIDeleteProcessor extends AbstractAsyncTaskProcessor<POIObject, Boolean> {
+	private class POIDeleteProcessor extends
+			AbstractAsyncTaskProcessor<POIObject, Boolean> {
 		private POIObject object = null;
 
 		public POIDeleteProcessor(Activity activity) {
@@ -421,6 +421,7 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 			if (result) {
 				((PoiAdapter) list.getAdapter()).remove(object);
 				((PoiAdapter) list.getAdapter()).notifyDataSetChanged();
+				updateList(((PoiAdapter) list.getAdapter()).isEmpty());
 			} else {
 				Toast.makeText(getActivity(), getActivity().getString(R.string.app_failure_cannot_delete), Toast.LENGTH_LONG)
 						.show();
@@ -439,4 +440,13 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		return list;
 	}
 
+	private void updateList(boolean empty) {
+		eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout)getView().findViewById(R.id.poilistcontainer));
+		if (empty) {
+			eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout)getView().findViewById(R.id.poilistcontainer));
+		}
+		hideListItemsMenu(null);
+	}
+
+	
 }

@@ -22,5 +22,12 @@ public class Constants {
 	public static final String SYNC_SERVICE = "/smartcampus.vas.discovertrento.web/sync";
 	public static final int SYNC_INTERVAL = 10;
 	public static final String SYNC_DB_NAME = "discovertrentodb";
+	public static final String PREFS = "eu.trentorise.smartcampus.dt.preferences";
+	public static final String PREFS_USER_ID = "user.profile.id";
+	public static final String PREFS_USER_SOCIAL_ID = "user.profile.socialId";
+	public static final String PREFS_USER_NAME = "user.profile.name";
+	public static final String PREFS_USER_SURNAME = "user.profile.surname";
+
+	public static final String CM_SERVICE = "/smartcampus.vas.community-manager.web";
 
 }
