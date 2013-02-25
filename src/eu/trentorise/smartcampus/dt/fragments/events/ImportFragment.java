@@ -40,8 +40,7 @@ public class ImportFragment extends SherlockFragment {
 	private AlertDialog self;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.importform, container, false);
 	}
 
@@ -56,7 +55,8 @@ public class ImportFragment extends SherlockFragment {
 			public void onClick(View v) {
 				// to be replaced either by intent to file browsing app or by
 				// call to custom activity
-				Toast.makeText(getActivity(), "Browsing your files...",
+				Toast.makeText(getActivity(),
+						getSherlockActivity().getApplicationContext().getString(R.string.toast_browsing_your_files),
 						Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -77,28 +77,28 @@ public class ImportFragment extends SherlockFragment {
 
 	private void onParsingCompleted(List<EventObject> list) {
 		for (EventObject e : list) {
-			AlertDialog dialog = new AlertDialog.Builder(getActivity())
-					.setView(
-							getActivity().getLayoutInflater().inflate(
-									R.layout.import_dialog, null)).create();
+			AlertDialog dialog = new AlertDialog.Builder(getActivity()).setView(
+					getActivity().getLayoutInflater().inflate(R.layout.import_dialog, null)).create();
 			dialog.setTitle("Event found:");
 			dialog.show();
-			EditText et;Button b;
+			EditText et;
+			Button b;
 			self = dialog;
-			
+
 			// event title
 			if (e.getTitle() != null) {
 				et = (EditText) dialog.findViewById(R.id.import_title);
 				et.setText(e.getTitle());
 			}
-			
+
 			// event date
-			//if (e.dateTimeString() != null) {et = (EditText) dialog.findViewById(R.id.import_date);et.setText(e.dateTimeString());}
+			// if (e.dateTimeString() != null) {et = (EditText)
+			// dialog.findViewById(R.id.import_date);et.setText(e.dateTimeString());}
 			// starting time
 			// if(e.getFromTime()!=null){et=(EditText)dialog.findViewById(R.id.import_start);et.setText(e.getFromTime().toString());}
 			// ending time
 			// if(e.getToTime()!=null){et=(EditText)dialog.findViewById(R.id.import_end);et.setText(e.getToTime().toString());}
-			
+
 			// location
 			if (e.getPoiId() != null) {
 				POIObject poi = DTHelper.findPOIById(e.getPoiId());
@@ -110,8 +110,7 @@ public class ImportFragment extends SherlockFragment {
 			// tags
 			if (e.getCommunityData().getTags() != null) {
 				et = (EditText) dialog.findViewById(R.id.import_tags);
-				et.setText(Concept.toSimpleString(e.getCommunityData()
-						.getTags()));
+				et.setText(Concept.toSimpleString(e.getCommunityData().getTags()));
 			}
 			// categories
 			if (e.getType() != null) {
@@ -123,14 +122,15 @@ public class ImportFragment extends SherlockFragment {
 				et = (EditText) dialog.findViewById(R.id.import_notes);
 				et.setText(e.getCommunityData().getNotes());
 			}
-			
+
 			b = (Button) dialog.findViewById(R.id.btn_import_ok);
 			b.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					// save new event and handle "apply to all"
-					Toast.makeText(getActivity(), "Event saved!",
+					Toast.makeText(getActivity(),
+							getSherlockActivity().getApplicationContext().getResources().getString(R.string.toast_event_saved),
 							Toast.LENGTH_SHORT).show();
 					self.dismiss();
 				}

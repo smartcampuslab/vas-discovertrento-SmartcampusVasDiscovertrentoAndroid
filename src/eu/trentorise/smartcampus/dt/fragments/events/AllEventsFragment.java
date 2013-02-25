@@ -47,8 +47,7 @@ public class AllEventsFragment extends SherlockFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.eventscategories, container, false);
 	}
 
@@ -56,12 +55,10 @@ public class AllEventsFragment extends SherlockFragment {
 	public void onStart() {
 		super.onStart();
 		gridview = (GridView) getView().findViewById(R.id.events_gridview);
-		gridview.setAdapter(new EventsCategoriesAdapter(getSherlockActivity()
-				.getApplicationContext(), fragmentManager));
-		//hide keyboard if it is still open
-		InputMethodManager imm = (InputMethodManager)getSherlockActivity().getSystemService(
-			      Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(gridview.getWindowToken(), 0);
+		gridview.setAdapter(new EventsCategoriesAdapter(getSherlockActivity().getApplicationContext(), fragmentManager));
+		// hide keyboard if it is still open
+		InputMethodManager imm = (InputMethodManager) getSherlockActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(gridview.getWindowToken(), 0);
 	}
 
 	@Override
@@ -71,11 +68,9 @@ public class AllEventsFragment extends SherlockFragment {
 		SubMenu submenu = menu.getItem(0).getSubMenu();
 		submenu.clear();
 
-		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addevent, Menu.NONE,
-				R.string.menu_item_addevent_text);
+		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addevent, Menu.NONE, R.string.menu_item_addevent_text);
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_todayevent, Menu.NONE, R.string.menu_item_todayevent_text);
-		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_myevents, Menu.NONE,
-				R.string.menu_item_myevents_text);
+		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_myevents, Menu.NONE, R.string.menu_item_myevents_text);
 
 		SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
 			@Override
@@ -85,16 +80,15 @@ public class AllEventsFragment extends SherlockFragment {
 				Bundle args = new Bundle();
 				args.putString(EventsListingFragment.ARG_QUERY, query);
 				fragment.setArguments(args);
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//				fragmentTransaction.detach(currentFragment);
-				fragmentTransaction.replace(android.R.id.content, fragment,"events");
+				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				// fragmentTransaction.detach(currentFragment);
+				fragmentTransaction.replace(android.R.id.content, fragment, "events");
 				fragmentTransaction.addToBackStack(fragment.getTag());
 				fragmentTransaction.commit();
 			}
 		});
-		
-//		super.onCreateOptionsMenu(menu, inflater);
+
+		// super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	/*
@@ -115,63 +109,61 @@ public class AllEventsFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		FragmentTransaction fragmentTransaction;
 		Fragment fragment;
-		Bundle args ;
+		Bundle args;
 		switch (item.getItemId()) {
 
 		case R.id.menu_item_addevent:
 			fragmentTransaction = fragmentManager.beginTransaction();
 			fragment = new CreateEventFragment();
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//			fragmentTransaction.detach(this);
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 			return true;
 
-			
 		case R.id.menu_item_todayevent:
 			fragmentTransaction = fragmentManager.beginTransaction();
 			fragment = new EventsListingFragment();
 			args = new Bundle();
 			args.putString(EventsListingFragment.ARG_QUERY_TODAY, "");
 			fragment.setArguments(args);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//			fragmentTransaction.detach(currentFragment);
-			fragmentTransaction.replace(android.R.id.content, fragment,"events");
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			// fragmentTransaction.detach(currentFragment);
+			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 			return true;
 		case R.id.menu_item_myevents:
 			fragmentTransaction = fragmentManager.beginTransaction();
 			fragment = new EventsListingFragment();
-			 args = new Bundle();
+			args = new Bundle();
 			args.putBoolean(EventsListingFragment.ARG_MY, true);
 			fragment.setArguments(args);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//			fragmentTransaction.detach(this);
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 			return true;
 		case R.id.search:
-//			getSherlockActivity().onSearchRequested();
-//			Toast.makeText(getSherlockActivity(), "Opening search...",
-//					Toast.LENGTH_SHORT).show();
+			// getSherlockActivity().onSearchRequested();
+			// Toast.makeText(getSherlockActivity(), "Opening search...",
+			// Toast.LENGTH_SHORT).show();
 			return true;
 
-	/*	case R.id.menu_item_import:
-			fragmentTransaction=fragmentManager.beginTransaction();
-			fragment=new ImportFragment();
-			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(android.R.id.content, fragment, "import");
-			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
-			return true;*/
+			/*
+			 * case R.id.menu_item_import:
+			 * fragmentTransaction=fragmentManager.beginTransaction();
+			 * fragment=new ImportFragment();
+			 * fragmentTransaction.setTransition(FragmentTransaction
+			 * .TRANSIT_FRAGMENT_FADE);
+			 * fragmentTransaction.replace(android.R.id.content, fragment,
+			 * "import"); fragmentTransaction.addToBackStack(fragment.getTag());
+			 * fragmentTransaction.commit(); return true;
+			 */
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
-}	
+}

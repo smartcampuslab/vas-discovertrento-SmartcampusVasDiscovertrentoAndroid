@@ -181,4 +181,9 @@
     
 	<string name="eventlist_at_place">Events at</string>
 	
+	<string name="toast_my_events_clicked">My events clicked</string>
+	<string name="toast_browsing_your_files">Browsing your files&#8230;</string>
+	<string name="toast_event_saved">Event saved!</string>
+	<string name="toast_poi_shared">POI shared.</string>
+	
 </resources>

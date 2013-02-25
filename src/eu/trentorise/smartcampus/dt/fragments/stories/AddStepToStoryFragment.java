@@ -26,19 +26,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.actionbarsherlock.app.SherlockFragment;
-import eu.trentorise.smartcampus.dt.R;
+
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
+import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.fragments.events.POISelectActivity;
 import eu.trentorise.smartcampus.dt.model.POIObject;
@@ -56,15 +58,15 @@ public class AddStepToStoryFragment extends SherlockFragment implements OnTagsSe
 	public static String ARG_STEP_POSITION = "position";
 	private View view = null;
 	private POIObject poi = null;
-	private StepObject step =null;
+	private StepObject step = null;
 	private StepHandler stepHandler = null;
 	private StoryObject storyObject = null;
 	private Integer position = null;
-    private static final String TAG = "AddStepToStoryFragment";
-	
+	private static final String TAG = "AddStepToStoryFragment";
+
 	@Override
 	public void onTagsSelected(Collection<SemanticSuggestion> suggestions) {
-	
+
 	}
 
 	@Override
@@ -75,115 +77,110 @@ public class AddStepToStoryFragment extends SherlockFragment implements OnTagsSe
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.onCreate ");
-        }
-        
+
+		if (Log.isLoggable(TAG, Log.VERBOSE)) {
+			Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.onCreate ");
+		}
+
 		setHasOptionsMenu(false);
-		
-		if (getArguments() != null && getArguments().containsKey(ARG_STEP_HANDLER) && getArguments().getParcelable(ARG_STEP_HANDLER) != null) {
-			stepHandler = (StepHandler)getArguments().getParcelable(ARG_STEP_HANDLER);
+
+		if (getArguments() != null && getArguments().containsKey(ARG_STEP_HANDLER)
+				&& getArguments().getParcelable(ARG_STEP_HANDLER) != null) {
+			stepHandler = (StepHandler) getArguments().getParcelable(ARG_STEP_HANDLER);
 		}
-		if (getArguments() != null && getArguments().containsKey(ARG_STORY_OBJECT) && getArguments().getSerializable(ARG_STORY_OBJECT) != null) {
-			storyObject = (StoryObject)getArguments().getSerializable(ARG_STORY_OBJECT);
-		
-		}	
-		if (getArguments() != null && getArguments().containsKey(ARG_STEP_POSITION) && getArguments().getSerializable(ARG_STEP_POSITION) != null) {
+		if (getArguments() != null && getArguments().containsKey(ARG_STORY_OBJECT)
+				&& getArguments().getSerializable(ARG_STORY_OBJECT) != null) {
+			storyObject = (StoryObject) getArguments().getSerializable(ARG_STORY_OBJECT);
+
+		}
+		if (getArguments() != null && getArguments().containsKey(ARG_STEP_POSITION)
+				&& getArguments().getSerializable(ARG_STEP_POSITION) != null) {
 			position = getArguments().getInt(ARG_STEP_POSITION);
-		
+
 		}
-		
+
 	}
 
-	
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
- 
+
 		if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.onCreateView ");
-        }
+			Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.onCreateView ");
+		}
 		view = inflater.inflate(R.layout.createstepform, container, false);
-		
-		//title
+
+		// title
 		AutoCompleteTextView poiField = (AutoCompleteTextView) view.findViewById(R.id.step_place);
-		ArrayAdapter<String> stepAdapter = new ArrayAdapter<String>(
-				getSherlockActivity(),
-				R.layout.dd_list,
-				R.id.dd_textview,
+		ArrayAdapter<String> stepAdapter = new ArrayAdapter<String>(getSherlockActivity(), R.layout.dd_list, R.id.dd_textview,
 				DTHelper.getAllPOITitles());
 		poiField.setAdapter(stepAdapter);
-		
-		//load the poi's title
+
+		// load the poi's title
 		if (poi != null) {
 			poiField.setText(poi.getTitle());
-		}
-		else if ((storyObject!=null)&&(position!=null)){
+		} else if ((storyObject != null) && (position != null)) {
 			step = storyObject.getSteps().get(position);
 			poi = step.assignedPoi();
-			if (poi!=null)
+			if (poi != null)
 				poiField.setText(poi.getTitle());
 
 		}
-		
-		//button linked to the map where choose the POIs
+
+		// button linked to the map where choose the POIs
 		ImageButton locationBtn = (ImageButton) view.findViewById(R.id.btn_step_locate);
 		locationBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startActivityForResult(new Intent(getActivity(),
-						POISelectActivity.class),
-						POISelectActivity.RESULT_SELECTED);
+				startActivityForResult(new Intent(getActivity(), POISelectActivity.class), POISelectActivity.RESULT_SELECTED);
 			}
 		});
-		
-		//note
+
+		// note
 		TextView noteField = (TextView) view.findViewById(R.id.step_tags);
 		if (step != null) {
 			noteField.setText(step.getNote());
 		}
-		
-		//cancel
+
+		// cancel
 		Button cancel = (Button) view.findViewById(R.id.btn_createstep_cancel);
 		cancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				getSherlockActivity().getSupportFragmentManager().popBackStack();
 			}
-			
+
 		});
-		
-		//save
+
+		// save
 		Button save = (Button) view.findViewById(R.id.btn_createstep_ok);
 		save.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				// get the data from the user interface and call the correct method of the handler 
-				//if the step is new or an update
-		        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-		            Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment click on save button ");
-		        }
-		        
+				// get the data from the user interface and call the correct
+				// method of the handler
+				// if the step is new or an update
+				if (Log.isLoggable(TAG, Log.VERBOSE)) {
+					Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment click on save button ");
+				}
+
 				AutoCompleteTextView stepPlace = (AutoCompleteTextView) view.findViewById(R.id.step_place);
 				TextView notePlace = (TextView) view.findViewById(R.id.step_tags);
 
-				if (stepPlace.getText() != null && stepPlace.getText().length() > 0) 
-				{
-					step = new StepObject(DTHelper.findPOIByTitle(stepPlace.getText().toString()),notePlace.getText().toString());
-					if (stepHandler!=null)
-					{
-					if ((storyObject!=null)&&(position!=null))
-						stepHandler.updateStep(step,position);
-						else stepHandler.addStep(step);
+				if (stepPlace.getText() != null && stepPlace.getText().length() > 0) {
+					step = new StepObject(DTHelper.findPOIByTitle(stepPlace.getText().toString()), notePlace.getText()
+							.toString());
+					if (stepHandler != null) {
+						if ((storyObject != null) && (position != null))
+							stepHandler.updateStep(step, position);
+						else
+							stepHandler.addStep(step);
 
 					}
 
+				} else {
+					Toast.makeText(getActivity(), R.string.empty_step_title, Toast.LENGTH_LONG).show();
 				}
-				else 
-					Toast.makeText(getActivity(), getString(R.string.empty_step_title), Toast.LENGTH_LONG).show();
-										
 			}
 		});
 
@@ -194,27 +191,25 @@ public class AddStepToStoryFragment extends SherlockFragment implements OnTagsSe
 	public void onPause() {
 		super.onPause();
 		// hide the keyboard
-		InputMethodManager imm = (InputMethodManager) getSherlockActivity()
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		InputMethodManager imm = (InputMethodManager) getSherlockActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		TextView noteField = (TextView) view.findViewById(R.id.step_tags);
 
 		imm.hideSoftInputFromWindow(noteField.getWindowToken(), 0);
 
 	}
 
-	//get the poi from the choosing POIs activity
+	// get the poi from the choosing POIs activity
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent result) {
 		super.onActivityResult(requestCode, resultCode, result);
-		
-        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.onActivityResult ");
-        }
-        
+
+		if (Log.isLoggable(TAG, Log.VERBOSE)) {
+			Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.onActivityResult ");
+		}
+
 		if (resultCode == POISelectActivity.RESULT_SELECTED) {
 			poi = (POIObject) result.getSerializableExtra("poi");
-			AutoCompleteTextView text = (AutoCompleteTextView) view
-					.findViewById(R.id.step_place);
+			AutoCompleteTextView text = (AutoCompleteTextView) view.findViewById(R.id.step_place);
 			text.setText(poi.getTitle());
 			for (int i = 0; i < text.getAdapter().getCount(); i++) {
 				if (poi.getTitle().equals((text.getAdapter().getItem(i)))) {
@@ -226,11 +221,11 @@ public class AddStepToStoryFragment extends SherlockFragment implements OnTagsSe
 
 	@Override
 	public List<SemanticSuggestion> getTags(CharSequence text) {
-		
-        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.getTags ");
-        }
-        
+
+		if (Log.isLoggable(TAG, Log.VERBOSE)) {
+			Log.v(TAG, "eu.trentorise.smartcampus.dt.fragments.stories.AddStepToStoryFragment.getTags ");
+		}
+
 		try {
 			return DTHelper.getSuggestions(text);
 		} catch (Exception e) {
@@ -238,10 +233,10 @@ public class AddStepToStoryFragment extends SherlockFragment implements OnTagsSe
 		}
 	}
 
-	
-	public interface StepHandler  {
+	public interface StepHandler {
 		public void addStep(StepObject step);
-		public void updateStep( StepObject step, Integer position);
+
+		public void updateStep(StepObject step, Integer position);
 	}
-	
+
 }

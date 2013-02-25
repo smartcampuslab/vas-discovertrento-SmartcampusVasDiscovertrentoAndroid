@@ -43,8 +43,7 @@ public class EventsMenuFragment extends SherlockFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.simpleeventsmenu, container, false);
 	}
 
@@ -64,12 +63,10 @@ public class EventsMenuFragment extends SherlockFragment {
 		allEventsClicked = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				FragmentTransaction fragmentTransaction = fragmentManager
-						.beginTransaction();
+				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 				Fragment fragment = new AllEventsFragment();
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				fragmentTransaction.replace(android.R.id.content, fragment,"events");
+				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				fragmentTransaction.replace(android.R.id.content, fragment, "events");
 				fragmentTransaction.addToBackStack(fragment.getTag());
 				fragmentTransaction.commit();
 			}
@@ -78,12 +75,10 @@ public class EventsMenuFragment extends SherlockFragment {
 		createEventClicked = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				FragmentTransaction fragmentTransaction = fragmentManager
-						.beginTransaction();
+				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 				Fragment fragment = new CreateEventFragment();
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				fragmentTransaction.replace(android.R.id.content, fragment,"events");
+				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				fragmentTransaction.replace(android.R.id.content, fragment, "events");
 				fragmentTransaction.addToBackStack(fragment.getTag());
 				fragmentTransaction.commit();
 			}
@@ -92,9 +87,8 @@ public class EventsMenuFragment extends SherlockFragment {
 		myEventsClicked = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Toast toast = Toast.makeText(getSherlockActivity()
-						.getApplicationContext(), "My events clicked",
-						Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(getSherlockActivity().getApplicationContext(), getSherlockActivity()
+						.getApplicationContext().getResources().getString(R.string.toast_my_events_clicked), Toast.LENGTH_LONG);
 				toast.show();
 			}
 		};

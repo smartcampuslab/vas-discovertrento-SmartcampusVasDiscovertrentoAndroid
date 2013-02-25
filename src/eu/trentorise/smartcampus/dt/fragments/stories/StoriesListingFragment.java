@@ -209,8 +209,8 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 			b.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					new SCAsyncTask<StoryObject, Void, Boolean>(getActivity(),
-							new StoryDeleteProcessor(getActivity())).execute(story);
+					new SCAsyncTask<StoryObject, Void, Boolean>(getActivity(), new StoryDeleteProcessor(getActivity()))
+							.execute(story);
 				}
 			});
 		} else {
@@ -311,7 +311,7 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 			} else {
 				return Collections.emptyList();
 			}
-			
+
 			List<StoryObject> sorted = new ArrayList<StoryObject>(result);
 
 			return sorted;
@@ -343,7 +343,7 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 		}
 
 	}
-	
+
 	@Override
 	public List<SemanticSuggestion> getTags(CharSequence text) {
 		try {
@@ -353,9 +353,8 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 		}
 	}
 
-
 	private class TaggingAsyncTask extends SCAsyncTask<List<Concept>, Void, Void> {
-		
+
 		public TaggingAsyncTask(final StoryObject s) {
 			super(getSherlockActivity(), new AbstractAsyncTaskProcessor<List<Concept>, Void>(getSherlockActivity()) {
 				@Override
@@ -364,16 +363,16 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 					DTHelper.saveStory(s);
 					return null;
 				}
+
 				@Override
 				public void handleResult(Void result) {
-					Toast.makeText(getSherlockActivity(), getString(R.string.tags_successfully_added), Toast.LENGTH_SHORT).show();
+					Toast.makeText(getSherlockActivity(), R.string.tags_successfully_added, Toast.LENGTH_SHORT).show();
 				}
 			});
 		}
 	}
 
-	private class StoryDeleteProcessor extends
-			AbstractAsyncTaskProcessor<StoryObject, Boolean> {
+	private class StoryDeleteProcessor extends AbstractAsyncTaskProcessor<StoryObject, Boolean> {
 		private StoryObject object = null;
 
 		public StoryDeleteProcessor(Activity activity) {
@@ -381,8 +380,7 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 		}
 
 		@Override
-		public Boolean performAction(StoryObject... params)
-				throws SecurityException, Exception {
+		public Boolean performAction(StoryObject... params) throws SecurityException, Exception {
 			object = params[0];
 			return DTHelper.deleteStory(params[0]);
 		}
@@ -395,11 +393,7 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 				hideListItemsMenu(clickedElement);
 				updateList(((StoryAdapter) list.getAdapter()).isEmpty());
 			} else {
-				Toast.makeText(
-						getActivity(),
-						getActivity().getString(
-								R.string.app_failure_cannot_delete),
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(getActivity(), R.string.app_failure_cannot_delete, Toast.LENGTH_LONG).show();
 			}
 		}
 
@@ -416,12 +410,13 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 	}
 
 	private void updateList(boolean empty) {
-		eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout)getView().findViewById(R.id.storylistcontainer));
+		eu.trentorise.smartcampus.dt.custom.ViewHelper.removeEmptyListView((LinearLayout) getView().findViewById(
+				R.id.storylistcontainer));
 		if (empty) {
-			eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout)getView().findViewById(R.id.storylistcontainer));
+			eu.trentorise.smartcampus.dt.custom.ViewHelper.addEmptyListView((LinearLayout) getView().findViewById(
+					R.id.storylistcontainer));
 		}
 		hideListItemsMenu(null);
 	}
 
-	
 }

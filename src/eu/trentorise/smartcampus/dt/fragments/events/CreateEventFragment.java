@@ -160,7 +160,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		EditText dateEdit = (EditText) view.findViewById(R.id.event_date);
 
 		EditText timing = (EditText) view.findViewById(R.id.event_timing_et);
-		// timing is editable only in own UserEvent 
+		// timing is editable only in own UserEvent
 		if (eventObject.createdByUser() && DTHelper.isOwnedObject(eventObject)) {
 			// set edit visible, set textview gone
 			if (eventObject.getTiming() != null) {
@@ -172,7 +172,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			timing.setText(eventObject.getTimingFormatted());
 			timing.setEnabled(false);
 		}
-		
+
 		if (eventObject.getFromTime() != null && eventObject.getFromTime() > 0) {
 			dateEdit.setText(DatePickerDialogFragment.DATEFORMAT.format(new Date(eventObject.getFromTime())));
 		} else {
@@ -214,28 +214,31 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 				startActivityForResult(new Intent(getActivity(), POISelectActivity.class), POISelectActivity.RESULT_SELECTED);
 			}
 		});
-		
-		EditText notes = (EditText)view.findViewById(R.id.event_notes);
+
+		EditText notes = (EditText) view.findViewById(R.id.event_notes);
 		notes.setText(eventObject.getCommunityData().getNotes());
 
-
-		// Cannot edit title, date, poi, category, and notes for ServiceEvent and non-owned UserEvent
+		// Cannot edit title, date, poi, category, and notes for ServiceEvent
+		// and non-owned UserEvent
 		if (!eventObject.createdByUser() || !DTHelper.isOwnedObject(eventObject)) {
 			title.setEnabled(false);
-//			if (eventObject.getType() != null && !eventObject.isTypeUserDefined()) {
-				categories.setEnabled(false);
-//			}
-//			if (eventObject.getFromTime() != null && eventObject.getFromTime() > 0 && !eventObject.isFromTimeUserDefined()) {
-				dateEdit.setEnabled(false);
-//			}
-//			if (poi != null && !eventObject.isPoiIdUserDefined()) {
-				poiField.setEnabled(false);
-				locationBtn.setEnabled(false);
-				addPoiBtn.setEnabled(false);
-//			}
+			// if (eventObject.getType() != null &&
+			// !eventObject.isTypeUserDefined()) {
+			categories.setEnabled(false);
+			// }
+			// if (eventObject.getFromTime() != null &&
+			// eventObject.getFromTime() > 0 &&
+			// !eventObject.isFromTimeUserDefined()) {
+			dateEdit.setEnabled(false);
+			// }
+			// if (poi != null && !eventObject.isPoiIdUserDefined()) {
+			poiField.setEnabled(false);
+			locationBtn.setEnabled(false);
+			addPoiBtn.setEnabled(false);
+			// }
 			notes.setEnabled(false);
 		}
-		
+
 		EditText tagsEdit = (EditText) view.findViewById(R.id.event_tags);
 		tagsEdit.setText(Concept.toSimpleString(eventObject.getCommunityData().getTags()));
 		tagsEdit.setClickable(true);
@@ -243,7 +246,8 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		tagsEdit.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				TaggingDialog taggingDialog = new TaggingDialog(getActivity(), CreateEventFragment.this, CreateEventFragment.this, Concept.convertToSS(eventObject.getCommunityData().getTags()));
+				TaggingDialog taggingDialog = new TaggingDialog(getActivity(), CreateEventFragment.this,
+						CreateEventFragment.this, Concept.convertToSS(eventObject.getCommunityData().getTags()));
 				taggingDialog.show();
 			}
 		});
@@ -254,7 +258,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			public void onClick(View v) {
 				getSherlockActivity().getSupportFragmentManager().popBackStack();
 			}
-			
+
 		});
 
 		Button save = (Button) view.findViewById(R.id.btn_createevent_ok);
@@ -267,12 +271,12 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		Integer result = null;
 		if (data.getTitle() == null || data.getTitle().length() == 0)
 			return R.string.create_title;
-//		if (data.getFromTime() == null)
-//			return R.string.createevent_timestart;
-//		if (data.getToTime() == null)
-//			return R.string.createevent_timeend;
-//		if (data.getToTime() <= data.getFromTime())
-//			return R.string.createevent_timeend;
+		// if (data.getFromTime() == null)
+		// return R.string.createevent_timestart;
+		// if (data.getToTime() == null)
+		// return R.string.createevent_timeend;
+		// if (data.getToTime() <= data.getFromTime())
+		// return R.string.createevent_timeend;
 		if (data.getPoiId() == null)
 			return R.string.create_place;
 		if (data.getType() == null || data.getType().length() == 0)
@@ -303,7 +307,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			return Collections.emptyList();
 		}
 	}
-	
+
 	private class CreateEventProcessor extends AbstractAsyncTaskProcessor<EventObject, Boolean> {
 
 		public CreateEventProcessor(Activity activity) {
@@ -324,10 +328,10 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 				Toast.makeText(getSherlockActivity(), R.string.update_success, Toast.LENGTH_SHORT).show();
 			}
 		}
-		
+
 	}
-	
-	private class SaveEvent implements OnClickListener{
+
+	private class SaveEvent implements OnClickListener {
 		@Override
 		public void onClick(View v) {
 			CharSequence desc = ((EditText) view.findViewById(R.id.event_notes)).getText();
@@ -353,25 +357,27 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 			if (datestr == null || datestr.length() == 0) {
 				Toast.makeText(
 						getActivity(),
-						getActivity().getResources().getString(R.string.createevent_date) + " "+
-						getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
+						getActivity().getResources().getString(R.string.createevent_date) + " "
+								+ getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
 						.show();
 				return;
 			}
-//			if (eventObject.getTiming() == null || eventObject.isFromTimeUserDefined() || DTHelper.isOwnedObject(eventObject)) {
+			// if (eventObject.getTiming() == null ||
+			// eventObject.isFromTimeUserDefined() ||
+			// DTHelper.isOwnedObject(eventObject)) {
 			if (DTHelper.isOwnedObject(eventObject)) {
 				CharSequence timingstr = ((EditText) view.findViewById(R.id.event_timing_et)).getText();
 				if (timingstr == null || timingstr.length() == 0) {
 					Toast.makeText(
 							getActivity(),
-							getActivity().getResources().getString(R.string.createevent_timing) + " "+
-							getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
+							getActivity().getResources().getString(R.string.createevent_timing) + " "
+									+ getActivity().getResources().getString(R.string.msg_field_required), Toast.LENGTH_SHORT)
 							.show();
 					return;
 				}
 				eventObject.setTiming(timingstr.toString());
 			}
-			
+
 			Calendar cal = Calendar.getInstance();
 			try {
 				Date d = DatePickerDialogFragment.DATEFORMAT.parse(datestr.toString());
@@ -421,7 +427,7 @@ public class CreateEventFragment extends SherlockFragment implements TaggingDial
 		@Override
 		public void addPoi(POIObject poi) {
 
-			//add the step, notify to the adapter and go back to this fragment
+			// add the step, notify to the adapter and go back to this fragment
 			CreateEventFragment.this.poi = poi;
 			CreateEventFragment.this.eventObject.assignPoi(poi);
 		}

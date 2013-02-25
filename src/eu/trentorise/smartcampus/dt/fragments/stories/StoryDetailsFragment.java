@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -43,6 +44,7 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -50,11 +52,12 @@ import com.actionbarsherlock.view.SubMenu;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-import eu.trentorise.smartcampus.dt.R;
+
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
 import eu.trentorise.smartcampus.android.common.follow.FollowHelper;
 import eu.trentorise.smartcampus.android.common.navigation.NavigationHelper;
+import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.RatingHelper;
 import eu.trentorise.smartcampus.dt.custom.RatingHelper.RatingHandler;
@@ -74,12 +77,10 @@ import eu.trentorise.smartcampus.dt.model.StoryObject;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.BasicObject;
 
-
 /*
  * Shows the detail of the story and steps, manages the mapview and the refresh of it
  */
-public class StoryDetailsFragment extends SherlockFragment implements
-		MapStoryHandler, BasicObjectMapItemTapListener {
+public class StoryDetailsFragment extends SherlockFragment implements MapStoryHandler, BasicObjectMapItemTapListener {
 
 	public static final String ARG_STORY = "story_object";
 	private StoryObject story = null;
@@ -102,11 +103,9 @@ public class StoryDetailsFragment extends SherlockFragment implements
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.story_details, container, false);
 	}
-
 
 	@Override
 	public void onStart() {
@@ -114,13 +113,11 @@ public class StoryDetailsFragment extends SherlockFragment implements
 		if (getStory() != null) {
 
 			// title
-			TextView titleText = (TextView) this.getView().findViewById(
-					R.id.story_details_title);
+			TextView titleText = (TextView) this.getView().findViewById(R.id.story_details_title);
 			titleText.setText(getStory().getTitle());
 
 			// rating
-			RatingBar rating = (RatingBar) getView().findViewById(
-					R.id.story_details_rating);
+			RatingBar rating = (RatingBar) getView().findViewById(R.id.story_details_rating);
 			rating.setOnTouchListener(new View.OnTouchListener() {
 
 				@Override
@@ -134,44 +131,38 @@ public class StoryDetailsFragment extends SherlockFragment implements
 			if (story.getCommunityData() != null) {
 				rating.setRating(story.getCommunityData().getAverageRating());
 			}
-			
+
 			// description, optional
-			titleText = (TextView) this.getView().findViewById(
-					R.id.story_details_descr);
-			if (story.getDescription() != null
-					&& story.getDescription().length() > 0) {
+			titleText = (TextView) this.getView().findViewById(R.id.story_details_descr);
+			if (story.getDescription() != null && story.getDescription().length() > 0) {
 				titleText.setText(story.getDescription());
 			}
-			
+
 			// detail of the story (contains all the story elements)
-			final ScrollView detailStory = (ScrollView) this.getView()
-					.findViewById(R.id.story_details);
+			final ScrollView detailStory = (ScrollView) this.getView().findViewById(R.id.story_details);
 			detailStory.setVisibility(View.VISIBLE);
 
 			// update the attending part
 			updateAttending();
 
 			// detail of the step (contains all the step elements)
-			final ScrollView detailStep = (ScrollView) this.getView()
-					.findViewById(R.id.step_details);
-				
+			final ScrollView detailStep = (ScrollView) this.getView().findViewById(R.id.step_details);
+
 			// disable the step part at the start
 			detailStep.setVisibility(View.GONE);
-			final LinearLayout buttonStep = (LinearLayout) this.getView()
-					.findViewById(R.id.navigation_buttons);
+			final LinearLayout buttonStep = (LinearLayout) this.getView().findViewById(R.id.navigation_buttons);
 			buttonStep.setVisibility(View.GONE);
 
 			// start button
-			final LinearLayout buttonSart = (LinearLayout) this.getView()
-					.findViewById(R.id.start_buttons);
+			final LinearLayout buttonSart = (LinearLayout) this.getView().findViewById(R.id.start_buttons);
 			buttonSart.setVisibility(View.VISIBLE);
-			final Button startStory = (Button) this.getView().findViewById(
-					R.id.btn_story_start);
+			final Button startStory = (Button) this.getView().findViewById(R.id.btn_story_start);
 			startStory.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					// visualize first step enabling the its elements and disabling the story part
+					// visualize first step enabling the its elements and
+					// disabling the story part
 					mItemizedoverlay.fithMaptOnTheStory();
 					changeStep(actualStepPosition + 1);
 					detailStep.setVisibility(View.VISIBLE);
@@ -183,8 +174,7 @@ public class StoryDetailsFragment extends SherlockFragment implements
 			});
 
 			// prevbutton
-			final Button prevButton = (Button) this.getView().findViewById(
-					R.id.btn_story_prev);
+			final Button prevButton = (Button) this.getView().findViewById(R.id.btn_story_prev);
 			prevButton.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -196,8 +186,7 @@ public class StoryDetailsFragment extends SherlockFragment implements
 			});
 
 			// next button
-			final Button nextButton = (Button) this.getView().findViewById(
-					R.id.btn_story_next);
+			final Button nextButton = (Button) this.getView().findViewById(R.id.btn_story_next);
 			nextButton.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -211,8 +200,7 @@ public class StoryDetailsFragment extends SherlockFragment implements
 			// reinit the story every time this fragment is loaded
 			changeStep(-1);
 			// hide the keyboard
-			InputMethodManager imm = (InputMethodManager) getSherlockActivity()
-					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			InputMethodManager imm = (InputMethodManager) getSherlockActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(nextButton.getWindowToken(), 0);
 			changeTheMapConfiguration();
 			mItemizedoverlay.fithMaptOnTheStory();
@@ -232,29 +220,25 @@ public class StoryDetailsFragment extends SherlockFragment implements
 	}
 
 	/*
-	 * Method used to change all the element in the fragment (except the Map)
-	 * if the actualStepPosition is -1, shows the story's details
-	 * if it is different, shows the others details and buttons
+	 * Method used to change all the element in the fragment (except the Map) if
+	 * the actualStepPosition is -1, shows the story's details if it is
+	 * different, shows the others details and buttons
 	 */
-	
+
 	private void changeStep(int i) {
 
 		actualStepPosition = i;
 		// detail of the story
-		ScrollView detailStory = (ScrollView) this.getView().findViewById(
-				R.id.story_details);
+		ScrollView detailStory = (ScrollView) this.getView().findViewById(R.id.story_details);
 		// disable the step part
-		ScrollView detailStep = (ScrollView) this.getView().findViewById(
-				R.id.step_details);
-		LinearLayout buttonStep = (LinearLayout) this.getView().findViewById(
-				R.id.navigation_buttons);
+		ScrollView detailStep = (ScrollView) this.getView().findViewById(R.id.step_details);
+		LinearLayout buttonStep = (LinearLayout) this.getView().findViewById(R.id.navigation_buttons);
 		// start button
-		LinearLayout startStory = (LinearLayout) this.getView().findViewById(
-				R.id.start_buttons);
+		LinearLayout startStory = (LinearLayout) this.getView().findViewById(R.id.start_buttons);
 
 		if (getStory().getSteps() == null || getStory().getSteps().size() == 0) {
 			startStory.setVisibility(View.GONE);
-		} else 
+		} else
 
 		// show the details of the story
 		if (actualStepPosition == -1) {
@@ -272,32 +256,27 @@ public class StoryDetailsFragment extends SherlockFragment implements
 				startStory.setVisibility(View.GONE);
 				detailStep.setVisibility(View.VISIBLE);
 				buttonStep.setVisibility(View.VISIBLE);
-				//number of the step
-				TextView numberOfStepText = (TextView) this.getView()
-						.findViewById(R.id.number_of_step);
-				numberOfStepText
-						.setText(String.valueOf(actualStepPosition + 1));
-				//name of the step (if the POI hasn't been erased)  
-				TextView nameOfStepText = (TextView) this.getView()
-						.findViewById(R.id.step_details_name);
+				// number of the step
+				TextView numberOfStepText = (TextView) this.getView().findViewById(R.id.number_of_step);
+				numberOfStepText.setText(String.valueOf(actualStepPosition + 1));
+				// name of the step (if the POI hasn't been erased)
+				TextView nameOfStepText = (TextView) this.getView().findViewById(R.id.step_details_name);
 				if (story.getSteps().get(actualStepPosition).assignedPoi() != null)
-					nameOfStepText.setText(story.getSteps()
-							.get(actualStepPosition).assignedPoi().getTitle());
+					nameOfStepText.setText(story.getSteps().get(actualStepPosition).assignedPoi().getTitle());
 				else
 					nameOfStepText.setText(getString(R.string.poi_erased));
 				// notes of the step
-				TextView noteOfStepText = (TextView) this.getView()
-						.findViewById(R.id.step_details_note);
-//				if (story.getSteps().get(actualStepPosition).assignedPoi() != null)
-//					noteOfStepText.setText(story.getSteps()
-//							.get(actualStepPosition).getNote());
-//				else
-//					noteOfStepText.setText(" ");
+				TextView noteOfStepText = (TextView) this.getView().findViewById(R.id.step_details_note);
+				// if (story.getSteps().get(actualStepPosition).assignedPoi() !=
+				// null)
+				// noteOfStepText.setText(story.getSteps()
+				// .get(actualStepPosition).getNote());
+				// else
+				// noteOfStepText.setText(" ");
 				noteOfStepText.setText(story.getSteps().get(actualStepPosition).getNote());
-				Button nextStep = (Button) this.getView().findViewById(
-						R.id.btn_story_next);
+				Button nextStep = (Button) this.getView().findViewById(R.id.btn_story_next);
 
-				//If it is at the end of the story, hides the "next" button
+				// If it is at the end of the story, hides the "next" button
 				if (actualStepPosition == story.getSteps().size() - 1)
 					nextStep.setVisibility(View.GONE);
 				else
@@ -312,12 +291,9 @@ public class StoryDetailsFragment extends SherlockFragment implements
 	@Override
 	public void onDestroyView() {
 		try {
-			FragmentTransaction transaction = getFragmentManager()
-					.beginTransaction();
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-			transaction.remove(
-					getFragmentManager()
-							.findFragmentById(R.id.my_map_fragment1)).commit();
+			transaction.remove(getFragmentManager().findFragmentById(R.id.my_map_fragment1)).commit();
 		} catch (Exception e) {
 		}
 
@@ -325,109 +301,86 @@ public class StoryDetailsFragment extends SherlockFragment implements
 
 	}
 
-	/* There are many different cases to build the options menu: 
-	 * 1-story visualization
-	 * 2-POI 
-	 * 3-POI created by user
-	 * 4-POI erased */
+	/*
+	 * There are many different cases to build the options menu: 1-story
+	 * visualization 2-POI 3-POI created by user 4-POI erased
+	 */
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 
 		menu.clear();
-		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.gripmenu,
-				menu);
+		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.gripmenu, menu);
 
 		SubMenu submenu = menu.getItem(0).getSubMenu();
 		submenu.clear();
 
 		if (actualStepPosition == -1 || getStory().getSteps() == null || getStory().getSteps().size() == 0) {
-			//story visualization
-			submenu.add(Menu.CATEGORY_SYSTEM, R.id.rate, Menu.NONE,
-					R.string.rate);
-			if (getStory().getAttending() == null
-					|| getStory().getAttending().isEmpty()) {
-				submenu.add(Menu.CATEGORY_SYSTEM, R.id.add_my_stories,
-						Menu.NONE, R.string.add_my_stories);
+			// story visualization
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.rate, Menu.NONE, R.string.rate);
+			if (getStory().getAttending() == null || getStory().getAttending().isEmpty()) {
+				submenu.add(Menu.CATEGORY_SYSTEM, R.id.add_my_stories, Menu.NONE, R.string.add_my_stories);
 			} else
-				submenu.add(Menu.CATEGORY_SYSTEM, R.id.add_my_stories,
-						Menu.NONE, R.string.delete_my_stories);
-			submenu.add(Menu.CATEGORY_SYSTEM, R.id.follow, Menu.NONE,
-					R.string.follow);
-			submenu.add(Menu.CATEGORY_SYSTEM, R.id.edit_btn, Menu.NONE,
-					R.string.edit);
+				submenu.add(Menu.CATEGORY_SYSTEM, R.id.add_my_stories, Menu.NONE, R.string.delete_my_stories);
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.follow, Menu.NONE, R.string.follow);
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.edit_btn, Menu.NONE, R.string.edit);
 			// CAN DELETE ONLY OWN STORY
 			if (DTHelper.isOwnedObject(getStory())) {
-				submenu.add(Menu.CATEGORY_SYSTEM, R.id.delete_btn, Menu.NONE,
-						R.string.delete);
+				submenu.add(Menu.CATEGORY_SYSTEM, R.id.delete_btn, Menu.NONE, R.string.delete);
 			}
 		} else {
-			//POI visualization
+			// POI visualization
 			if (getStory().getSteps().get(actualStepPosition).assignedPoi() != null) {
-				submenu.add(Menu.CATEGORY_SYSTEM, R.id.related_step_btn,
-						Menu.NONE, R.string.related_poi);
-				submenu.add(Menu.CATEGORY_SYSTEM, R.id.direction_step_btn,
-						Menu.NONE, R.string.getdir);
+				submenu.add(Menu.CATEGORY_SYSTEM, R.id.related_step_btn, Menu.NONE, R.string.related_poi);
+				submenu.add(Menu.CATEGORY_SYSTEM, R.id.direction_step_btn, Menu.NONE, R.string.getdir);
 
 			}
 			// CAN EDIT AND DELETE STEPS ONLY IN OWN STORIES
 			if (DTHelper.isOwnedObject(getStory())) {
 				// TODO implement the step cancellation!!!!
-//				submenu.add(Menu.CATEGORY_SYSTEM, R.id.delete_step_btn,
-//						Menu.NONE, R.string.delete);
-				submenu.add(Menu.CATEGORY_SYSTEM, R.id.edit_step_btn, Menu.NONE,
-						R.string.edit);
+				// submenu.add(Menu.CATEGORY_SYSTEM, R.id.delete_step_btn,
+				// Menu.NONE, R.string.delete);
+				submenu.add(Menu.CATEGORY_SYSTEM, R.id.edit_step_btn, Menu.NONE, R.string.edit);
 			}
 
 		}
 		super.onPrepareOptionsMenu(menu);
 	}
 
-	
 	private void ratingDialog() {
-		float rating = (story != null && story.getCommunityData() != null && story
-				.getCommunityData().getAverageRating() > 0) ? story
+		float rating = (story != null && story.getCommunityData() != null && story.getCommunityData().getAverageRating() > 0) ? story
 				.getCommunityData().getAverageRating() : 2.5f;
-		RatingHelper.ratingDialog(getActivity(), rating, new RatingProcessor(
-				getActivity()));
+		RatingHelper.ratingDialog(getActivity(), rating, new RatingProcessor(getActivity()));
 	}
 
-	
 	private void updateRating(Integer result) {
 		getStory().getCommunityData().setAverageRating(result);
-		RatingBar rating = (RatingBar) getView().findViewById(
-				R.id.story_details_rating);
+		RatingBar rating = (RatingBar) getView().findViewById(R.id.story_details_rating);
 		rating.setRating(getStory().getCommunityData().getAverageRating());
 	}
-	
-	private class RatingProcessor extends
-			AbstractAsyncTaskProcessor<Integer, Integer> implements
-			RatingHandler {
+
+	private class RatingProcessor extends AbstractAsyncTaskProcessor<Integer, Integer> implements RatingHandler {
 
 		public RatingProcessor(Activity activity) {
 			super(activity);
 		}
 
 		@Override
-		public Integer performAction(Integer... params)
-				throws SecurityException, Exception {
+		public Integer performAction(Integer... params) throws SecurityException, Exception {
 			return DTHelper.rate(story, params[0]);
 		}
 
 		@Override
 		public void handleResult(Integer result) {
 			updateRating(result);
-			Toast.makeText(getSherlockActivity(), R.string.rating_success,
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(getSherlockActivity(), R.string.rating_success, Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
 		public void onRatingChanged(float rating) {
-			new SCAsyncTask<Integer, Void, Integer>(getActivity(), this)
-					.execute((int) rating);
+			new SCAsyncTask<Integer, Void, Integer>(getActivity(), this).execute((int) rating);
 		}
 	}
 
-	
 	/*
 	 * Manage the options
 	 */
@@ -442,63 +395,51 @@ public class StoryDetailsFragment extends SherlockFragment implements
 		}
 		// add to my stories
 		case R.id.add_my_stories: {
-			new SCAsyncTask<Boolean, Void, StoryObject>(getActivity(),
-					new AttendProcessor(getActivity())).execute(getStory()
-					.getAttending() == null
-					|| getStory().getAttending().isEmpty());
+			new SCAsyncTask<Boolean, Void, StoryObject>(getActivity(), new AttendProcessor(getActivity())).execute(getStory()
+					.getAttending() == null || getStory().getAttending().isEmpty());
 			return true;
 		}
-		//follow
+		// follow
 		case R.id.follow: {
-			FollowEntityObject obj = new FollowEntityObject(getStory()
-					.getEntityId(), getStory().getTitle(),
+			FollowEntityObject obj = new FollowEntityObject(getStory().getEntityId(), getStory().getTitle(),
 					DTConstants.ENTITY_TYPE_STORY);
 			FollowHelper.follow(getActivity(), obj);
 			return true;
 		}
-		//edit the story
+		// edit the story
 		case R.id.edit_btn: {
-			FragmentTransaction fragmentTransaction = getSherlockActivity()
-					.getSupportFragmentManager().beginTransaction();
+			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			Fragment fragment = new CreateStoryFragment();
 			Bundle args = new Bundle();
 			args.putSerializable(CreateStoryFragment.ARG_STORY, story);
 			fragment.setArguments(args);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(android.R.id.content, fragment,
-					"stories");
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fragmentTransaction.replace(android.R.id.content, fragment, "stories");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 			return true;
 		}
-		//delete the story
+		// delete the story
 		case R.id.delete_btn: {
-			new SCAsyncTask<StoryObject, Void, Boolean>(getActivity(),
-					new StoryDeleteProcessor(getActivity())).execute(story);
+			new SCAsyncTask<StoryObject, Void, Boolean>(getActivity(), new StoryDeleteProcessor(getActivity())).execute(story);
 			return true;
 		}
-		//related step
+		// related step
 		case R.id.related_step_btn: {
-			FragmentTransaction fragmentTransaction = getSherlockActivity()
-					.getSupportFragmentManager().beginTransaction();
+			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			PoiDetailsFragment fragment = new PoiDetailsFragment();
 			Bundle args = new Bundle();
-			args.putSerializable(PoiDetailsFragment.ARG_POI, getStory()
-					.getSteps().get(actualStepPosition).assignedPoi());
+			args.putSerializable(PoiDetailsFragment.ARG_POI, getStory().getSteps().get(actualStepPosition).assignedPoi());
 			fragment.setArguments(args);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(android.R.id.content, fragment,
-					"stories");
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fragmentTransaction.replace(android.R.id.content, fragment, "stories");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 			return true;
 		}
-		//direction to the step
+		// direction to the step
 		case R.id.direction_step_btn: {
-			Address to = getStory().getSteps().get(actualStepPosition)
-					.assignedPoi().asGoogleAddress();
+			Address to = getStory().getSteps().get(actualStepPosition).assignedPoi().asGoogleAddress();
 			Address from = null;
 			GeoPoint mylocation = MapManager.requestMyLocation(getActivity());
 			if (mylocation != null) {
@@ -510,22 +451,17 @@ public class StoryDetailsFragment extends SherlockFragment implements
 			NavigationHelper.bringMeThere(getActivity(), from, to);
 			return true;
 		}
-		//edit step
+		// edit step
 		case R.id.edit_step_btn: {
-			FragmentTransaction fragmentTransaction = getSherlockActivity()
-					.getSupportFragmentManager().beginTransaction();
+			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			AddStepToStoryFragment fragment = new AddStepToStoryFragment();
 			Bundle args = new Bundle();
-			args.putParcelable(AddStepToStoryFragment.ARG_STEP_HANDLER,
-					stepHandler);
+			args.putParcelable(AddStepToStoryFragment.ARG_STEP_HANDLER, stepHandler);
 			args.putSerializable(AddStepToStoryFragment.ARG_STORY_OBJECT, story);
-			args.putInt(AddStepToStoryFragment.ARG_STEP_POSITION,
-					actualStepPosition);
+			args.putInt(AddStepToStoryFragment.ARG_STEP_POSITION, actualStepPosition);
 			fragment.setArguments(args);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(android.R.id.content, fragment,
-					"stories");
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fragmentTransaction.replace(android.R.id.content, fragment, "stories");
 			fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 			return true;
@@ -535,10 +471,8 @@ public class StoryDetailsFragment extends SherlockFragment implements
 		}
 	}
 
-	
-	
 	/*
-	 * load on the map the story passed by parameter using an asynch task.  
+	 * load on the map the story passed by parameter using an asynch task.
 	 */
 
 	@Override
@@ -546,30 +480,28 @@ public class StoryDetailsFragment extends SherlockFragment implements
 
 		mItemizedoverlay.clearMarkers();
 
-		new SCAsyncTask<Void, Void, Collection<? extends BaseDTObject>>(
-				getActivity(), new MapStoryLoadProcessor(getActivity(),
-						mItemizedoverlay, mapViewStory) {
-					@Override
-					protected Collection<? extends BaseDTObject> getObjects() {
-						try {
-							ArrayList<POIObject> poiList = new ArrayList<POIObject>();
-							poiList = DTHelper.getPOIBySteps(story.getSteps());
-							for (int i = 0; i < poiList.size(); i++) {
-								story.getSteps().get(i)
-										.assignPoi(poiList.get(i));
-							}
-							return poiList;
-						} catch (Exception e) {
-							e.printStackTrace();
-							return Collections.emptyList();
-						}
+		new SCAsyncTask<Void, Void, Collection<? extends BaseDTObject>>(getActivity(), new MapStoryLoadProcessor(getActivity(),
+				mItemizedoverlay, mapViewStory) {
+			@Override
+			protected Collection<? extends BaseDTObject> getObjects() {
+				try {
+					ArrayList<POIObject> poiList = new ArrayList<POIObject>();
+					poiList = DTHelper.getPOIBySteps(story.getSteps());
+					for (int i = 0; i < poiList.size(); i++) {
+						story.getSteps().get(i).assignPoi(poiList.get(i));
 					}
-				}).execute();
+					return poiList;
+				} catch (Exception e) {
+					e.printStackTrace();
+					return Collections.emptyList();
+				}
+			}
+		}).execute();
 	}
 
-	
 	/*
-	 * Method used by MyMapFragment to load the MapView. It requires the reset of the map
+	 * Method used by MyMapFragment to load the MapView. It requires the reset
+	 * of the map
 	 */
 	public void setMap(MapView mapViewStory) {
 
@@ -585,8 +517,7 @@ public class StoryDetailsFragment extends SherlockFragment implements
 		mapViewStory.getController().setZoom(15);
 		List<Overlay> listOfOverlays = mapViewStory.getOverlays();
 
-		mItemizedoverlay = new DTStoryItemizedOverlay(getSherlockActivity(),
-				mapViewStory, story);
+		mItemizedoverlay = new DTStoryItemizedOverlay(getSherlockActivity(), mapViewStory, story);
 		mItemizedoverlay.setMapItemTapListener(this);
 		listOfOverlays.add(mItemizedoverlay);
 		setPOIStoryToLoad(story);
@@ -595,9 +526,11 @@ public class StoryDetailsFragment extends SherlockFragment implements
 	}
 
 	/*
-	 * implementation of the BasicObjectMapItemTapListener interface method, called when a user taps on an element
-	 * it's called by DTStoryItemizedOverlay.onTap anche checks which element is clicked, compared with the element in the 
-	 * story, set the actual posistion and modifies the layout
+	 * implementation of the BasicObjectMapItemTapListener interface method,
+	 * called when a user taps on an element it's called by
+	 * DTStoryItemizedOverlay.onTap anche checks which element is clicked,
+	 * compared with the element in the story, set the actual posistion and
+	 * modifies the layout
 	 */
 	@Override
 	public void onBasicObjectTap(BasicObject o) {
@@ -605,18 +538,16 @@ public class StoryDetailsFragment extends SherlockFragment implements
 		POIObject poiTapped = (POIObject) o;
 		for (int i = 0; i < story.getSteps().size(); i++)
 			if (story.getSteps().get(i).assignedPoi() != null)
-				if (story.getSteps().get(i).assignedPoi().getId()
-						.compareTo(poiTapped.getId()) == 0) {
+				if (story.getSteps().get(i).assignedPoi().getId().compareTo(poiTapped.getId()) == 0) {
 					actualStepPosition = i;
 					changeStep(actualStepPosition);
 				}
 
 	}
 
-	
 	/*
-	 * class passsed to the AddStepToStoryFragment and implements two method used in it.
-	 * 
+	 * class passsed to the AddStepToStoryFragment and implements two method
+	 * used in it.
 	 */
 	private class AddStep implements StepHandler, Parcelable {
 
@@ -654,25 +585,21 @@ public class StoryDetailsFragment extends SherlockFragment implements
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			// Add the buttons
 			builder.setMessage(getActivity().getString(R.string.sure_change));
-			builder.setPositiveButton(R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// User clicked OK button
-							story.getSteps().set(position, step);
-							new SCAsyncTask<StoryObject, Void, Boolean>(
-									getActivity(), new CreateStoryProcessor(
-											getActivity())).execute(story);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					// User clicked OK button
+					story.getSteps().set(position, step);
+					new SCAsyncTask<StoryObject, Void, Boolean>(getActivity(), new CreateStoryProcessor(getActivity()))
+							.execute(story);
 
-
-						}
-					});
-			builder.setNegativeButton(R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// User cancelled the dialog
-							dialog.dismiss();
-						}
-					});
+				}
+			});
+			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					// User cancelled the dialog
+					dialog.dismiss();
+				}
+			});
 
 			// Create the AlertDialog
 			AlertDialog dialog = builder.create();
@@ -684,29 +611,23 @@ public class StoryDetailsFragment extends SherlockFragment implements
 	/*
 	 * Delete a story
 	 */
-	private class StoryDeleteProcessor extends
-			AbstractAsyncTaskProcessor<StoryObject, Boolean> {
+	private class StoryDeleteProcessor extends AbstractAsyncTaskProcessor<StoryObject, Boolean> {
 		public StoryDeleteProcessor(Activity activity) {
 			super(activity);
 		}
 
 		@Override
-		public Boolean performAction(StoryObject... params)
-				throws SecurityException, Exception {
+		public Boolean performAction(StoryObject... params) throws SecurityException, Exception {
 			return DTHelper.deleteStory(params[0]);
 		}
 
 		@Override
 		public void handleResult(Boolean result) {
 			if (result) {
-				getSherlockActivity().getSupportFragmentManager().popBackStack(
-						"stories", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+				getSherlockActivity().getSupportFragmentManager().popBackStack("stories",
+						FragmentManager.POP_BACK_STACK_INCLUSIVE);
 			} else {
-				Toast.makeText(
-						getActivity(),
-						getActivity().getString(
-								R.string.app_failure_cannot_delete),
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(getSherlockActivity(), R.string.app_failure_cannot_delete, Toast.LENGTH_LONG).show();
 			}
 		}
 
@@ -715,16 +636,14 @@ public class StoryDetailsFragment extends SherlockFragment implements
 	/*
 	 * Attend to a story
 	 */
-	private class AttendProcessor extends
-			AbstractAsyncTaskProcessor<Boolean, StoryObject> {
+	private class AttendProcessor extends AbstractAsyncTaskProcessor<Boolean, StoryObject> {
 
 		public AttendProcessor(Activity activity) {
 			super(activity);
 		}
 
 		@Override
-		public StoryObject performAction(Boolean... params)
-				throws SecurityException, Exception {
+		public StoryObject performAction(Boolean... params) throws SecurityException, Exception {
 			if (params[0])
 				return DTHelper.addToMyStories(getStory());
 			return DTHelper.removeFromMyStories(getStory());
@@ -736,13 +655,10 @@ public class StoryDetailsFragment extends SherlockFragment implements
 			updateAttending();
 			changeTheMapConfiguration();
 			getSherlockActivity().invalidateOptionsMenu();
-			if (getStory().getAttending() == null
-					|| getStory().getAttending().isEmpty())
-				Toast.makeText(getSherlockActivity(),
-						R.string.not_attend_story_success, Toast.LENGTH_SHORT).show();
+			if (getStory().getAttending() == null || getStory().getAttending().isEmpty())
+				Toast.makeText(getSherlockActivity(), R.string.not_attend_story_success, Toast.LENGTH_SHORT).show();
 			else
-				Toast.makeText(getSherlockActivity(), R.string.attend_story_success,
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(getSherlockActivity(), R.string.attend_story_success, Toast.LENGTH_SHORT).show();
 		}
 
 	}
@@ -750,33 +666,26 @@ public class StoryDetailsFragment extends SherlockFragment implements
 	/*
 	 * Create a story
 	 */
-	private class CreateStoryProcessor extends
-			AbstractAsyncTaskProcessor<StoryObject, Boolean> {
+	private class CreateStoryProcessor extends AbstractAsyncTaskProcessor<StoryObject, Boolean> {
 
 		public CreateStoryProcessor(Activity activity) {
 			super(activity);
 		}
 
 		@Override
-		public Boolean performAction(StoryObject... params)
-				throws SecurityException, Exception {
+		public Boolean performAction(StoryObject... params) throws SecurityException, Exception {
 			return DTHelper.saveStory(params[0]);
 		}
 
 		@Override
 		public void handleResult(Boolean result) {
 			if (result) {
-				Toast.makeText(getSherlockActivity(),
-						R.string.story_create_success, Toast.LENGTH_SHORT)
-						.show();
-				getSherlockActivity().getSupportFragmentManager()
-						.popBackStack();
+				Toast.makeText(getSherlockActivity(), R.string.story_create_success, Toast.LENGTH_SHORT).show();
+				getSherlockActivity().getSupportFragmentManager().popBackStack();
 
 			} else {
-				Toast.makeText(getSherlockActivity(), R.string.update_success,
-						Toast.LENGTH_SHORT).show();
-				getSherlockActivity().getSupportFragmentManager()
-						.popBackStack();
+				Toast.makeText(getSherlockActivity(), R.string.update_success, Toast.LENGTH_SHORT).show();
+				getSherlockActivity().getSupportFragmentManager().popBackStack();
 
 			}
 			mItemizedoverlay.fithMaptOnTheStory();

@@ -180,5 +180,10 @@
 	<string name="toast_incorrect">Dato non corretto:</string>
 
 	<string name="eventlist_at_place">Eventi a</string>
+	
+	<string name="toast_my_events_clicked">Cliccato I miei eventi</string>
+	<string name="toast_browsing_your_files">Controllo dei tuoi files&#8230;</string>
+	<string name="toast_event_saved">Evento salvato!</string>
+	<string name="toast_poi_shared">POI shared.</string>
 		
 </resources>

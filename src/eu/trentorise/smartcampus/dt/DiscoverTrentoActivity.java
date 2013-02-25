@@ -259,8 +259,7 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 	 * try { DTHelper.init(getApplicationContext()); String token =
 	 * DTHelper.getAccessProvider().getAuthToken(this, null); if (token != null)
 	 * { initData(token); } } catch (Exception e) { Toast.makeText(this,
-	 * "Failed to initialize DiscoverTrento application",
-	 * Toast.LENGTH_LONG).show(); return; } }
+	 * R.string.app_failure_init, Toast.LENGTH_LONG).show(); return; } }
 	 */
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
