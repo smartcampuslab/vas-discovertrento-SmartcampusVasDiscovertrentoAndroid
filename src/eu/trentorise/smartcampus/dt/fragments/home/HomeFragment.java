@@ -47,6 +47,7 @@ import com.google.android.maps.Projection;
 
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
+import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.custom.map.BaseDTObjectMapItemTapListener;
 import eu.trentorise.smartcampus.dt.custom.map.DTItemizedOverlay;
@@ -227,12 +228,14 @@ public class HomeFragment extends SherlockFragment implements MapItemsHandler, B
 
 	@Override
 	public void onBaseDTObjectsTap(List<BaseDTObject> list) {
+		SlidingFragment sl = (SlidingFragment) getActivity().getSupportFragmentManager()
+				.findFragmentById(R.id.feedback_fragment_container);
 		if (list == null || list.size() == 0) return;
 		if (list.size() == 1) {
 			onBaseDTObjectTap(list.get(0));
 			return;
 		}
-		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+		//FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 		SherlockFragment fragment = null;
 		Bundle args = new Bundle();
 		if (list.get(0) instanceof EventObject) {
@@ -244,11 +247,13 @@ public class HomeFragment extends SherlockFragment implements MapItemsHandler, B
 		}
 		if (fragment != null) {
 			fragment.setArguments(args);
-			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			/*fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "home");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
+			fragmentTransaction.commit();*/
+			sl.replaceFragmentWithTransition(fragment, 
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Home");
 		}
 	}
 }

@@ -45,6 +45,8 @@ import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
 import eu.trentorise.smartcampus.android.common.follow.FollowHelper;
 import eu.trentorise.smartcampus.android.common.navigation.NavigationHelper;
+import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
+import eu.trentorise.smartcampus.dt.DiscoverTrentoActivity;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.RatingHelper;
@@ -328,10 +330,15 @@ public class EventDetailsFragment extends SherlockFragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		SlidingFragment sl = (SlidingFragment) getActivity()
+				.getSupportFragmentManager().findFragmentById(
+						R.id.feedback_fragment_container);
+		
 		switch (item.getItemId()) {
 
 		case R.id.show_related_poi: {
-			FragmentTransaction fragmentTransaction = getSherlockActivity()
+			/*Gio comment
+			 * FragmentTransaction fragmentTransaction = getSherlockActivity()
 					.getSupportFragmentManager().beginTransaction();
 			PoiDetailsFragment fragment = new PoiDetailsFragment();
 			Bundle args = new Bundle();
@@ -343,7 +350,14 @@ public class EventDetailsFragment extends SherlockFragment {
 			fragmentTransaction.replace(android.R.id.content, fragment,
 					"events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
+			fragmentTransaction.commit();*/
+			PoiDetailsFragment fragment = new PoiDetailsFragment();
+			Bundle args = new Bundle();
+			args.putSerializable(PoiDetailsFragment.ARG_POI, getPOI());
+			fragment.setArguments(args);
+			
+			sl.replaceFragmentWithTransition(fragment, 
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Events");
 			return true;
 		}
 
@@ -380,7 +394,8 @@ public class EventDetailsFragment extends SherlockFragment {
 			new SCAsyncTask<Boolean, Void, EventObject>(getActivity(), new AttendProcessor(getActivity())).execute(getEvent().getAttending() == null || getEvent().getAttending().isEmpty());
 			return true;
 		case R.id.edit_btn:
-			FragmentTransaction fragmentTransaction = getSherlockActivity()
+			/* Gio comment
+			 * FragmentTransaction fragmentTransaction = getSherlockActivity()
 					.getSupportFragmentManager().beginTransaction();
 			Fragment fragment = new CreateEventFragment();
 			Bundle args = new Bundle();
@@ -392,7 +407,14 @@ public class EventDetailsFragment extends SherlockFragment {
 			fragmentTransaction.replace(android.R.id.content, fragment,
 					"events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
+			fragmentTransaction.commit();*/
+			Fragment fragment = new CreateEventFragment();
+			Bundle args = new Bundle();
+			args.putSerializable(CreateEventFragment.ARG_EVENT, getEvent());
+			fragment.setArguments(args);
+			sl.replaceFragmentWithTransition(fragment,
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE,
+					true, "Events");
 			return true;
 		case R.id.delete_btn:
 			new SCAsyncTask<EventObject, Void, Boolean>(getActivity(),

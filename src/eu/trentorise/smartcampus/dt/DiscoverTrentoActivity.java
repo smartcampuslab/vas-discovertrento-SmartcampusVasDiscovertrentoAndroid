@@ -20,12 +20,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.google.android.maps.MapView;
@@ -33,6 +36,8 @@ import com.google.android.maps.MapView;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
+import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
+import eu.trentorise.smartcampus.android.feedback.interfaces.onDrawerVisibleListener;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.TabListener;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
@@ -50,21 +55,25 @@ import eu.trentorise.smartcampus.dt.model.POIObject;
 import eu.trentorise.smartcampus.dt.model.StoryObject;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
-public class DiscoverTrentoActivity extends SherlockFragmentActivity {
+public class DiscoverTrentoActivity extends SherlockFragmentActivity implements
+		onDrawerVisibleListener {
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt("tag", getSupportActionBar().getSelectedNavigationIndex());
+		outState.putInt("tag", getSupportActionBar()
+				.getSelectedNavigationIndex());
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setUpContent(savedInstanceState != null ? savedInstanceState.getInt("tag") : null);
+		setUpContent(savedInstanceState != null ? savedInstanceState
+				.getInt("tag") : null);
 
 		initDataManagement(savedInstanceState);
-		MapManager.setMapView(new MapView(this, getResources().getString(R.string.maps_api_key)));
+		MapManager.setMapView(new MapView(this, getResources().getString(
+				R.string.maps_api_key)));
 	}
 
 	@Override
@@ -84,21 +93,25 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 	private void initDataManagement(Bundle savedInstanceState) {
 		try {
 			DTHelper.init(getApplicationContext());
-			String token = DTHelper.getAccessProvider().getAuthToken(this, null);
+			String token = DTHelper.getAccessProvider()
+					.getAuthToken(this, null);
 			if (token != null) {
 				initData(token);
 			}
 		} catch (Exception e) {
-			Toast.makeText(this, R.string.app_failure_init, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.app_failure_init, Toast.LENGTH_LONG)
+					.show();
 			return;
 		}
 	}
 
 	private boolean initData(String token) {
 		try {
-			new SCAsyncTask<Void, Void, BaseDTObject>(this, new LoadDataProcessor(this)).execute();
+			new SCAsyncTask<Void, Void, BaseDTObject>(this,
+					new LoadDataProcessor(this)).execute();
 		} catch (Exception e1) {
-			Toast.makeText(this, R.string.app_failure_init, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.app_failure_init, Toast.LENGTH_LONG)
+					.show();
 			return false;
 		}
 		return true;
@@ -115,25 +128,29 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 		// Home
 		ActionBar.Tab tab = actionBar.newTab();
 		tab.setText(R.string.tab_home);
-		tab.setTabListener(new TabListener<HomeFragment>(this, "me", HomeFragment.class));
+		tab.setTabListener(new TabListener<HomeFragment>(this, "Home",
+				HomeFragment.class));
 		actionBar.addTab(tab);
 
 		// Points of interest
 		tab = actionBar.newTab();
 		tab.setText(R.string.tab_places);
-		tab.setTabListener(new TabListener<AllPoisFragment>(this, "pois", AllPoisFragment.class));
+		tab.setTabListener(new TabListener<AllPoisFragment>(this, "Places",
+				AllPoisFragment.class));
 		actionBar.addTab(tab);
 
 		// Events
 		tab = actionBar.newTab();
 		tab.setText(R.string.tab_events);
-		tab.setTabListener(new TabListener<AllEventsFragment>(this, "events", AllEventsFragment.class));
+		tab.setTabListener(new TabListener<AllEventsFragment>(this, "Events",
+				AllEventsFragment.class));
 		actionBar.addTab(tab);
 
 		// Stories
 		tab = getSupportActionBar().newTab();
 		tab.setText(R.string.tab_stories);
-		tab.setTabListener(new TabListener<AllStoriesFragment>(this, "stories", AllStoriesFragment.class));
+		tab.setTabListener(new TabListener<AllStoriesFragment>(this, "Stories",
+				AllStoriesFragment.class));
 		actionBar.addTab(tab);
 
 		if (pos != null)
@@ -152,28 +169,36 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
-			String token = data.getExtras().getString(AccountManager.KEY_AUTHTOKEN);
+			String token = data.getExtras().getString(
+					AccountManager.KEY_AUTHTOKEN);
 			if (token == null) {
-				Toast.makeText(this, R.string.app_failure_security, Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.app_failure_security,
+						Toast.LENGTH_LONG).show();
 				finish();
 			} else {
 				initData(token);
 			}
-		} else if (resultCode == RESULT_CANCELED && requestCode == SCAccessProvider.SC_AUTH_ACTIVITY_REQUEST_CODE) {
-			DTHelper.endAppFailure(this, eu.trentorise.smartcampus.ac.R.string.token_required);
+		} else if (resultCode == RESULT_CANCELED
+				&& requestCode == SCAccessProvider.SC_AUTH_ACTIVITY_REQUEST_CODE) {
+			DTHelper.endAppFailure(this,
+					eu.trentorise.smartcampus.ac.R.string.token_required);
 		}
 	}
 
-	private class LoadDataProcessor extends AbstractAsyncTaskProcessor<Void, BaseDTObject> {
+	private class LoadDataProcessor extends
+			AbstractAsyncTaskProcessor<Void, BaseDTObject> {
 
 		public LoadDataProcessor(Activity activity) {
 			super(activity);
 		}
 
 		@Override
-		public BaseDTObject performAction(Void... params) throws SecurityException, Exception {
-			Long entityId = getIntent().getLongExtra(getString(R.string.view_intent_arg_entity_id), -1);
-			String type = getIntent().getStringExtra(getString(R.string.view_intent_arg_entity_type));
+		public BaseDTObject performAction(Void... params)
+				throws SecurityException, Exception {
+			Long entityId = getIntent().getLongExtra(
+					getString(R.string.view_intent_arg_entity_id), -1);
+			String type = getIntent().getStringExtra(
+					getString(R.string.view_intent_arg_entity_type));
 
 			Exception res = null;
 
@@ -200,10 +225,13 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 
 		@Override
 		public void handleResult(BaseDTObject result) {
-			Long entityId = getIntent().getLongExtra(getString(R.string.view_intent_arg_entity_id), -1);
+			Long entityId = getIntent().getLongExtra(
+					getString(R.string.view_intent_arg_entity_id), -1);
 			if (entityId > 0) {
 				if (result == null) {
-					Toast.makeText(DiscoverTrentoActivity.this, R.string.app_failure_obj_not_found, Toast.LENGTH_LONG).show();
+					Toast.makeText(DiscoverTrentoActivity.this,
+							R.string.app_failure_obj_not_found,
+							Toast.LENGTH_LONG).show();
 					return;
 				}
 
@@ -216,7 +244,8 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 					tag = "pois";
 				} else if (result instanceof EventObject) {
 					fragment = new EventDetailsFragment();
-					args.putSerializable(EventDetailsFragment.ARG_EVENT_OBJECT, result);
+					args.putSerializable(EventDetailsFragment.ARG_EVENT_OBJECT,
+							result);
 					tag = "events";
 				} else if (result instanceof StoryObject) {
 					fragment = new StoryDetailsFragment();
@@ -229,13 +258,23 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 					// tag = "stories";
 				}
 				if (fragment != null) {
-					FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-					fragment.setArguments(args);
+					/*
+					 * FragmentTransaction fragmentTransaction =
+					 * getSupportFragmentManager().beginTransaction();
+					 * fragment.setArguments(args);
+					 * 
+					 * fragmentTransaction.setTransition(FragmentTransaction.
+					 * TRANSIT_FRAGMENT_FADE);
+					 * fragmentTransaction.replace(android.R.id.content,
+					 * fragment, tag);
+					 * fragmentTransaction.addToBackStack(fragment.getTag());
+					 * fragmentTransaction.commit();
+					 */
+					SlidingFragment sl = (SlidingFragment) DiscoverTrentoActivity.this
+							.getSupportFragmentManager().findFragmentById(
+									R.id.feedback_fragment_container);
+					sl.replaceFragmentWithTransition(fragment, null, true,tag);
 
-					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-					fragmentTransaction.replace(android.R.id.content, fragment, tag);
-					fragmentTransaction.addToBackStack(fragment.getTag());
-					fragmentTransaction.commit();
 				}
 			}
 		}
@@ -247,7 +286,8 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 		try {
 			DTHelper.getAccessProvider().getAuthToken(this, null);
 		} catch (Exception e) {
-			Toast.makeText(this, R.string.app_failure_init, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.app_failure_init, Toast.LENGTH_LONG)
+					.show();
 			return;
 		}
 
@@ -265,6 +305,7 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 	}
+
 	// private BroadcastReceiver mTokenInvalidReceiver = new BroadcastReceiver()
 	// {
 	// @Override
@@ -288,5 +329,28 @@ public class DiscoverTrentoActivity extends SherlockFragmentActivity {
 	// unregisterReceiver(mTokenInvalidReceiver);
 	// super.onPause();
 	// }
+	
+	
+
+	@Override
+	public void disableViewsBehindDrawer() {
+		View v = findViewById(R.id.mainlayout);
+		//v.setEnabled(false);
+	}
+
+	@Override
+	public void onBackPressed() {
+		SlidingFragment sl = (SlidingFragment) DiscoverTrentoActivity.this
+				.getSupportFragmentManager().findFragmentById(
+						R.id.feedback_fragment_container);
+		if(!sl.backButtonPressed())
+			super.onBackPressed();
+	}
+
+	@Override
+	public void enableViewsBehindDrawer() {
+		View v = findViewById(R.id.mainlayout);
+		//v.setEnabled(true);
+	}
 
 }

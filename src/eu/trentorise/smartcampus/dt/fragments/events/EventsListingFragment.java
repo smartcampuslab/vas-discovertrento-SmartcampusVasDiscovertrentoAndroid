@@ -51,6 +51,7 @@ import eu.trentorise.smartcampus.android.common.listing.AbstractLstingFragment;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
+import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
@@ -115,18 +116,23 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 			SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
 				@Override
 				public void onSearch(String query) {
-					FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager()
-							.beginTransaction();
+					SlidingFragment sl = (SlidingFragment) getActivity().getSupportFragmentManager()
+							.findFragmentById(R.id.feedback_fragment_container);
+					
 					EventsListingFragment fragment = new EventsListingFragment();
 					Bundle args = new Bundle();
 					args.putString(EventsListingFragment.ARG_QUERY, query);
 					String category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
 					args.putString(EventsListingFragment.ARG_CATEGORY_SEARCH, category);
 					fragment.setArguments(args);
+					/*FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager()
+							.beginTransaction();
 					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 					fragmentTransaction.replace(android.R.id.content, fragment, "events");
 					fragmentTransaction.addToBackStack(fragment.getTag());
-					fragmentTransaction.commit();
+					fragmentTransaction.commit();*/
+					sl.replaceFragmentWithTransition(fragment, 
+							FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Events");
 				}
 			});
 		}
@@ -140,6 +146,8 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		SlidingFragment sl = (SlidingFragment) getActivity().getSupportFragmentManager()
+				.findFragmentById(R.id.feedback_fragment_container);
 		switch (item.getItemId()) {
 		case R.id.map_view:
 			ArrayList<BaseDTObject> target = new ArrayList<BaseDTObject>();
@@ -154,16 +162,18 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 			MapManager.switchToMapView(target, this);
 			return true;
 		case R.id.menu_item_addevent:
-			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			Fragment fragment = new CreateEventFragment();
 			Bundle args = new Bundle();
 			args.putString(ARG_CATEGORY, category);
 			fragment.setArguments(args);
+			/*FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
+			fragmentTransaction.commit();*/
+			sl.replaceFragmentWithTransition(fragment, 
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Events");
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -245,19 +255,22 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 		}
 		if (!toBeHidden && v != null && v.getTag() != null) {
 			// no items needed to be flipped, fill and open details page
-			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			SlidingFragment sl = (SlidingFragment) getActivity().getSupportFragmentManager()
+					.findFragmentById(R.id.feedback_fragment_container);
 			EventDetailsFragment fragment = new EventDetailsFragment();
 
 			Bundle args = new Bundle();
 			args.putSerializable(EventDetailsFragment.ARG_EVENT_OBJECT, ((EventPlaceholder) v.getTag()).event);
 			fragment.setArguments(args);
+			/*FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
-
+			fragmentTransaction.commit();*/
+			sl.replaceFragmentWithTransition(fragment, 
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Events");
 		}
 	}
 
@@ -283,16 +296,21 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject> i
 
 			@Override
 			public void onClick(View v) {
-				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+				SlidingFragment sl = (SlidingFragment) getActivity().getSupportFragmentManager()
+						.findFragmentById(R.id.feedback_fragment_container);
+				
 				Fragment fragment = new CreateEventFragment();
 				Bundle args = new Bundle();
 				args.putSerializable(CreateEventFragment.ARG_EVENT, event);
 				fragment.setArguments(args);
+				/*FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				// fragmentTransaction.detach(this);
 				fragmentTransaction.replace(android.R.id.content, fragment, "events");
 				fragmentTransaction.addToBackStack(fragment.getTag());
-				fragmentTransaction.commit();
+				fragmentTransaction.commit();*/
+				sl.replaceFragmentWithTransition(fragment, 
+						FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Events");
 			}
 		});
 		// b = (ImageButton) vs.findViewById(R.id.share_btn);

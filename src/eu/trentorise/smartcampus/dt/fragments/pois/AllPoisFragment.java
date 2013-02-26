@@ -31,6 +31,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
+import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.PoisCategoriesAdapter;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
@@ -75,17 +76,21 @@ public class AllPoisFragment extends SherlockFragment {
 		SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
 			@Override
 			public void onSearch(String query) {
-				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+				SlidingFragment sl = (SlidingFragment) fragmentManager
+						.findFragmentById(R.id.feedback_fragment_container);
 				PoisListingFragment fragment = new PoisListingFragment();
 				Bundle args = new Bundle();
 				args.putString(PoisListingFragment.ARG_QUERY, query);
 				fragment.setArguments(args);
+				/*FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 				fragmentTransaction
 						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 //				fragmentTransaction.detach(currentFragment);
 				fragmentTransaction.replace(android.R.id.content, fragment,"pois");
 				fragmentTransaction.addToBackStack(fragment.getTag());
-				fragmentTransaction.commit();
+				fragmentTransaction.commit();*/
+				sl.replaceFragmentWithTransition(fragment, 
+						FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Pois");
 			}
 		});
 	}
@@ -94,15 +99,20 @@ public class AllPoisFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_item_addpoi:
-			FragmentTransaction fragmentTransaction = fragmentManager
-					.beginTransaction();
+			SlidingFragment sl = (SlidingFragment) fragmentManager
+			.findFragmentById(R.id.feedback_fragment_container);
+			
 			Fragment fragment = new CreatePoiFragment();
+			/*FragmentTransaction fragmentTransaction = fragmentManager
+					.beginTransaction();
 			fragmentTransaction
 					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 //			fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
+			fragmentTransaction.commit();*/
+			sl.replaceFragmentWithTransition(fragment, 
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Pois");
 			return true;
 			
 		case R.id.search:

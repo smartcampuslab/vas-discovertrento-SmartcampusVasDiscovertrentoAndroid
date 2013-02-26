@@ -50,6 +50,7 @@ import eu.trentorise.smartcampus.android.common.listing.AbstractLstingFragment;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
+import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
@@ -104,18 +105,23 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 			SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
 				@Override
 				public void onSearch(String query) {
-					FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager()
-							.beginTransaction();
+					SlidingFragment sl = (SlidingFragment) getSherlockActivity().getSupportFragmentManager()
+							.findFragmentById(R.id.feedback_fragment_container);
+					
 					PoisListingFragment fragment = new PoisListingFragment();
 					Bundle args = new Bundle();
 					args.putString(PoisListingFragment.ARG_QUERY, query);
 					String category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
 					args.putString(PoisListingFragment.ARG_CATEGORY_SEARCH, category);
 					fragment.setArguments(args);
+					/*FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager()
+							.beginTransaction();
 					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 					fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 					fragmentTransaction.addToBackStack(fragment.getTag());
-					fragmentTransaction.commit();
+					fragmentTransaction.commit();*/
+					sl.replaceFragmentWithTransition(fragment, 
+							FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Places");
 				}
 			});
 		}
@@ -144,16 +150,21 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 			}
 			return true;
 		case R.id.menu_item_addpoi:
-			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			SlidingFragment sl = (SlidingFragment) getSherlockActivity().getSupportFragmentManager()
+			.findFragmentById(R.id.feedback_fragment_container);
+			
 			Fragment fragment = new CreatePoiFragment();
 			Bundle args = new Bundle();
 			args.putString(ARG_CATEGORY, category);
 			fragment.setArguments(args);
-			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
+			/*FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
+			fragmentTransaction.commit();*/
+			sl.replaceFragmentWithTransition(fragment, 
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Places");
 			return true;
 
 		default:
@@ -236,16 +247,21 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 
 			@Override
 			public void onClick(View v) {
-				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+				SlidingFragment sl = (SlidingFragment) getSherlockActivity().getSupportFragmentManager()
+						.findFragmentById(R.id.feedback_fragment_container);
+				
 				Fragment fragment = new CreatePoiFragment();
 				Bundle args = new Bundle();
 				args.putSerializable(CreatePoiFragment.ARG_POI, poi);
 				fragment.setArguments(args);
+				/*FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				// fragmentTransaction.detach(this);
 				fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 				fragmentTransaction.addToBackStack(fragment.getTag());
-				fragmentTransaction.commit();
+				fragmentTransaction.commit();*/
+				sl.replaceFragmentWithTransition(fragment, 
+						FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Places");
 			}
 		});
 		// b = (ImageButton) vs.findViewById(R.id.poi_share_btn);
@@ -296,18 +312,22 @@ public class PoisListingFragment extends AbstractLstingFragment<POIObject> imple
 		}
 		if (!toBeHidden && v != null && v.getTag() != null) {
 			// no items needed to be flipped, fill and open details page
-			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			SlidingFragment sl = (SlidingFragment) getSherlockActivity().getSupportFragmentManager()
+					.findFragmentById(R.id.feedback_fragment_container);
+
 			PoiDetailsFragment fragment = new PoiDetailsFragment();
 
 			Bundle args = new Bundle();
 			args.putSerializable(PoiDetailsFragment.ARG_POI, ((PoiPlaceholder) v.getTag()).poi);
 			fragment.setArguments(args);
-
+			/*FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
+			fragmentTransaction.commit();*/
+			sl.replaceFragmentWithTransition(fragment, 
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Places");
 		}
 	}
 

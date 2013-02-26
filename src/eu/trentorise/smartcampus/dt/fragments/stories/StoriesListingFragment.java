@@ -50,6 +50,7 @@ import eu.trentorise.smartcampus.android.common.listing.AbstractLstingFragment;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
+import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
@@ -100,17 +101,22 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 		SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
 			@Override
 			public void onSearch(String query) {
-				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+				SlidingFragment sl = (SlidingFragment) getSherlockActivity().getSupportFragmentManager()
+						.findFragmentById(R.id.feedback_fragment_container);
 				StoriesListingFragment fragment = new StoriesListingFragment();
 				Bundle args = new Bundle();
 				args.putString(StoriesListingFragment.ARG_QUERY, query);
 				String category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
 				args.putString(StoriesListingFragment.ARG_CATEGORY_SEARCH, category);
 				fragment.setArguments(args);
+				/*
+				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				fragmentTransaction.replace(android.R.id.content, fragment, "stories");
 				fragmentTransaction.addToBackStack(fragment.getTag());
-				fragmentTransaction.commit();
+				fragmentTransaction.commit();*/
+				sl.replaceFragmentWithTransition(fragment, 
+						FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Stories");
 			}
 		});
 
@@ -127,16 +133,21 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_item_addstory:
-			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			SlidingFragment sl = (SlidingFragment) getSherlockActivity().getSupportFragmentManager()
+			.findFragmentById(R.id.feedback_fragment_container);
 			Fragment fragment = new CreateStoryFragment();
 			Bundle args = new Bundle();
 			args.putString(ARG_CATEGORY, category);
 			fragment.setArguments(args);
+			/*FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "stories");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
+			fragmentTransaction.commit();*/
+			sl.replaceFragmentWithTransition(fragment, 
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Stories");
 		default:
 			return super.onOptionsItemSelected(item);
 		}

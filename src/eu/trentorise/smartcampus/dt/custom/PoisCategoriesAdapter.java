@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper.CategoryDescriptor;
 import eu.trentorise.smartcampus.dt.fragments.pois.PoisListingFragment;
@@ -78,16 +79,23 @@ public class PoisCategoriesAdapter extends BaseAdapter {
 
 		@Override
 		public void onClick(View v) {
+			SlidingFragment sl = (SlidingFragment) fragmentManager
+					.findFragmentById(R.id.feedback_fragment_container);
 			String cat = ((CategoryDescriptor) v.getTag()).category;
-			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			
 			PoisListingFragment fragment = new PoisListingFragment();
 			Bundle args = new Bundle();
 			args.putString(PoisListingFragment.ARG_CATEGORY, cat);
 			fragment.setArguments(args);
+			/*Gio comment
+			 * FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
+			fragmentTransaction.commit();			 */
+			sl.replaceFragmentWithTransition(fragment, 
+					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Places");
 		}
 
 	}

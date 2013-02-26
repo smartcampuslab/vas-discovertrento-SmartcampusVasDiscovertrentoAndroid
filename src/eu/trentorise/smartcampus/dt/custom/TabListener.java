@@ -16,6 +16,7 @@
 package eu.trentorise.smartcampus.dt.custom;
 
 import android.app.FragmentManager;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
@@ -23,6 +24,9 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+
+import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
+import eu.trentorise.smartcampus.dt.R;
 
 public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	private Fragment mFragment;
@@ -49,20 +53,30 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 
 	/* The following are each of the ActionBar.TabListener callbacks */
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		SherlockFragment preInitializedFragment = (SherlockFragment) mActivity
-		.getSupportFragmentManager().findFragmentByTag(mTag);
-		if (preInitializedFragment != null && ! preInitializedFragment.equals(mFragment)) {
+		
+		SlidingFragment sl = (SlidingFragment) mActivity.getSupportFragmentManager()
+				.findFragmentById(R.id.feedback_fragment_container);
+		if(mFragment!=null){
+			sl.replaceFragmentWithTransition(mFragment, null,false,mTag);
+		}
+		else{
+			mFragment=Fragment.instantiate(mActivity, mClass.getName());
+			sl.replaceFragmentWithTransition(mFragment, null,false,mTag);
+		}
+		
+		/*if (preInitializedFragment != null && ! preInitializedFragment.equals(mFragment)) {
 			ft.remove(preInitializedFragment);
 		}
 
 		if (mFragment == null) {
             // If not, instantiate and add it to the activity
             mFragment = Fragment.instantiate(mActivity, mClass.getName());
-            ft.add(android.R.id.content, mFragment, mTag);
+            ft.add(R.id.mainlayout, mFragment, mTag);
         } else {
             // If it exists, simply attach it in order to show it
             ft.attach(mFragment);
-        }
+        }*/
+		
 
 //		SherlockFragment preInitializedFragment = (SherlockFragment) mActivity
 //				.getSupportFragmentManager().findFragmentByTag(mTag);
@@ -104,11 +118,12 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 //			ft.detach(preInitializedFragment);
 //		}
 
-		mActivity.getSupportFragmentManager().popBackStack(mTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		/*mActivity.getSupportFragmentManager().popBackStack(mTag, 
+				FragmentManager.POP_BACK_STACK_INCLUSIVE);
 		if (mFragment != null) {
 			// Detach the fragment, because another one is being attached
 			ft.detach(mFragment);
-		}
+		}*/
 	}
 
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
