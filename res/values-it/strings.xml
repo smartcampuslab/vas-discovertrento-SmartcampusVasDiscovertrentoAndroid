@@ -80,7 +80,7 @@
     <string name="app_failure_init">Inizializzazione di ViviTrento non riuscita</string>
     <string name="app_failure_security">Recupero delle informazioni di autenticazione non riuscito!</string>
     <string name="app_failure_setup">Inizializzazione dell\'applicatione non riuscita</string>
-    <string name="app_failure_operation">Perbacco! C\'è stato un errore. Controlla la connessione o riprova a breve.</string>
+    <string name="app_failure_operation">OOPS! C\'è stato un errore. Controlla la connessione o riprova a breve.</string>
     <string name="app_failure_cannot_delete">L\'oggetto non può essere cancellato.</string>
     <string name="app_failure_obj_not_found">Oggetto non trovato!</string>
     <string name="ratingtext">Valutazione della community:</string>
