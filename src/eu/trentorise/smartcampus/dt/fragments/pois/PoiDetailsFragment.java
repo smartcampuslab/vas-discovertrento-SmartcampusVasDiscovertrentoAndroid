@@ -48,7 +48,6 @@ import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
 import eu.trentorise.smartcampus.android.common.follow.FollowHelper;
 import eu.trentorise.smartcampus.android.common.navigation.NavigationHelper;
-import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.RatingHelper;
 import eu.trentorise.smartcampus.dt.custom.RatingHelper.RatingHandler;
@@ -272,9 +271,6 @@ public class PoiDetailsFragment extends SherlockFragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		SlidingFragment sl = (SlidingFragment) getActivity().getSupportFragmentManager()
-				.findFragmentById(R.id.feedback_fragment_container);
-		
 		switch (item.getItemId()) {
 		case R.id.show_related_events: {
 			/*
@@ -282,8 +278,7 @@ public class PoiDetailsFragment extends SherlockFragment {
 			 * events related to this POI: in case there were not, this entry in
 			 * the menu could be omitted
 			 */
-			/*Gio comment
-			 * FragmentTransaction fragmentTransaction = getFragmentManager()
+			FragmentTransaction fragmentTransaction = getFragmentManager()
 					.beginTransaction();
 			EventsListingFragment fragment = new EventsListingFragment();
 			Bundle args = new Bundle();
@@ -295,14 +290,7 @@ public class PoiDetailsFragment extends SherlockFragment {
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();*/
-			EventsListingFragment fragment = new EventsListingFragment();
-			Bundle args = new Bundle();
-			args.putString(EventsListingFragment.ARG_POI, poi.getId());
-			args.putString(EventsListingFragment.ARG_POI_NAME, poi.getTitle());
-			fragment.setArguments(args);
-			sl.replaceFragmentWithTransition(fragment,
-					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Places");
+			fragmentTransaction.commit();
 			return true;
 		}
 		case R.id.get_dir:
@@ -333,8 +321,7 @@ public class PoiDetailsFragment extends SherlockFragment {
 			return true;
 
 		case R.id.edit_btn:
-			/*Gio comment
-			 * FragmentTransaction fragmentTransaction = getSherlockActivity()
+			FragmentTransaction fragmentTransaction = getSherlockActivity()
 					.getSupportFragmentManager().beginTransaction();
 			Fragment fragment = new CreatePoiFragment();
 			Bundle args = new Bundle();
@@ -345,13 +332,7 @@ public class PoiDetailsFragment extends SherlockFragment {
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "pois");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();*/
-			Fragment fragment = new CreatePoiFragment();
-			Bundle args = new Bundle();
-			args.putSerializable(CreatePoiFragment.ARG_POI, poi);
-			fragment.setArguments(args);
-			sl.replaceFragmentWithTransition(fragment,
-					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Places");
+			fragmentTransaction.commit();
 			return true;
 		case R.id.delete_btn:
 			new SCAsyncTask<POIObject, Void, Boolean>(getActivity(),

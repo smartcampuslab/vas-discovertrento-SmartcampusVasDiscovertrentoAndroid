@@ -31,7 +31,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.EventsCategoriesAdapter;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
@@ -64,7 +63,6 @@ public class AllEventsFragment extends SherlockFragment {
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		
 		menu.clear();
 		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.gripmenu, menu);
 		SubMenu submenu = menu.getItem(0).getSubMenu();
@@ -77,21 +75,16 @@ public class AllEventsFragment extends SherlockFragment {
 		SearchHelper.createSearchMenu(submenu, getActivity(), new SearchHelper.OnSearchListener() {
 			@Override
 			public void onSearch(String query) {
-				SlidingFragment sl = (SlidingFragment) fragmentManager
-						.findFragmentById(R.id.feedback_fragment_container);
+				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 				EventsListingFragment fragment = new EventsListingFragment();
 				Bundle args = new Bundle();
 				args.putString(EventsListingFragment.ARG_QUERY, query);
 				fragment.setArguments(args);
-				/*
-				 * FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-				 * fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				// fragmentTransaction.detach(currentFragment);
 				fragmentTransaction.replace(android.R.id.content, fragment, "events");
 				fragmentTransaction.addToBackStack(fragment.getTag());
-				fragmentTransaction.commit();*/
-				sl.replaceFragmentWithTransition(fragment, 
-						FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Events");
+				fragmentTransaction.commit();
 			}
 		});
 
@@ -114,35 +107,24 @@ public class AllEventsFragment extends SherlockFragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		SlidingFragment sl = (SlidingFragment) fragmentManager
-				.findFragmentById(R.id.feedback_fragment_container);
-		//FragmentTransaction fragmentTransaction;
+		FragmentTransaction fragmentTransaction;
 		Fragment fragment;
 		Bundle args;
 		switch (item.getItemId()) {
 
 		case R.id.menu_item_addevent:
-			/*Gio Comment
-			 * fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction = fragmentManager.beginTransaction();
 			fragment = new CreateEventFragment();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();*/
-			fragment = new CreateEventFragment();
-			sl.replaceFragmentWithTransition(fragment, 
-					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Events");
+			fragmentTransaction.commit();
 			return true;
 
 		case R.id.menu_item_todayevent:
-			
+			fragmentTransaction = fragmentManager.beginTransaction();
 			fragment = new EventsListingFragment();
-			args = new Bundle();
-			args.putString(EventsListingFragment.ARG_QUERY_TODAY, "");
-			fragment.setArguments(args);
-			/*gio comment
-			 * fragmentTransaction = fragmentManager.beginTransaction();
 			args = new Bundle();
 			args.putString(EventsListingFragment.ARG_QUERY_TODAY, "");
 			fragment.setArguments(args);
@@ -150,24 +132,19 @@ public class AllEventsFragment extends SherlockFragment {
 			// fragmentTransaction.detach(currentFragment);
 			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();*/
-			sl.replaceFragmentWithTransition(fragment, 
-					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Events");
+			fragmentTransaction.commit();
 			return true;
 		case R.id.menu_item_myevents:
-			
+			fragmentTransaction = fragmentManager.beginTransaction();
 			fragment = new EventsListingFragment();
 			args = new Bundle();
 			args.putBoolean(EventsListingFragment.ARG_MY, true);
 			fragment.setArguments(args);
-			/*fragmentTransaction = fragmentManager.beginTransaction();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			// fragmentTransaction.detach(this);
 			fragmentTransaction.replace(android.R.id.content, fragment, "events");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();*/
-			sl.replaceFragmentWithTransition(fragment, 
-					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Events");
+			fragmentTransaction.commit();
 			return true;
 		case R.id.search:
 			// getSherlockActivity().onSearchRequested();
@@ -188,6 +165,5 @@ public class AllEventsFragment extends SherlockFragment {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-		
 	}
 }

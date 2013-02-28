@@ -24,7 +24,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper.CategoryDescriptor;
 import eu.trentorise.smartcampus.dt.fragments.stories.StoriesListingFragment;
@@ -78,22 +77,16 @@ public class StoriesCategoriesAdapter extends BaseAdapter {
 
 		@Override
 		public void onClick(View v) {
-			SlidingFragment sl = (SlidingFragment) fragmentManager
-					.findFragmentById(R.id.feedback_fragment_container);
 			String cat = ((CategoryDescriptor) v.getTag()).category;
-			
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			StoriesListingFragment fragment = new StoriesListingFragment();
 			Bundle args = new Bundle();
 			args.putString(StoriesListingFragment.ARG_CATEGORY, cat);
 			fragment.setArguments(args);
-			/*Gio comment
-			 * FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			fragmentTransaction.replace(android.R.id.content, fragment, "stories");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();*/
-			sl.replaceFragmentWithTransition(fragment, 
-					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Stories");
+			fragmentTransaction.commit();
 		}
 
 	}

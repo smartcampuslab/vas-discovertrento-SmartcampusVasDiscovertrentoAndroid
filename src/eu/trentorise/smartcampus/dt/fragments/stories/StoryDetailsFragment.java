@@ -57,7 +57,6 @@ import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
 import eu.trentorise.smartcampus.android.common.follow.FollowHelper;
 import eu.trentorise.smartcampus.android.common.navigation.NavigationHelper;
-import eu.trentorise.smartcampus.android.feedback.fragment.SlidingFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.RatingHelper;
@@ -387,8 +386,6 @@ public class StoryDetailsFragment extends SherlockFragment implements MapStoryHa
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		SlidingFragment sl = (SlidingFragment) getActivity().getSupportFragmentManager()
-				.findFragmentById(R.id.feedback_fragment_container);
 		switch (item.getItemId()) {
 
 		// rating
@@ -411,9 +408,7 @@ public class StoryDetailsFragment extends SherlockFragment implements MapStoryHa
 		}
 		// edit the story
 		case R.id.edit_btn: {
-			/*
-			 * Gio comment
-			 * FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			Fragment fragment = new CreateStoryFragment();
 			Bundle args = new Bundle();
 			args.putSerializable(CreateStoryFragment.ARG_STORY, story);
@@ -421,13 +416,7 @@ public class StoryDetailsFragment extends SherlockFragment implements MapStoryHa
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			fragmentTransaction.replace(android.R.id.content, fragment, "stories");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();*/
-			Fragment fragment = new CreateStoryFragment();
-			Bundle args = new Bundle();
-			args.putSerializable(CreateStoryFragment.ARG_STORY, story);
-			fragment.setArguments(args);
-			sl.replaceFragmentWithTransition(fragment,
-					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Stories");
+			fragmentTransaction.commit();
 			return true;
 		}
 		// delete the story
@@ -437,8 +426,7 @@ public class StoryDetailsFragment extends SherlockFragment implements MapStoryHa
 		}
 		// related step
 		case R.id.related_step_btn: {
-			/*Gio Comment
-			 * FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			PoiDetailsFragment fragment = new PoiDetailsFragment();
 			Bundle args = new Bundle();
 			args.putSerializable(PoiDetailsFragment.ARG_POI, getStory().getSteps().get(actualStepPosition).assignedPoi());
@@ -446,13 +434,7 @@ public class StoryDetailsFragment extends SherlockFragment implements MapStoryHa
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			fragmentTransaction.replace(android.R.id.content, fragment, "stories");
 			fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();*/
-			PoiDetailsFragment fragment = new PoiDetailsFragment();
-			Bundle args = new Bundle();
-			args.putSerializable(PoiDetailsFragment.ARG_POI, getStory().getSteps().get(actualStepPosition).assignedPoi());
-			fragment.setArguments(args);
-			sl.replaceFragmentWithTransition(fragment,
-					FragmentTransaction.TRANSIT_FRAGMENT_FADE, true, "Stories");
+			fragmentTransaction.commit();
 			return true;
 		}
 		// direction to the step
