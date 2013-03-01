@@ -29,6 +29,10 @@ public class CategoryHelper {
 	private static final String POI_NONCATEGORIZED = "Other place";
 	private static final String EVENT_NONCATEGORIZED = "Other event";
 	private static final String STORY_NONCATEGORIZED = "Other story";
+	
+	public static final String CATEGORY_TYPE_POIS = "pois";
+	public static final String CATEGORY_TYPE_EVENTS = "events";
+	public static final String CATEGORY_TYPE_STORIES = "stories";
 
 	public static CategoryDescriptor[] EVENT_CATEGORIES = new CategoryDescriptor[] {
 			new CategoryDescriptor(R.drawable.marker_event_concert, R.drawable.ic_event_concerts, "Concerts",
@@ -196,11 +200,11 @@ public class CategoryHelper {
 	public static CategoryDescriptor getCategoryDescriptorByCategory(String type, String cat) {
 		CategoryDescriptor[] cdarray = null;
 
-		if (type.equalsIgnoreCase("pois")) {
+		if (type.equalsIgnoreCase(CATEGORY_TYPE_POIS)) {
 			cdarray = POI_CATEGORIES;
-		} else if (type.equalsIgnoreCase("events")) {
+		} else if (type.equalsIgnoreCase(CATEGORY_TYPE_EVENTS)) {
 			cdarray = EVENT_CATEGORIES;
-		} else if (type.equalsIgnoreCase("stories")) {
+		} else if (type.equalsIgnoreCase(CATEGORY_TYPE_STORIES)) {
 			cdarray = STORY_CATEGORIES;
 		}
 
@@ -212,6 +216,7 @@ public class CategoryHelper {
 				}
 			}
 		}
+
 
 		return null;
 	}

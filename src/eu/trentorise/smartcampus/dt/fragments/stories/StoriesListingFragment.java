@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
@@ -116,10 +117,21 @@ public class StoriesListingFragment extends AbstractLstingFragment<StoryObject> 
 
 		if (category == null)
 			category = (getArguments() != null) ? getArguments().getString(ARG_CATEGORY) : null;
-		if (category != null)
-			submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addstory, Menu.NONE, getString(R.string.add) + " " + category
-					+ " " + getString(R.string.story));
+		if (category != null) {
+			String addString = getString(R.string.add)
+					+ " "
+					+ getString(CategoryHelper.getCategoryDescriptorByCategory(CategoryHelper.CATEGORY_TYPE_STORIES, category).description)
+					+ " " + getString(R.string.story);
+			if (Locale.getDefault().equals(Locale.ITALY))
+				addString = getString(R.string.add)
+						+ " "
+						+ getString(R.string.story)
+						+ " su "
+						+ getString(CategoryHelper.getCategoryDescriptorByCategory(CategoryHelper.CATEGORY_TYPE_STORIES,
+								category).description);
 
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_addstory, Menu.NONE, addString);
+		}
 		super.onPrepareOptionsMenu(menu);
 	}
 
