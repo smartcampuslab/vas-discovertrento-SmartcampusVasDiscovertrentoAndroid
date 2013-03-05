@@ -137,7 +137,7 @@
     <string name="place">luogo</string>
     <string name="list_event_today">Oggi</string> 
     <string name="list_event_tomorrow">Domani</string>    
-    <string name="menu_item_todayevent_text">Eventi di domani</string> 
+    <string name="menu_item_todayevent_text">Eventi di oggi</string> 
     
     <string name="tab_home">Home</string>
     <string name="tab_places">Luoghi</string>
