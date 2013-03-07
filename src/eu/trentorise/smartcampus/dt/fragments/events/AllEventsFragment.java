@@ -24,18 +24,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.GridView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
+import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.EventsCategoriesAdapter;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
 
-public class AllEventsFragment extends SherlockFragment {
+public class AllEventsFragment extends FeedbackFragment {
 	private FragmentManager fragmentManager;
 	private GridView gridview;
 

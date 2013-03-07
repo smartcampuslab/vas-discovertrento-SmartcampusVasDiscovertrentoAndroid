@@ -24,6 +24,6 @@
         android:title="@string/empty">
         <menu android:id="@+id/placeholder_menu" >
         </menu>
+       
     </item>
-
 </menu>

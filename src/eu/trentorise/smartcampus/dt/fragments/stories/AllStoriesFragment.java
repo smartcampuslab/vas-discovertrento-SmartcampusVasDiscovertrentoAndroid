@@ -30,6 +30,8 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+
+import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
 import eu.trentorise.smartcampus.dt.custom.StoriesCategoriesAdapter;
@@ -37,7 +39,7 @@ import eu.trentorise.smartcampus.dt.custom.StoriesCategoriesAdapter;
 /*
  * build the grid with the stories' categories
  */
-public class AllStoriesFragment extends SherlockFragment {
+public class AllStoriesFragment extends FeedbackFragment {
 	private GridView gridview;
 	private FragmentManager fragmentManager;
     private static final String TAG = "AllStoriesFragment";

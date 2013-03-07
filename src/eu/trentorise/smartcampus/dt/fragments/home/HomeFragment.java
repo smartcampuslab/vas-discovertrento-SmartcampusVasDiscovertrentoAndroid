@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
@@ -47,6 +48,7 @@ import com.google.android.maps.Projection;
 
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
+import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.dt.custom.data.DTHelper;
 import eu.trentorise.smartcampus.dt.custom.map.BaseDTObjectMapItemTapListener;
 import eu.trentorise.smartcampus.dt.custom.map.DTItemizedOverlay;
@@ -60,7 +62,7 @@ import eu.trentorise.smartcampus.dt.model.BaseDTObject;
 import eu.trentorise.smartcampus.dt.model.EventObject;
 import eu.trentorise.smartcampus.dt.model.POIObject;
 
-public class HomeFragment extends SherlockFragment implements MapItemsHandler, BaseDTObjectMapItemTapListener {
+public class HomeFragment extends FeedbackFragment implements MapItemsHandler, BaseDTObjectMapItemTapListener {
 
 	public static final String ARG_OBJECTS = "objects";
 	public static final String ARG_CATEGORY = "category";
@@ -91,7 +93,7 @@ public class HomeFragment extends SherlockFragment implements MapItemsHandler, B
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		boolean initialized = mapView != null;
-		mapContainer = new FrameLayout(getActivity());
+		mapContainer = new RelativeLayout(getActivity());
 		mapView = MapManager.getMapView();
 
 		final ViewGroup parent = (ViewGroup) mapView.getParent();

@@ -31,11 +31,12 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
+import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.PoisCategoriesAdapter;
 import eu.trentorise.smartcampus.dt.custom.SearchHelper;
 
-public class AllPoisFragment extends SherlockFragment {
+public class AllPoisFragment extends FeedbackFragment {
 	private GridView gridview;
 	private FragmentManager fragmentManager;
 

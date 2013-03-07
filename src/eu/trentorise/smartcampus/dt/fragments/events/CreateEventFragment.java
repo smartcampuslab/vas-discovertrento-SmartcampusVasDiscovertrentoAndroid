@@ -47,6 +47,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
+import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
@@ -63,7 +64,7 @@ import eu.trentorise.smartcampus.dt.model.POIObject;
 import eu.trentorise.smartcampus.dt.model.UserEventObject;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
-public class CreateEventFragment extends SherlockFragment implements TaggingDialog.OnTagsSelectedListener,
+public class CreateEventFragment extends FeedbackFragment implements TaggingDialog.OnTagsSelectedListener,
 		TaggingDialog.TagProvider {
 
 	private POIObject poi = null;
