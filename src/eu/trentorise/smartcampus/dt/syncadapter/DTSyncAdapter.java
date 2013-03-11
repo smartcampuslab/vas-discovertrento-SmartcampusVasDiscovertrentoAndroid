@@ -51,8 +51,8 @@ public class DTSyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
         mContext = context;
 		DTHelper.init(mContext);
-        ContentResolver.setSyncAutomatically(new Account(eu.trentorise.smartcampus.ac.Constants.ACCOUNT_NAME, eu.trentorise.smartcampus.ac.Constants.ACCOUNT_TYPE), "eu.trentorise.smartcampus.dt", true);
-        ContentResolver.addPeriodicSync(new Account(eu.trentorise.smartcampus.ac.Constants.ACCOUNT_NAME, eu.trentorise.smartcampus.ac.Constants.ACCOUNT_TYPE), "eu.trentorise.smartcampus.dt", new Bundle(),Constants.SYNC_INTERVAL*60);
+        ContentResolver.setSyncAutomatically(new Account(eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext), eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext)), "eu.trentorise.smartcampus.dt", true);
+        ContentResolver.addPeriodicSync(new Account(eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext), eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext)), "eu.trentorise.smartcampus.dt", new Bundle(),Constants.SYNC_INTERVAL*60);
 
     }
 

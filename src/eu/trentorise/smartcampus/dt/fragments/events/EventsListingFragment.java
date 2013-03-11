@@ -52,6 +52,9 @@ import eu.trentorise.smartcampus.android.common.listing.AbstractLstingFragment;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.TagProvider;
+import eu.trentorise.smartcampus.android.feedback.activity.FeedbackFragmentActivity;
+import eu.trentorise.smartcampus.android.feedback.model.Feedback;
+import eu.trentorise.smartcampus.android.feedback.utils.FeedbackFragmentInflater;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.dt.custom.CategoryHelper;
@@ -96,8 +99,11 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject>
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.eventslist, container, false);
+		View v=inflater.inflate(R.layout.eventslist, container, false);
+		return v;
 	}
+	
+	
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
@@ -273,7 +279,7 @@ public class EventsListingFragment extends AbstractLstingFragment<EventObject>
 				return true;
 			}
 		});
-
+		FeedbackFragmentInflater.inflateHandleButton(getSherlockActivity(), getView());
 		super.onStart();
 
 	}
