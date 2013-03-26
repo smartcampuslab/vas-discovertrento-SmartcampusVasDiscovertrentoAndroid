@@ -52,7 +52,7 @@
         android:logo="@drawable/logo"
         android:theme="@style/Theme.discovertrento" >
         <meta-data android:name="use-feedback" android:value="false" />
-        <meta-data android:name="show-notification" android:value="false" />
+        <meta-data android:name="hidden-notification" android:value="true" />
         
         <uses-library android:name="com.google.android.maps" />
 
