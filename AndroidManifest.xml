@@ -53,6 +53,7 @@
         android:theme="@style/Theme.discovertrento" >
         <meta-data android:name="use-feedback" android:value="false" />
         <meta-data android:name="hidden-notification" android:value="true" />
+        <meta-data android:name="follow-by-intent" android:value="true" />
         
         <uses-library android:name="com.google.android.maps" />
 
