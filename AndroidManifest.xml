@@ -51,10 +51,14 @@
         android:label="@string/app_name"
         android:logo="@drawable/logo"
         android:theme="@style/Theme.discovertrento" >
+        <meta-data android:name="use-feedback" android:value="false" />
+        <meta-data android:name="hidden-notification" android:value="true" />
+        <meta-data android:name="follow-by-intent" android:value="true" />
+        
         <uses-library android:name="com.google.android.maps" />
 
         <activity
-            android:name=".DiscoverTrentoActivity"
+            android:name="eu.trentorise.smartcampus.dt.DiscoverTrentoActivity"
             android:label="@string/app_name"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTop" >
@@ -106,7 +110,7 @@
             android:theme="@style/Theme.discovertrento" />
         
         <service
-            android:name=".syncadapter.DTSyncService"
+            android:name="eu.trentorise.smartcampus.dt.syncadapter.DTSyncService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
@@ -119,7 +123,7 @@
         
 
       <provider
-        android:name=".DTDummyProvider"
+        android:name="eu.trentorise.smartcampus.dt.DTDummyProvider"
         android:exported="false"
     	android:authorities="eu.trentorise.smartcampus.dt"
     	android:syncable="true"
