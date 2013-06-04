@@ -40,7 +40,6 @@
 {
   "title": "ViviTrentino",
    "poi_categories":[
-
         1,
         2,
         3,
@@ -63,7 +62,6 @@
         6,
         7,
         9
-        
       ],
    "story_categories":[
         1,
@@ -85,6 +83,4 @@
                      11.1212700605392
                      ],
    "zoom_map":15
-  
-  
 }
