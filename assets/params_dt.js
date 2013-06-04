@@ -1,3 +1,42 @@
+/*
+ * POI CATEGORIES
+ * 1 Museums
+ * 2 Mobility
+ * 3 Parking
+ * 4 Offices
+ * 5 Theater
+ * 6 University
+ * 7 Accomodation
+ * 8 Libraries
+ * 9 Food
+ * 10 Drink
+ * 11 Cinemas
+ * 12 Family - Organizations
+ * 13 other POIs
+ * 
+ * EVENT CATEGORIES
+ * 1 Concerts
+ * 2 Happy hours
+ * 3 Movies
+ * 4 Parties
+ * 5 Seminars
+ * 6 Theaters
+ * 7 Exhibitions
+ * 8 Family
+ * 9 other events
+ * 
+ * STORY CATEGORIES
+ * 1 Leisure
+ * 2 Offices and Services
+ * 3 University
+ * 4 Culture
+ * 5 other stories
+ * 
+ * COORDINATES
+ * Trento 46.069672, 11.121270
+ * Rovereto 45.890919, 11.040184
+ */
+
 {
   "title": "ViviTrentino",
    "poi_categories":[
