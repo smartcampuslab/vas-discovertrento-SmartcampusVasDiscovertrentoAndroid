@@ -77,7 +77,7 @@
     	        ],
     	type:"Comune"
    },
-   "app_token":"familytrento",
+   "app_token":"sc_vivitrento",
    "center_map":[
                      46.0696727540531,
                      11.1212700605392

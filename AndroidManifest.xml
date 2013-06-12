@@ -50,10 +50,10 @@
         android:icon="@drawable/ic_launcher_dt"
         android:label="@string/app_name"
         android:logo="@drawable/logo"
-        android:theme="@style/Theme.discovertrento" >
+        android:theme="@style/Theme.Discovertrento" >
         <meta-data android:name="use-feedback" android:value="false" />
         <meta-data android:name="hidden-notification" android:value="true" />
-        <meta-data android:name="follow-by-intent" android:value="true" />
+        <meta-data android:name="follow-by-intent" android:value="false" />
         <meta-data android:name="dt-sync-authority" android:value="eu.trentorise.smartcampus.dt" />
         
         <uses-library android:name="com.google.android.maps" />
@@ -99,16 +99,16 @@
         <activity
             android:name="eu.trentorise.smartcampus.dt.fragments.pois.AddressSelectActivity"
             android:logo="@drawable/logo"
-            android:theme="@style/Theme.discovertrento" />
+            android:theme="@style/Theme.Discovertrento" />
         <activity
             android:name="eu.trentorise.smartcampus.dt.fragments.events.POISelectActivity"
             android:logo="@drawable/logo"
-            android:theme="@style/Theme.discovertrento" />
+            android:theme="@style/Theme.Discovertrento" />
         
         <activity 
             android:name=".fragments.stories.MyMapActivity"
             android:logo="@drawable/logo"
-            android:theme="@style/Theme.discovertrento" />
+            android:theme="@style/Theme.Discovertrento" />
         
         <service
             android:name="eu.trentorise.smartcampus.dt.syncadapter.DTSyncService"
