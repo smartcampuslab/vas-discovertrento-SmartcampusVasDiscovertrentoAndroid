@@ -120,7 +120,7 @@
             android:logo="@drawable/logo"
             android:theme="@style/Theme.Discovertrento" />
         <activity
-            android:name="eu.trentorise.smartcampus.dt.fragments.events.POISelectActivity"
+            android:name="eu.trentorise.smartcampus.dt.fragments.events.POISelectActivity_toberemoved"
             android:logo="@drawable/logo"
             android:theme="@style/Theme.Discovertrento" />
         <activity
