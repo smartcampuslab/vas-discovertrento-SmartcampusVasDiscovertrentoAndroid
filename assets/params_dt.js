@@ -106,7 +106,7 @@
 	        "smartplanner-transitstops",
 	        "TrentinoFamiglia"
 	    ],
-	    "type" : "Comune"
+	    "type" : ["Comune", "Family", "Family - Organizations"]
 	},
    "center_map":[
                      46.0696727540531,
