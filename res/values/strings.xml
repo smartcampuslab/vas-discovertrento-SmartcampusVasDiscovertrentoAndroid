@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="notificationprovider_authority">eu.trentorise.smartcampus.dt.notifications</string>
+    <string name="notification_text">%s new notification</string>
+    <string name="notification_text_multi">%s new notifications</string>
+    <string name="dt_notification_name">ViviTrento Notifications</string>
+
+</resources>

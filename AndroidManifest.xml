@@ -65,13 +65,22 @@
             android:value="false" />
         <meta-data
             android:name="hidden-notification"
-            android:value="true" />
+            android:value="false" />
         <meta-data
             android:name="follow-by-intent"
             android:value="false" />
         <meta-data
             android:name="dt-sync-authority"
             android:value="eu.trentorise.smartcampus.dt" />
+        <meta-data
+            android:name="eu.trentorise.smartcampus.account.ACCOUNT_BASED_ACCESS"
+            android:value="true" />
+        <meta-data
+            android:name="eu.trentorise.smartcampus.account.ACCOUNT_TYPE"
+            android:value="eu.trentorise.smartcampus.account" />
+        <meta-data
+            android:name="eu.trentorise.smartcampus.account.ACCOUNT_NAME"
+            android:value="SmartCampus" />
 
         <uses-library android:name="com.google.android.maps" />
 
@@ -80,10 +89,10 @@
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
-
 <!--             <intent-filter> -->
-<!--             <action android:name="android.intent.action.MAIN" /> -->
-<!--             <category android:name="android.intent.category.LAUNCHER" /> -->
+<!--                 <action android:name="android.intent.action.MAIN" /> -->
+
+<!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
 <!--             </intent-filter> -->
             <intent-filter>
                 <action android:name="eu.trentorise.smartcampus.START" />
@@ -120,6 +129,10 @@
             android:logo="@drawable/logo"
             android:theme="@style/Theme.Discovertrento" />
         <activity
+            android:name="eu.trentorise.smartcampus.dt.fragments.events.POISelectActivity"
+            android:logo="@drawable/logo"
+            android:theme="@style/Theme.Discovertrento" />
+        <activity
             android:name="eu.trentorise.smartcampus.dt.fragments.events.POISelectActivity_toberemoved"
             android:logo="@drawable/logo"
             android:theme="@style/Theme.Discovertrento" />
@@ -127,14 +140,15 @@
             android:name=".fragments.stories.MyMapActivity"
             android:logo="@drawable/logo"
             android:theme="@style/Theme.Discovertrento" />
-        <activity android:name="eu.trentorise.smartcampus.dt.custom.TutorialActivity"
-            android:theme="@style/TutorialTheme"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard">
-            <intent-filter >
+        <activity
+            android:name="eu.trentorise.smartcampus.dt.custom.TutorialActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:theme="@style/TutorialTheme" >
+            <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        
+
         <service
             android:name="eu.trentorise.smartcampus.dt.syncadapter.DTSyncService"
             android:exported="false" >
@@ -152,6 +166,32 @@
             android:authorities="eu.trentorise.smartcampus.dt"
             android:exported="false"
             android:label="@string/app_name"
+            android:syncable="true" />
+
+        <activity
+            android:name="eu.trentorise.smartcampus.dt.notifications.NotificationsFragmentActivityDT"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Discovertrento" >
+        </activity>
+
+        <service
+            android:name="eu.trentorise.smartcampus.dt.syncadapter.NotificationsSyncService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/notificationssyncadapter" />
+        </service>
+
+        <provider
+            android:name="eu.trentorise.smartcampus.notifications.DummyProvider"
+            android:authorities="@string/notificationprovider_authority"
+            android:exported="false"
+            android:label="@string/dt_notification_name"
             android:syncable="true" />
     </application>
 
