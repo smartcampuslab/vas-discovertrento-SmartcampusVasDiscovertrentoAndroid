@@ -16,8 +16,6 @@
 
 package eu.trentorise.smartcampus.dt.syncadapter;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import android.accounts.Account;
@@ -30,14 +28,12 @@ import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
-import eu.trentorise.smartcampus.android.common.GlobalConfig;
-import eu.trentorise.smartcampus.communicator.model.Notification;
+import eu.trentorise.smartcampus.communicator.model.DBNotification;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.notifications.NotificationsFragmentActivityDT;
 import eu.trentorise.smartcampus.notifications.NotificationsHelper;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.sync.SyncData;
-import eu.trentorise.smartcampus.storage.sync.SyncStorage;
 
 /**
  * SyncAdapter implementation for syncing sample SyncAdapter contacts to the
@@ -48,18 +44,10 @@ public class NotificationsSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	private final Context mContext;
 
-	private String syncService;
-
-	private static String NOTIFICATION_TYPE_DISCOVERTRENTO = "discovertrento";
-
 	// NotificationHelper consts
-	private final static String syncDbName = "discovertrento_notifications";
-
 	private final static String appToken = "discovertrento";
 
-	private final static String CORE_MOBILITY = "core.territory";
-	private final static String NOTIFICATION_URL = "/core.communicator";
-	
+	private final static String APP_ID = "core.territory";
 
 	private final static int MAX_MSG = 50;
 
@@ -75,9 +63,7 @@ public class NotificationsSyncAdapter extends AbstractThreadedSyncAdapter {
 			String authority = context
 					.getString(R.string.notificationprovider_authority);
 			try {
-				syncService = GlobalConfig.getAppUrl(context) +NOTIFICATION_URL;
-				NotificationsHelper.init(context, appToken, syncDbName,
-						syncService, authority, CORE_MOBILITY, MAX_MSG);
+				NotificationsHelper.init(context, appToken, authority, APP_ID, MAX_MSG);
 				NotificationsHelper.start(true);
 			} catch (Exception e) {
 				Log.e(TAG,
@@ -97,9 +83,9 @@ public class NotificationsSyncAdapter extends AbstractThreadedSyncAdapter {
 			if (data.getUpdated() != null
 					&& !data.getUpdated().isEmpty()
 					&& data.getUpdated().containsKey(
-							Notification.class.getCanonicalName()))
+							DBNotification.class.getCanonicalName()))
 				onDBUpdate(data.getUpdated().get(
-						Notification.class.getCanonicalName()));
+						DBNotification.class.getCanonicalName()));
 		} catch (SecurityException e) {
 			handleSecurityProblem();
 		} catch (Exception e) {
@@ -137,69 +123,47 @@ public class NotificationsSyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 	private void onDBUpdate(List<Object> objsList) {
+		if (!objsList.isEmpty()) {
+			int icon = 0;
+			Intent intent = null;
 
-		List<Object> dtList = new ArrayList<Object>();
-		List<Object> jpList = new ArrayList<Object>();
+			icon = R.drawable.dt;
+			intent = new Intent(mContext,
+					NotificationsFragmentActivityDT.class);
 
-		for (Object obj : objsList) {
-			LinkedHashMap<String, Object> notification = (LinkedHashMap<String, Object>) obj;
-			String type = (String) notification.get("type");
-			jpList.add(notification);
-		}
-
-		List<List<Object>> notificationsLists = new ArrayList<List<Object>>();
-		notificationsLists.add(dtList);
-		notificationsLists.add(jpList);
-
-		for (List<Object> list : notificationsLists) {
-			if (!list.isEmpty()) {
-				int icon = 0;
-				Intent intent = null;
-
-				LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) list
-						.get(0);
-				icon = R.drawable.ic_launcher;
-				intent = new Intent(mContext,
-						NotificationsFragmentActivityDT.class);
-
-				if (intent != null) {
-					intent.putExtra(NotificationsHelper.PARAM_APP_TOKEN,
-							appToken);
-					intent.putExtra(NotificationsHelper.PARAM_SYNC_DB_NAME,
-							syncDbName);
-					intent.putExtra(NotificationsHelper.PARAM_SYNC_SERVICE,
-							syncService);
-					intent.putExtra(
-							NotificationsHelper.PARAM_AUTHORITY,
-							mContext.getString(R.string.notificationprovider_authority));
-				}
-
-				NotificationManager mNotificationManager = (NotificationManager) mContext
-						.getSystemService(Context.NOTIFICATION_SERVICE);
-
-				CharSequence tickerText = extractTitle(list);
-				long when = System.currentTimeMillis();
-				CharSequence contentText = extractText(list);
-				PendingIntent contentIntent = PendingIntent.getActivity(
-						mContext, 0, intent, 0);
-
-				android.app.Notification notification = new android.app.Notification(
-						icon, tickerText, when);
-				notification.flags |= android.app.Notification.FLAG_AUTO_CANCEL;
-				notification.setLatestEventInfo(mContext, tickerText,
-						contentText, contentIntent);
-
-				mNotificationManager.notify(1, notification);
+			if (intent != null) {
+				intent.putExtra(NotificationsHelper.PARAM_APP_TOKEN,
+						appToken);
+				intent.putExtra(
+						NotificationsHelper.PARAM_AUTHORITY,
+						mContext.getString(R.string.notificationprovider_authority));
 			}
+
+			NotificationManager mNotificationManager = (NotificationManager) mContext
+					.getSystemService(Context.NOTIFICATION_SERVICE);
+
+			CharSequence tickerText = extractTitle(objsList);
+			long when = System.currentTimeMillis();
+			CharSequence contentText = extractText(objsList);
+			PendingIntent contentIntent = PendingIntent.getActivity(
+					mContext, 0, intent, 0);
+
+			android.app.Notification notification = new android.app.Notification(
+					icon, tickerText, when);
+			notification.flags |= android.app.Notification.FLAG_AUTO_CANCEL;
+			notification.setLatestEventInfo(mContext, tickerText,
+					contentText, contentIntent);
+
+			mNotificationManager.notify(1, notification);
 		}
+
 	}
 
 	private CharSequence extractTitle(List<Object> list) {
 		String txt = "";
 
-		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) list
-				.get(0);
-		String type = (String) map.get("type");
+		DBNotification map = (DBNotification) list.get(0);
+		String type = map.getNotification().getType();
 		txt = mContext.getString(R.string.app_name);
 
 		return txt;
