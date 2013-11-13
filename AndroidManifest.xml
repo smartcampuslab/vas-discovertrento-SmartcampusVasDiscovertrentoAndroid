@@ -73,6 +73,9 @@
             android:name="dt-sync-authority"
             android:value="eu.trentorise.smartcampus.dt" />
         <meta-data
+            android:name="eu.trentorise.smartcampus.account.AUTH_URL"
+            android:value="https://ac.smartcampuslab.it/aac" />
+        <meta-data
             android:name="eu.trentorise.smartcampus.account.ACCOUNT_BASED_ACCESS"
             android:value="true" />
         <meta-data
