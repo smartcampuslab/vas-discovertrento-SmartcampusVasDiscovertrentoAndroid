@@ -101,12 +101,25 @@
 	],
 	"events_default" : [0],
 
-	"exclude" : {
+	"include" : {
 		"source" : [
-	        "smartplanner-transitstops",
-	        "TrentinoFamiglia"
-	    ],
-	    "type" : ["Comune", "Family", "Family - Organizations"]
+	        null,
+	        "Osteria La Scaletta",
+	        "TrentinoCultura",
+	        "Flambard Pub",
+	        "Smart Campus Lab",
+	        "La Libreria Erickson",
+	        "Café de la Paix Trento",
+	        "Al Porteghet",
+	        "smartplanner-bikesharing",
+	        "smartplanner-parking",
+	        "Officina Gambrinus",
+	        "OSTERIA TRENTINA",
+	        "OperaUniversitaria",
+	        "smartplanner-carsharing",
+	        "Facebook",
+	        "Fumettoteca Mad"
+	    ]
 	},
    "center_map":[
                      46.0696727540531,
