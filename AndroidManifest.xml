@@ -124,7 +124,14 @@
                 <data android:scheme="eu.trentorise.smartcampus.narrative" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name="com.github.espiandev.showcaseview.TutorialActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:theme="@style/TutorialTheme" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <service android:name="eu.trentorise.smartcampus.storage.sync.service.SyncStorageService" />
 
         <activity
