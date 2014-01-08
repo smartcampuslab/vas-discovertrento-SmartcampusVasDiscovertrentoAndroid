@@ -29,6 +29,7 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 import eu.trentorise.smartcampus.communicator.model.DBNotification;
+import eu.trentorise.smartcampus.dt.DiscoverTrentoActivity;
 import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.dt.notifications.NotificationsFragmentActivityDT;
 import eu.trentorise.smartcampus.notifications.NotificationsHelper;
@@ -129,14 +130,9 @@ public class NotificationsSyncAdapter extends AbstractThreadedSyncAdapter {
 
 			icon = R.drawable.dt;
 			intent = new Intent(mContext,
-					NotificationsFragmentActivityDT.class);
-
+					DiscoverTrentoActivity.class);
 			if (intent != null) {
-				intent.putExtra(NotificationsHelper.PARAM_APP_TOKEN,
-						appToken);
-				intent.putExtra(
-						NotificationsHelper.PARAM_AUTHORITY,
-						mContext.getString(R.string.notificationprovider_authority));
+				intent.putExtra(NotificationsHelper.PARAM_NOTIFICATION_ACTIVITY, true);
 			}
 
 			NotificationManager mNotificationManager = (NotificationManager) mContext
