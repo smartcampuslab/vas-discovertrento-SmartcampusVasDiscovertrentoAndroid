@@ -60,32 +60,27 @@ public class NotificationsSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	private void init(Context context) {
 		if (!NotificationsHelper.isInstantiated()) {
-			String authority = context
-					.getString(R.string.notificationprovider_authority);
+			String authority = context.getString(R.string.notificationprovider_authority);
 			try {
 				NotificationsHelper.init(context, appToken, authority, APP_ID, MAX_MSG);
 				NotificationsHelper.start(true);
 			} catch (Exception e) {
-				Log.e(TAG,
-						"Failed to instantiate SyncAdapter: " + e.getMessage());
+				Log.e(TAG, "Failed to instantiate SyncAdapter: " + e.getMessage());
 			}
 		}
 	}
 
 	@Override
-	public void onPerformSync(Account account, Bundle extras, String authority,
-			ContentProviderClient provider, SyncResult syncResult) {
+	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider,
+			SyncResult syncResult) {
 		init(getContext());
 		try {
 			Log.e(TAG, "Trying synchronization");
 			// SyncStorage storage = NotificationsHelper.getSyncStorage();
 			SyncData data = NotificationsHelper.synchronize();
-			if (data.getUpdated() != null
-					&& !data.getUpdated().isEmpty()
-					&& data.getUpdated().containsKey(
-							DBNotification.class.getCanonicalName()))
-				onDBUpdate(data.getUpdated().get(
-						DBNotification.class.getCanonicalName()));
+			if (data.getUpdated() != null && !data.getUpdated().isEmpty()
+					&& data.getUpdated().containsKey(DBNotification.class.getCanonicalName()))
+				onDBUpdate(data.getUpdated().get(DBNotification.class.getCanonicalName()));
 		} catch (SecurityException e) {
 			handleSecurityProblem();
 		} catch (Exception e) {
@@ -128,26 +123,19 @@ public class NotificationsSyncAdapter extends AbstractThreadedSyncAdapter {
 			Intent intent = null;
 
 			icon = R.drawable.dt;
-			intent = new Intent(mContext,
-					DiscoverTrentoActivity.class);
-			if (intent != null) {
-				intent.putExtra(DiscoverTrentoActivity.PARAM_NOTIFICATION_ACTIVITY, true);
-			}
-
+			intent = new Intent(mContext, DiscoverTrentoActivity.class);
+			intent.putExtra(DiscoverTrentoActivity.PARAM_NOTIFICATION_ACTIVITY, true);
 			NotificationManager mNotificationManager = (NotificationManager) mContext
 					.getSystemService(Context.NOTIFICATION_SERVICE);
 
 			CharSequence tickerText = extractTitle(objsList);
 			long when = System.currentTimeMillis();
 			CharSequence contentText = extractText(objsList);
-			PendingIntent contentIntent = PendingIntent.getActivity(
-					mContext, 0, intent, 0);
+			PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
 
-			android.app.Notification notification = new android.app.Notification(
-					icon, tickerText, when);
+			android.app.Notification notification = new android.app.Notification(icon, tickerText, when);
 			notification.flags |= android.app.Notification.FLAG_AUTO_CANCEL;
-			notification.setLatestEventInfo(mContext, tickerText,
-					contentText, contentIntent);
+			notification.setLatestEventInfo(mContext, tickerText, contentText, contentIntent);
 
 			mNotificationManager.notify(1, notification);
 		}
@@ -168,11 +156,9 @@ public class NotificationsSyncAdapter extends AbstractThreadedSyncAdapter {
 		String txt = "";
 
 		if (list.size() == 1) {
-			txt = mContext.getString(R.string.notification_text,
-					Integer.toString(list.size()));
+			txt = mContext.getString(R.string.notification_text, Integer.toString(list.size()));
 		} else {
-			txt = mContext.getString(R.string.notification_text_multi,
-					Integer.toString(list.size()));
+			txt = mContext.getString(R.string.notification_text_multi, Integer.toString(list.size()));
 		}
 		return txt;
 	}
