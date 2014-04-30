@@ -16,6 +16,8 @@
 
 package eu.trentorise.smartcampus.dt.syncadapter;
 
+import it.smartcampuslab.dt.R;
+
 import java.util.List;
 
 import android.accounts.Account;
@@ -30,7 +32,6 @@ import android.os.Bundle;
 import android.util.Log;
 import eu.trentorise.smartcampus.communicator.model.DBNotification;
 import eu.trentorise.smartcampus.dt.DiscoverTrentoActivity;
-import eu.trentorise.smartcampus.dt.R;
 import eu.trentorise.smartcampus.notifications.NotificationsHelper;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.sync.SyncData;
