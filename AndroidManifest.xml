@@ -17,8 +17,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.smartcampuslab.dt"
     android:installLocation="internalOnly"
-    android:versionCode="34"
-    android:versionName="0.19.0" >
+    android:versionCode="36"
+    android:versionName="0.20.1" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -29,9 +29,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" /> -->
-    <!-- <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" /> -->
-    <!-- <uses-permission android:name="android.permission.USE_CREDENTIALS" /> -->
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -57,7 +55,7 @@
         android:theme="@style/Theme.Discovertrento" >
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAYMob8Ipl_ykdVq9hkQTvFVSQMNSXn3aA" />
+            android:value="AIzaSyC8Iafl-PanukaEoWT8GuYh4UJEUAZcgv8" />
         <meta-data
             android:name="use-feedback"
             android:value="false" />
@@ -82,7 +80,10 @@
         <meta-data
             android:name="eu.trentorise.smartcampus.account.ACCOUNT_NAME"
             android:value="SmartCampus" />
-
+        <meta-data
+            android:name="SHARED_PACKAGE"
+            android:value="it.smartcampuslab.dt" />
+        
         <uses-library android:name="com.google.android.maps" />
 
         <activity
