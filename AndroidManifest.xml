@@ -16,6 +16,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.smartcampuslab.dt"
+    android:sharedUserId="it.smartcampuslab.launcher"
+    android:sharedUserLabel="@string/app_uid_label"
     android:installLocation="internalOnly"
     android:versionCode="36"
     android:versionName="0.20.1" >
@@ -29,10 +31,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <permission
         android:name="eu.trentorise.smartcampus.permission.MAPS_RECEIVE"
@@ -80,9 +80,6 @@
         <meta-data
             android:name="eu.trentorise.smartcampus.account.ACCOUNT_NAME"
             android:value="SmartCampus" />
-        <meta-data
-            android:name="SHARED_PACKAGE"
-            android:value="it.smartcampuslab.dt" />
         
         <uses-library android:name="com.google.android.maps" />
 
